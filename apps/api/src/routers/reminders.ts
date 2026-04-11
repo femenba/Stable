@@ -31,7 +31,7 @@ export const remindersRouter = router({
   create: protectedProcedure
     .input(z.object({
       taskId: z.string().uuid().optional(),
-      remindAt: z.string().datetime(),
+      remindAt: z.string().datetime().refine(v => new Date(v) > new Date(), { message: 'remindAt must be in the future' }),
       type: z.enum(['once', 'repeating', 'location']).default('once'),
     }))
     .mutation(async ({ ctx, input }) => {
@@ -83,20 +83,21 @@ export const remindersRouter = router({
   snooze: protectedProcedure
     .input(z.object({
       id: z.string().uuid(),
-      remindAt: z.string().datetime(),
+      remindAt: z.string().datetime().refine(v => new Date(v) > new Date(), { message: 'remindAt must be in the future' }),
     }))
     .mutation(async ({ ctx, input }) => {
       const userId = await getUserId(ctx)
 
-      // Fetch current snooze_count first
+      // Fetch current snooze_count and dismissed status first
       const { data: existing, error: fetchError } = await ctx.db
         .from('reminders')
-        .select('snooze_count')
+        .select('snooze_count, dismissed')
         .eq('id', input.id)
         .eq('user_id', userId)
         .single()
 
       if (fetchError || !existing) throw new TRPCError({ code: 'NOT_FOUND', message: 'Reminder not found' })
+      if (existing.dismissed) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Cannot snooze a dismissed reminder' })
 
       const { data, error } = await ctx.db
         .from('reminders')
