@@ -1,7 +1,12 @@
-import { router, protectedProcedure } from '@/router'
+import { initTRPC } from '@trpc/server'
+import type { Context } from '@/context'
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
 import type { User } from '@steady/shared'
+
+const t = initTRPC.context<Context>().create()
+const router = t.router
+const protectedProcedure = t.procedure
 
 function mapUser(row: Record<string, unknown>): User {
   return {
