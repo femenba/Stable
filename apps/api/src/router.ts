@@ -1,11 +1,8 @@
-import { initTRPC } from '@trpc/server'
-import type { Context } from './context'
+import { router } from './trpc'
 import { usersRouter } from './routers/users'
 import { tasksRouter } from './routers/tasks'
 
-const t = initTRPC.context<Context>().create()
-
-const router = t.router
+export { router, publicProcedure, protectedProcedure } from './trpc'
 
 export const appRouter = router({
   users: usersRouter,
