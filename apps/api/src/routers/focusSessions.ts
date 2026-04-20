@@ -1,6 +1,6 @@
 import { router, protectedProcedure } from '@/trpc'
 import type { Context } from '@/context'
-import { getCachedUserId, setCachedUserId } from '@/lib/redis'
+import { getUserId } from '@/lib/getUserId'
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
 import type { FocusSession } from '@steady/shared'
@@ -16,21 +16,6 @@ function mapSession(row: Record<string, unknown>): FocusSession {
     completed: row.completed as boolean,
     createdAt: row.created_at as string,
   }
-}
-
-async function getUserId(ctx: Context): Promise<string> {
-  const cached = await getCachedUserId(ctx.redis, ctx.userId)
-  if (cached) return cached
-
-  const { data, error } = await ctx.db
-    .from('users')
-    .select('id')
-    .eq('clerk_id', ctx.userId)
-    .single()
-
-  if (error || !data) throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' })
-  await setCachedUserId(ctx.redis, ctx.userId, data.id as string)
-  return data.id as string
 }
 
 export const focusSessionsRouter = router({
