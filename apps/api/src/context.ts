@@ -2,10 +2,13 @@ import { createDbClient, DbClient } from '@steady/db'
 import { getAuth } from '@clerk/nextjs/server'
 import { TRPCError } from '@trpc/server'
 import type { NextRequest } from 'next/server'
+import { getRedis } from './lib/redis'
+import type { Redis } from '@upstash/redis'
 
 export interface Context {
-  userId: string      // Clerk user ID
+  userId: string
   db: DbClient
+  redis: Redis
 }
 
 // Used in tests — pass a pre-built context directly
@@ -27,10 +30,6 @@ function getDb(): DbClient {
 
 export async function createContext({ req }: RawContext): Promise<Context> {
   const { userId } = getAuth(req)
-
-  if (!userId) {
-    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-  }
-
-  return { userId, db: getDb() }
+  if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
+  return { userId, db: getDb(), redis: getRedis() }
 }
