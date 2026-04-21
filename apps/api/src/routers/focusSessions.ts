@@ -3,7 +3,7 @@ import type { Context } from '@/context'
 import { getUserId } from '@/lib/getUserId'
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
-import type { FocusSession } from '@steady/shared'
+import type { FocusSession } from '@stable/shared'
 
 function mapSession(row: Record<string, unknown>): FocusSession {
   return {

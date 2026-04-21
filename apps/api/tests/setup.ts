@@ -1,11 +1,11 @@
 import { initTRPC } from '@trpc/server'
 import type { Context } from '@/context'
-import { createDbClient } from '@steady/db'
+import { createDbClient } from '@stable/db'
 import { Redis } from '@upstash/redis'
 
 // Test context uses real Supabase with a dedicated test user
 export const TEST_CLERK_ID = 'test_clerk_user_001'
-export const TEST_USER_EMAIL = 'test@steady.app'
+export const TEST_USER_EMAIL = 'test@stable.app'
 
 const t = initTRPC.context<Context>().create()
 export const testRouter = t.router

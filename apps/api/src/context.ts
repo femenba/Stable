@@ -1,4 +1,4 @@
-import { createDbClient, DbClient } from '@steady/db'
+import { createDbClient, DbClient } from '@stable/db'
 import { getAuth } from '@clerk/nextjs/server'
 import { TRPCError } from '@trpc/server'
 import type { NextRequest } from 'next/server'

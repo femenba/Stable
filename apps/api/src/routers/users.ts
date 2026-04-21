@@ -1,7 +1,7 @@
 import { router, protectedProcedure } from '@/trpc'
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
-import type { User } from '@steady/shared'
+import type { User } from '@stable/shared'
 
 function mapUser(row: Record<string, unknown>): User {
   return {

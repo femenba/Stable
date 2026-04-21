@@ -3,7 +3,7 @@ import type { Context } from '@/context'
 import { getUserId } from '@/lib/getUserId'
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
-import type { Reminder } from '@steady/shared'
+import type { Reminder } from '@stable/shared'
 
 function mapReminder(row: Record<string, unknown>): Reminder {
   return {

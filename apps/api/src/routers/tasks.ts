@@ -3,7 +3,7 @@ import type { Context } from '@/context'
 import { getUserId } from '@/lib/getUserId'
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
-import type { Task } from '@steady/shared'
+import type { Task } from '@stable/shared'
 
 function mapTask(row: Record<string, unknown>): Task {
   return {
