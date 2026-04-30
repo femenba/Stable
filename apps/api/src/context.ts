@@ -8,7 +8,7 @@ import type { Redis } from '@upstash/redis'
 export interface Context {
   userId: string
   db: DbClient
-  redis: Redis
+  redis: Redis | null
 }
 
 // Used in tests — pass a pre-built context directly

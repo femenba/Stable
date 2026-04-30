@@ -1,7 +1,7 @@
 import { initTRPC } from '@trpc/server'
 import type { Context } from '@/context'
 import { createDbClient } from '@stable/db'
-import { Redis } from '@upstash/redis'
+import { getRedis } from '@/lib/redis'
 
 // Test context uses real Supabase with a dedicated test user
 export const TEST_CLERK_ID = 'test_clerk_user_001'
@@ -18,7 +18,7 @@ export function createTestContext(overrides?: Partial<Context>): Context {
       process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
     ),
-    redis: Redis.fromEnv(),
+    redis: getRedis(),
     ...overrides,
   }
 }
@@ -62,5 +62,5 @@ export async function cleanTestData(ctx: Context) {
   await ctx.db.from('focus_sessions').delete().eq('user_id', user.id)
   await ctx.db.from('reminders').delete().eq('user_id', user.id)
   await ctx.db.from('tasks').delete().eq('user_id', user.id)
-  await ctx.redis.del(`user:clerk:${TEST_CLERK_ID}`)
+  if (ctx.redis) await ctx.redis.del(`user:clerk:${TEST_CLERK_ID}`)
 }

@@ -2,10 +2,12 @@ import { Redis } from '@upstash/redis'
 
 let _redis: Redis | null = null
 
-export function getRedis(): Redis {
-  if (!_redis) {
-    _redis = Redis.fromEnv() // reads UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN
+export function getRedis(): Redis | null {
+  if (_redis) return _redis
+  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+    return null
   }
+  _redis = Redis.fromEnv()
   return _redis
 }
 
