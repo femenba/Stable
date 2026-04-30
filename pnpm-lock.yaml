@@ -23,10 +23,10 @@ importers:
       '@clerk/nextjs':
         specifier: ^6.0.0
         version: 6.39.1(next@15.5.15(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
-      '@steady/db':
+      '@stable/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@steady/shared':
+      '@stable/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       '@trpc/server':
