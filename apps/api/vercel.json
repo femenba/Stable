@@ -1,5 +1,3 @@
 {
-  "buildCommand": "cd ../.. && pnpm build --filter=@stable/api",
-  "installCommand": "cd ../.. && pnpm install",
-  "framework": "nextjs"
+  "buildCommand": "pnpm build"
 }
