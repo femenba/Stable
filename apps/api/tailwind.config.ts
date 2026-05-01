@@ -9,13 +9,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        brand: {
-          50:  '#f0f4ff',
-          100: '#dde7ff',
-          500: '#4f6ef7',
-          600: '#3b5af0',
-          700: '#2c46dc',
-          900: '#1a2d9e',
+        stable: {
+          bg:           'var(--stable-bg)',
+          card:         'var(--stable-card)',
+          'card-border':'var(--stable-card-border)',
+          nav:          'var(--stable-nav)',
+          'nav-border': 'var(--stable-nav-border)',
+          t1:           'var(--stable-t1)',
+          t2:           'var(--stable-t2)',
+          t3:           'var(--stable-t3)',
         },
       },
     },

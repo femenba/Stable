@@ -2,11 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Light mode (default) ─────────────────── */
+:root {
+  --stable-bg:          #fafafe;
+  --stable-card:        #ffffff;
+  --stable-card-border: #f0eeff;
+  --stable-nav:         #ffffff;
+  --stable-nav-border:  #f0eeff;
+  --stable-t1:          #111111;
+  --stable-t2:          #888888;
+  --stable-t3:          #cccccc;
+  --stable-header:      linear-gradient(160deg, #4f3aff 0%, #7c3aed 50%, #c026d3 100%);
+  --stable-cta:         linear-gradient(135deg, #4f3aff, #7c3aed);
+  --cat-work:     #4f3aff;
+  --cat-personal: #7c3aed;
+  --cat-family:   #be185d;
+  --cat-health:   #0891b2;
+  --cat-other:    #6b7280;
+}
+
+/* ── Dark mode ────────────────────────────── */
+[data-theme="dark"] {
+  --stable-bg:          #120e24;
+  --stable-card:        #1a1535;
+  --stable-card-border: #2a1f60;
+  --stable-nav:         #120e24;
+  --stable-nav-border:  #1e1a38;
+  --stable-t1:          #e2d9f3;
+  --stable-t2:          #8b7ab8;
+  --stable-t3:          #3a2f5a;
+  --stable-header:      linear-gradient(160deg, #1e1260 0%, #120e24 70%);
+  --stable-cta:         linear-gradient(135deg, #6366f1, #a855f7);
+  --cat-work:     #6366f1;
+  --cat-personal: #a855f7;
+  --cat-family:   #ec4899;
+  --cat-health:   #22d3ee;
+  --cat-other:    #9ca3af;
+}
+
 @layer base {
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+    background: var(--stable-bg);
+    color: var(--stable-t1);
+    @apply antialiased;
   }
 }
