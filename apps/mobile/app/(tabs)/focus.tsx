@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useLocalSearchParams } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -135,6 +135,17 @@ export default function FocusScreen() {
     scheduleFocusCompleteNotification(
       Math.ceil(remaining / 60),
       new Date(Date.now() + remaining * 1000),
+    )
+  }
+
+  function confirmCancel() {
+    Alert.alert(
+      'End focus session?',
+      'You will lose your current progress.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'End session', style: 'destructive', onPress: handleReset },
+      ],
     )
   }
 
@@ -304,7 +315,7 @@ export default function FocusScreen() {
                   <Text style={[styles.secondaryBtnText, { color: t.t1 }]}>⏸  Pause</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={handleReset}
+                  onPress={confirmCancel}
                   style={[styles.cancelBtn]}
                 >
                   <Text style={styles.cancelBtnText}>✕  Cancel session</Text>
