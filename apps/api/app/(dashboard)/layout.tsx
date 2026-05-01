@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { Sidebar } from '../../src/components/sidebar'
+import { Shell } from '../../src/components/shell'
 import { UserSync } from '../../src/components/user-sync'
 
 export default function DashboardLayout({
@@ -8,12 +8,11 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <Shell>
       <Suspense fallback={null}>
-        <Sidebar />
+        <UserSync />
       </Suspense>
-      <UserSync />
-      <main className="flex-1 p-8 overflow-y-auto">{children}</main>
-    </div>
+      {children}
+    </Shell>
   )
 }
