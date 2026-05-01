@@ -1,85 +1,76 @@
 import { useState, useEffect, useRef } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Platform } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useLocalSearchParams } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import * as Notifications from 'expo-notifications'
-import { trpc } from '@/lib/trpc-client'
 import { useTheme } from '@/lib/use-theme'
-import { startLiveActivity, endLiveActivity } from '@/lib/live-activity'
 
-function formatDuration(startedAt: string): string {
-  const diff = Math.max(0, Math.floor((Date.now() - new Date(startedAt).getTime()) / 1000))
-  const h = Math.floor(diff / 3600)
-  const m = Math.floor((diff % 3600) / 60)
-  const s = diff % 60
-  if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+const DURATION = 25 * 60 // 25 minutes
+
+function pad(n: number) {
+  return String(n).padStart(2, '0')
 }
 
-function ElapsedTimer({ startedAt }: { startedAt: string }) {
-  const [, setTick] = useState(0)
-  useEffect(() => {
-    const id = setInterval(() => setTick((n) => n + 1), 1000)
-    return () => clearInterval(id)
-  }, [])
-  return <>{formatDuration(startedAt)}</>
+function formatTime(s: number) {
+  return `${pad(Math.floor(s / 60))}:${pad(s % 60)}`
 }
 
-async function showAndroidTimerNotification(taskName: string) {
-  if (Platform.OS !== 'android') return
-  await Notifications.scheduleNotificationAsync({
-    identifier: 'focus-session',
-    content: {
-      title: 'Focus session in progress',
-      body:  taskName,
-      sticky: true,
-      autoDismiss: false,
-    },
-    trigger: null,
-  })
-}
-
-async function dismissAndroidTimerNotification() {
-  if (Platform.OS !== 'android') return
-  await Notifications.dismissNotificationAsync('focus-session')
-}
+type Status = 'idle' | 'running' | 'paused' | 'done'
 
 export default function FocusScreen() {
   const { t } = useTheme()
-  const insets  = useSafeAreaInsets()
-  const utils   = trpc.useUtils()
-  const params  = useLocalSearchParams<{ taskId?: string; taskName?: string }>()
-  const liveActivityId = useRef<string | null>(null)
+  const insets = useSafeAreaInsets()
+  const { taskName: paramTask, startTs } = useLocalSearchParams<{ taskName?: string; startTs?: string }>()
 
-  const { data: sessions, isLoading } = trpc.focusSessions.list.useQuery({ limit: 10 })
+  const [status, setStatus]       = useState<Status>('idle')
+  const [secondsLeft, setSeconds] = useState(DURATION)
+  const [activeTask, setActiveTask] = useState('')
+  const lastStartTs = useRef('')
 
-  const start = trpc.focusSessions.start.useMutation({
-    onSuccess: async (session) => {
-      utils.focusSessions.list.invalidate()
-      const name = params.taskName ?? 'Focus session'
-      liveActivityId.current = await startLiveActivity({
-        sessionId: session.id,
-        taskName:  name,
-        startedAt: session.startedAt,
+  // Auto-start when Today navigates here with a task + timestamp
+  useEffect(() => {
+    if (startTs && startTs !== lastStartTs.current) {
+      lastStartTs.current = startTs
+      setActiveTask(paramTask ?? '')
+      setSeconds(DURATION)
+      setStatus('running')
+    }
+  }, [startTs, paramTask])
+
+  // Countdown tick
+  useEffect(() => {
+    if (status !== 'running') return
+    const id = setInterval(() => {
+      setSeconds((s) => {
+        if (s <= 1) {
+          clearInterval(id)
+          setStatus('done')
+          return 0
+        }
+        return s - 1
       })
-      await showAndroidTimerNotification(name)
-    },
-  })
+    }, 1000)
+    return () => clearInterval(id)
+  }, [status])
 
-  const end = trpc.focusSessions.end.useMutation({
-    onSuccess: async () => {
-      utils.focusSessions.list.invalidate()
-      if (liveActivityId.current) {
-        await endLiveActivity(liveActivityId.current)
-        liveActivityId.current = null
-      }
-      await dismissAndroidTimerNotification()
-    },
-  })
+  function handleStart() {
+    setActiveTask('')
+    setSeconds(DURATION)
+    setStatus('running')
+  }
 
-  const activeSession = sessions?.find((s) => s.endedAt === null) ?? null
-  const pastSessions  = sessions?.filter((s) => s.endedAt !== null) ?? []
+  function handleReset() {
+    setStatus('idle')
+    setSeconds(DURATION)
+    setActiveTask('')
+  }
+
+  const timerColor =
+    status === 'done'    ? '#16a34a' :
+    status === 'idle'    ? t.t3      :
+    '#4f3aff'
+
+  const progress = secondsLeft / DURATION // 1 → 0 as timer counts down
 
   return (
     <View style={[styles.container, { backgroundColor: t.bg }]}>
@@ -93,93 +84,118 @@ export default function FocusScreen() {
         <Text style={styles.title}>Focus</Text>
       </LinearGradient>
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      <View style={styles.content}>
         <View style={[styles.timerCard, { backgroundColor: t.card, borderColor: t.cardBorder }]}>
-          {activeSession ? (
-            <>
-              <Text style={[styles.timer, { color: '#4f3aff' }]}>
-                <ElapsedTimer startedAt={activeSession.startedAt} />
-              </Text>
-              <Text style={[styles.timerSub, { color: t.t2 }]}>Focus session in progress</Text>
-              <View style={styles.timerActions}>
-                <TouchableOpacity
-                  onPress={() => end.mutate({ id: activeSession.id, completed: true })}
-                  disabled={end.isPending}
-                  style={{ opacity: end.isPending ? 0.5 : 1 }}
-                >
-                  <LinearGradient
-                    colors={[t.ctaStart, t.ctaEnd]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={styles.endBtn}
-                  >
-                    <Text style={styles.endBtnText}>End session ✓</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => end.mutate({ id: activeSession.id, completed: false })}
-                  disabled={end.isPending}
-                  style={[styles.abandonBtn, { borderColor: t.cardBorder, opacity: end.isPending ? 0.5 : 1 }]}
-                >
-                  <Text style={[styles.abandonBtnText, { color: t.t2 }]}>Abandon</Text>
-                </TouchableOpacity>
-              </View>
-            </>
-          ) : (
-            <>
-              <Text style={[styles.timer, { color: t.t3 }]}>00:00</Text>
-              <Text style={[styles.timerSub, { color: t.t2 }]}>Ready to focus</Text>
-              <TouchableOpacity
-                onPress={() => start.mutate({ taskId: params.taskId ?? undefined })}
-                disabled={start.isPending}
-                style={{ opacity: start.isPending ? 0.5 : 1, marginTop: 24 }}
+          {/* Task name */}
+          {activeTask ? (
+            <Text style={[styles.taskName, { color: t.t2 }]} numberOfLines={1}>
+              {activeTask}
+            </Text>
+          ) : null}
+
+          {/* Timer */}
+          <Text style={[styles.timer, { color: timerColor }]}>
+            {formatTime(secondsLeft)}
+          </Text>
+
+          {/* Progress bar */}
+          <View style={[styles.progressTrack, { backgroundColor: t.cardBorder }]}>
+            <View
+              style={[
+                styles.progressFill,
+                {
+                  width:           `${progress * 100}%`,
+                  backgroundColor: status === 'done' ? '#16a34a' : '#4f3aff',
+                },
+              ]}
+            />
+          </View>
+
+          {/* Status label */}
+          <Text style={[styles.timerSub, { color: t.t2 }]}>
+            {status === 'idle'    ? '25-minute focus session'   :
+             status === 'running' ? 'Focus session in progress' :
+             status === 'paused'  ? 'Paused — take a breath'   :
+             'Session complete! Great work.'}
+          </Text>
+
+          {/* Controls */}
+          {status === 'idle' && (
+            <TouchableOpacity onPress={handleStart} style={styles.fullWidth}>
+              <LinearGradient
+                colors={[t.ctaStart, t.ctaEnd]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.primaryBtn}
               >
+                <Text style={styles.primaryBtnText}>▶  Start session</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          )}
+
+          {status === 'running' && (
+            <View style={styles.row}>
+              <TouchableOpacity
+                onPress={() => setStatus('paused')}
+                style={[styles.secondaryBtn, { borderColor: t.cardBorder, flex: 1 }]}
+              >
+                <Text style={[styles.secondaryBtnText, { color: t.t1 }]}>⏸  Pause</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleReset}
+                style={[styles.secondaryBtn, { borderColor: t.cardBorder }]}
+              >
+                <Text style={[styles.secondaryBtnText, { color: t.t3 }]}>↺  Reset</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {status === 'paused' && (
+            <View style={styles.row}>
+              <TouchableOpacity onPress={() => setStatus('running')} style={styles.fullWidth}>
                 <LinearGradient
                   colors={[t.ctaStart, t.ctaEnd]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
-                  style={styles.startBtn}
+                  style={styles.primaryBtn}
                 >
-                  <Text style={styles.startBtnText}>▶ Start session</Text>
+                  <Text style={styles.primaryBtnText}>▶  Resume</Text>
                 </LinearGradient>
               </TouchableOpacity>
-            </>
+              <TouchableOpacity
+                onPress={handleReset}
+                style={[styles.secondaryBtn, { borderColor: t.cardBorder }]}
+              >
+                <Text style={[styles.secondaryBtnText, { color: t.t3 }]}>↺</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {status === 'done' && (
+            <TouchableOpacity onPress={handleReset} style={styles.fullWidth}>
+              <LinearGradient
+                colors={['#16a34a', '#15803d']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.primaryBtn}
+              >
+                <Text style={styles.primaryBtnText}>✓  Done — start another</Text>
+              </LinearGradient>
+            </TouchableOpacity>
           )}
         </View>
 
-        <Text style={[styles.historyLabel, { color: t.t3 }]}>RECENT SESSIONS</Text>
-        {isLoading ? (
-          [0, 1].map((i) => (
-            <View key={i} style={[styles.skeleton, { backgroundColor: t.card }]} />
-          ))
-        ) : !pastSessions.length ? (
-          <View style={[styles.empty, { backgroundColor: t.card, borderColor: t.cardBorder }]}>
-            <Text style={[styles.emptyText, { color: t.t3 }]}>No completed sessions yet.</Text>
+        {/* Tips */}
+        {status === 'idle' && (
+          <View style={[styles.tipsCard, { backgroundColor: t.card, borderColor: t.cardBorder }]}>
+            <Text style={[styles.tipsTitle, { color: t.t3 }]}>POMODORO METHOD</Text>
+            <Text style={[styles.tipsBody, { color: t.t2 }]}>
+              25 minutes of deep focus, then a 5-minute break.{'\n'}
+              Put your phone down and close distracting tabs.
+            </Text>
           </View>
-        ) : (
-          pastSessions.map((s) => (
-            <View key={s.id} style={[styles.sessionRow, { backgroundColor: t.card, borderColor: t.cardBorder }]}>
-              <View>
-                <Text style={[styles.sessionDate, { color: t.t1 }]}>
-                  {new Date(s.startedAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}
-                </Text>
-                <Text style={[styles.sessionTime, { color: t.t2 }]}>
-                  {new Date(s.startedAt).toLocaleTimeString(undefined, { timeStyle: 'short' })}
-                  {s.endedAt ? ` → ${new Date(s.endedAt).toLocaleTimeString(undefined, { timeStyle: 'short' })}` : ''}
-                </Text>
-              </View>
-              <View style={styles.sessionRight}>
-                <Text style={[styles.sessionDuration, { color: t.t1 }]}>
-                  {s.durationMinutes != null ? `${s.durationMinutes}m` : '—'}
-                </Text>
-                <Text style={[styles.sessionStatus, { color: s.completed ? '#0891b2' : t.t3 }]}>
-                  {s.completed ? 'Completed' : 'Abandoned'}
-                </Text>
-              </View>
-            </View>
-          ))
         )}
-      </ScrollView>
+      </View>
     </View>
   )
 }
@@ -189,26 +205,20 @@ const styles = StyleSheet.create({
   header:         { paddingHorizontal: 20, paddingBottom: 24 },
   label:          { fontSize: 10, fontWeight: '600', letterSpacing: 2, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', marginBottom: 8 },
   title:          { fontSize: 26, fontWeight: '900', color: '#fff' },
-  scroll:         { flex: 1 },
-  content:        { paddingTop: 12, paddingBottom: 24 },
-  timerCard:      { marginHorizontal: 12, borderRadius: 16, borderWidth: 1, padding: 32, alignItems: 'center' },
-  timer:          { fontSize: 52, fontWeight: '900', fontVariant: ['tabular-nums'], letterSpacing: -1 },
-  timerSub:       { fontSize: 13, marginTop: 6 },
-  timerActions:   { flexDirection: 'row', gap: 12, marginTop: 24 },
-  endBtn:         { borderRadius: 14, paddingHorizontal: 24, paddingVertical: 14 },
-  endBtnText:     { color: '#fff', fontSize: 14, fontWeight: '700' },
-  abandonBtn:     { borderRadius: 14, borderWidth: 1, paddingHorizontal: 24, paddingVertical: 14 },
-  abandonBtnText: { fontSize: 14, fontWeight: '600' },
-  startBtn:       { borderRadius: 14, paddingHorizontal: 32, paddingVertical: 14 },
-  startBtnText:   { color: '#fff', fontSize: 14, fontWeight: '700' },
-  historyLabel:   { marginHorizontal: 12, marginTop: 20, marginBottom: 6, fontSize: 10, fontWeight: '700', letterSpacing: 1.5, textTransform: 'uppercase' },
-  skeleton:       { marginHorizontal: 12, marginBottom: 8, height: 56, borderRadius: 16 },
-  empty:          { marginHorizontal: 12, borderRadius: 16, borderWidth: 1, padding: 24, alignItems: 'center' },
-  emptyText:      { fontSize: 14 },
-  sessionRow:     { marginHorizontal: 12, marginBottom: 8, borderRadius: 16, borderWidth: 1, padding: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  sessionDate:    { fontSize: 14, fontWeight: '600' },
-  sessionTime:    { fontSize: 11, marginTop: 2 },
-  sessionRight:   { alignItems: 'flex-end' },
-  sessionDuration:{ fontSize: 14, fontWeight: '700' },
-  sessionStatus:  { fontSize: 11, marginTop: 2 },
+  content:        { flex: 1, paddingTop: 20, paddingHorizontal: 12, gap: 12 },
+  timerCard:      { borderRadius: 20, borderWidth: 1, padding: 28, alignItems: 'center', gap: 12 },
+  taskName:       { fontSize: 13, fontWeight: '600', textAlign: 'center', marginBottom: -4 },
+  timer:          { fontSize: 64, fontWeight: '900', fontVariant: ['tabular-nums'], letterSpacing: -2 },
+  progressTrack:  { width: '100%', height: 4, borderRadius: 2, overflow: 'hidden' },
+  progressFill:   { height: 4, borderRadius: 2 },
+  timerSub:       { fontSize: 13, textAlign: 'center' },
+  fullWidth:      { width: '100%' },
+  primaryBtn:     { borderRadius: 14, paddingHorizontal: 32, paddingVertical: 16, alignItems: 'center' },
+  primaryBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  row:            { flexDirection: 'row', gap: 10, width: '100%' },
+  secondaryBtn:   { borderRadius: 14, borderWidth: 1, paddingHorizontal: 20, paddingVertical: 16, alignItems: 'center' },
+  secondaryBtnText:{ fontSize: 14, fontWeight: '600' },
+  tipsCard:       { borderRadius: 16, borderWidth: 1, padding: 16, gap: 6 },
+  tipsTitle:      { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, textTransform: 'uppercase' },
+  tipsBody:       { fontSize: 13, lineHeight: 20 },
 })
