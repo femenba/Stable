@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { trpc } from '../../../src/lib/trpc-client'
-import { TaskItem } from '../../../src/components/task-item'
+import { TaskCard } from '../../../src/components/task-card'
 import { Plus, Loader2 } from 'lucide-react'
 
 export default function TasksPage() {
@@ -100,7 +100,7 @@ export default function TasksPage() {
         <>
           <div className="space-y-3">
             {pending.map((task) => (
-              <TaskItem key={task.id} task={task} onUpdate={handleUpdate} />
+              <TaskCard key={task.id} task={task} onUpdate={handleUpdate} />
             ))}
             {!pending.length && !showForm && (
               <div className="bg-white rounded-xl border border-gray-100 p-8 text-center text-gray-400">
@@ -113,7 +113,7 @@ export default function TasksPage() {
             <div className="space-y-3">
               <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Completed</p>
               {completed.map((task) => (
-                <TaskItem key={task.id} task={task} onUpdate={handleUpdate} />
+                <TaskCard key={task.id} task={task} onUpdate={handleUpdate} />
               ))}
             </div>
           )}
