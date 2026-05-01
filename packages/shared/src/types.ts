@@ -1,5 +1,6 @@
-export type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled'
-export type TaskPriority = 1 | 2 | 3 // 1=high, 2=medium, 3=low
+export type TaskStatus   = 'pending' | 'in_progress' | 'completed' | 'cancelled'
+export type TaskPriority = 1 | 2 | 3  // 1=high, 2=medium, 3=low
+export type TaskCategory = 'work' | 'personal' | 'family' | 'health' | 'other'
 export type ReminderType = 'once' | 'repeating' | 'location'
 
 export interface User {
@@ -21,6 +22,7 @@ export interface Task {
   estimatedMinutes: number | null
   priority: TaskPriority
   status: TaskStatus
+  category: TaskCategory
   parentTaskId: string | null
   aiGenerated: boolean
   createdAt: string
