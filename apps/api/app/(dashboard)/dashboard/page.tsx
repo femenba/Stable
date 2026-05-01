@@ -13,7 +13,7 @@ const PRIORITY_COLOR: Record<number, string> = {
 
 export default function DashboardPage() {
   const { data: topTasks, isLoading: loadingTasks } = trpc.tasks.listTopThree.useQuery()
-  const { data: sessions, isLoading: loadingSessions } = trpc.focusSessions.list.useQuery({ limit: 1 })
+  const { data: sessions } = trpc.focusSessions.list.useQuery({ limit: 10 })
   const { data: reminders, isLoading: loadingReminders } = trpc.reminders.listUpcoming.useQuery()
 
   const activeSession = sessions?.find((s) => s.endedAt === null) ?? null

@@ -105,12 +105,12 @@ export default function FocusPage() {
               >
                 <div>
                   <p className="font-medium text-gray-900">
-                    {new Date(s.startedAt).toLocaleDateString([], { dateStyle: 'medium' })}
+                    {new Date(s.startedAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                   </p>
                   <p className="text-xs text-gray-400">
-                    {new Date(s.startedAt).toLocaleTimeString([], { timeStyle: 'short' })}
+                    {new Date(s.startedAt).toLocaleTimeString(undefined, { timeStyle: 'short' })}
                     {s.endedAt
-                      ? ` → ${new Date(s.endedAt).toLocaleTimeString([], { timeStyle: 'short' })}`
+                      ? ` → ${new Date(s.endedAt).toLocaleTimeString(undefined, { timeStyle: 'short' })}`
                       : ''}
                   </p>
                 </div>

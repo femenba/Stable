@@ -42,7 +42,7 @@ export function Sidebar() {
       </nav>
 
       <div className="mt-auto px-3 pt-4 border-t border-gray-100 flex items-center gap-3">
-        <UserButton afterSignOutUrl="/sign-in" />
+        <UserButton />
         <span className="text-sm text-gray-500">Account</span>
       </div>
     </aside>
