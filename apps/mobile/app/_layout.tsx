@@ -12,13 +12,16 @@ const tokenCache = {
   async saveToken(key: string, value: string) {
     return SecureStore.setItemAsync(key, value)
   },
+  async deleteToken(key: string) {
+    return SecureStore.deleteItemAsync(key)
+  },
 }
 
 function TrpcProvider({ children }: { children: React.ReactNode }) {
   const { getToken } = useAuth()
   const [queryClient] = useState(() => makeQueryClient())
   const [trpcClient] = useState(() =>
-    makeTrpcClient(() => getToken({ template: 'default' }))
+    makeTrpcClient(() => getToken())
   )
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
