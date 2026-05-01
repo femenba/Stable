@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { trpc } from '../../../src/lib/trpc-client'
-import { Play, Square, Clock } from 'lucide-react'
+import { ThemeToggle } from '../../../src/components/theme-toggle'
 
 function formatDuration(startedAt: string): string {
   const diff = Math.floor((Date.now() - new Date(startedAt).getTime()) / 1000)
@@ -34,33 +34,51 @@ export default function FocusPage() {
   })
 
   const activeSession = sessions?.find((s) => s.endedAt === null) ?? null
-  const pastSessions = sessions?.filter((s) => s.endedAt !== null) ?? []
+  const pastSessions  = sessions?.filter((s) => s.endedAt !== null) ?? []
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
-      <h1 className="text-2xl font-bold text-gray-900">Focus</h1>
+    <div>
+      {/* Header */}
+      <div className="px-5 pt-12 pb-6" style={{ background: 'var(--stable-header)' }}>
+        <div className="flex items-start justify-between mb-3">
+          <p className="text-[10px] font-medium uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            FOCUS MODE
+          </p>
+          <ThemeToggle />
+        </div>
+        <h1 className="text-[26px] font-extrabold text-white leading-tight">Focus</h1>
+      </div>
 
       {/* Timer card */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center space-y-6">
+      <div
+        className="mx-3 mt-3 rounded-xl px-5 py-8 text-center"
+        style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)' }}
+      >
         {activeSession ? (
           <>
-            <div className="text-6xl font-mono font-bold text-brand-600 tabular-nums">
+            <div
+              className="text-5xl font-mono font-bold tabular-nums mb-2"
+              style={{ color: 'var(--cat-work)' }}
+            >
               <ElapsedTimer startedAt={activeSession.startedAt} />
             </div>
-            <p className="text-gray-400 text-sm">Focus session in progress</p>
+            <p className="text-xs mb-6" style={{ color: 'var(--stable-t2)' }}>
+              Focus session in progress
+            </p>
             <div className="flex justify-center gap-3">
               <button
                 onClick={() => end.mutate({ id: activeSession.id, completed: true })}
                 disabled={end.isPending}
-                className="flex items-center gap-2 bg-green-500 hover:bg-green-600 disabled:opacity-50 text-white font-medium px-6 py-3 rounded-xl transition-colors"
+                className="text-sm font-semibold px-6 py-3 rounded-xl text-white disabled:opacity-50"
+                style={{ background: 'var(--stable-cta)' }}
               >
-                <Square size={18} />
-                End session
+                End session ✓
               </button>
               <button
                 onClick={() => end.mutate({ id: activeSession.id, completed: false })}
                 disabled={end.isPending}
-                className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 text-gray-700 font-medium px-6 py-3 rounded-xl transition-colors"
+                className="text-sm font-semibold px-6 py-3 rounded-xl disabled:opacity-50"
+                style={{ color: 'var(--stable-t2)', border: '1px solid var(--stable-card-border)' }}
               >
                 Abandon
               </button>
@@ -68,46 +86,56 @@ export default function FocusPage() {
           </>
         ) : (
           <>
-            <div className="text-6xl font-mono font-bold text-gray-200 tabular-nums">00:00</div>
-            <p className="text-gray-400 text-sm">Ready to focus</p>
+            <div
+              className="text-5xl font-mono font-bold tabular-nums mb-2"
+              style={{ color: 'var(--stable-t3)' }}
+            >
+              00:00
+            </div>
+            <p className="text-xs mb-6" style={{ color: 'var(--stable-t2)' }}>
+              Ready to focus
+            </p>
             <button
               onClick={() => start.mutate({})}
               disabled={start.isPending}
-              className="flex items-center gap-2 mx-auto bg-brand-500 hover:bg-brand-600 disabled:opacity-50 text-white font-medium px-8 py-3 rounded-xl transition-colors"
+              className="text-sm font-semibold px-8 py-3 rounded-xl text-white disabled:opacity-50"
+              style={{ background: 'var(--stable-cta)' }}
             >
-              <Play size={18} />
-              Start session
+              ▶ Start session
             </button>
           </>
         )}
       </div>
 
       {/* Session history */}
-      <section>
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Recent sessions</h2>
+      <div className="px-3 mt-4 pb-4">
+        <p className="text-[10px] font-semibold uppercase tracking-widest mb-2" style={{ color: 'var(--stable-t3)' }}>
+          Recent sessions
+        </p>
         {isLoading ? (
-          <div className="space-y-3">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="h-14 bg-white rounded-xl animate-pulse border border-gray-100" />
-            ))}
-          </div>
+          [0, 1].map((i) => (
+            <div key={i} className="h-14 rounded-xl animate-pulse mb-2" style={{ background: 'var(--stable-card)' }} />
+          ))
         ) : !pastSessions.length ? (
-          <div className="bg-white rounded-xl border border-gray-100 p-6 text-center text-gray-400">
-            <Clock size={24} className="mx-auto mb-2 opacity-40" />
-            <p>No completed sessions yet.</p>
+          <div
+            className="rounded-xl px-5 py-6 text-center text-sm"
+            style={{ background: 'var(--stable-card)', color: 'var(--stable-t3)' }}
+          >
+            No completed sessions yet.
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {pastSessions.map((s) => (
               <div
                 key={s.id}
-                className="bg-white rounded-xl border border-gray-100 px-5 py-4 flex items-center justify-between"
+                className="rounded-xl px-4 py-3 flex items-center justify-between"
+                style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)' }}
               >
                 <div>
-                  <p className="font-medium text-gray-900">
+                  <p className="text-sm font-semibold" style={{ color: 'var(--stable-t1)' }}>
                     {new Date(s.startedAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                   </p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-[10px] mt-0.5" style={{ color: 'var(--stable-t2)' }}>
                     {new Date(s.startedAt).toLocaleTimeString(undefined, { timeStyle: 'short' })}
                     {s.endedAt
                       ? ` → ${new Date(s.endedAt).toLocaleTimeString(undefined, { timeStyle: 'short' })}`
@@ -115,10 +143,13 @@ export default function FocusPage() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold text-gray-800">
+                  <p className="text-sm font-bold" style={{ color: 'var(--stable-t1)' }}>
                     {s.durationMinutes != null ? `${s.durationMinutes}m` : '—'}
                   </p>
-                  <p className={`text-xs ${s.completed ? 'text-green-500' : 'text-gray-400'}`}>
+                  <p
+                    className="text-[10px]"
+                    style={{ color: s.completed ? 'var(--cat-health)' : 'var(--stable-t3)' }}
+                  >
                     {s.completed ? 'Completed' : 'Abandoned'}
                   </p>
                 </div>
@@ -126,7 +157,7 @@ export default function FocusPage() {
             ))}
           </div>
         )}
-      </section>
+      </div>
     </div>
   )
 }
