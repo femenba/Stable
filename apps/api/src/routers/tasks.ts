@@ -1,51 +1,55 @@
 import { router, protectedProcedure } from '@/trpc'
-import type { Context } from '@/context'
 import { getUserId } from '@/lib/getUserId'
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
 import type { Task } from '@stable/shared'
 
+const categorySchema = z.enum(['work', 'personal', 'family', 'health', 'other'])
+
 function mapTask(row: Record<string, unknown>): Task {
   return {
-    id: row.id as string,
-    userId: row.user_id as string,
-    title: row.title as string,
-    description: row.description as string | null,
-    dueAt: row.due_at as string | null,
+    id:               row.id as string,
+    userId:           row.user_id as string,
+    title:            row.title as string,
+    description:      row.description as string | null,
+    dueAt:            row.due_at as string | null,
     estimatedMinutes: row.estimated_minutes as number | null,
-    priority: row.priority as Task['priority'],
-    status: row.status as Task['status'],
-    parentTaskId: row.parent_task_id as string | null,
-    aiGenerated: row.ai_generated as boolean,
-    createdAt: row.created_at as string,
-    updatedAt: row.updated_at as string,
+    priority:         row.priority as Task['priority'],
+    status:           row.status as Task['status'],
+    category:         (row.category as Task['category']) ?? 'other',
+    parentTaskId:     row.parent_task_id as string | null,
+    aiGenerated:      row.ai_generated as boolean,
+    createdAt:        row.created_at as string,
+    updatedAt:        row.updated_at as string,
   }
 }
 
 export const tasksRouter = router({
   create: protectedProcedure
     .input(z.object({
-      title: z.string().min(1).max(500),
-      description: z.string().optional(),
-      dueAt: z.string().datetime().optional(),
+      title:            z.string().min(1).max(500),
+      description:      z.string().optional(),
+      dueAt:            z.string().datetime().optional(),
       estimatedMinutes: z.number().int().positive().optional(),
-      priority: z.union([z.literal(1), z.literal(2), z.literal(3)]).default(2),
-      parentTaskId: z.string().uuid().optional(),
-      aiGenerated: z.boolean().default(false),
+      priority:         z.union([z.literal(1), z.literal(2), z.literal(3)]).default(2),
+      category:         categorySchema.default('other'),
+      parentTaskId:     z.string().uuid().optional(),
+      aiGenerated:      z.boolean().default(false),
     }))
     .mutation(async ({ ctx, input }) => {
       const userId = await getUserId(ctx)
       const { data, error } = await ctx.db
         .from('tasks')
         .insert({
-          user_id: userId,
-          title: input.title,
-          description: input.description ?? null,
-          due_at: input.dueAt ?? null,
+          user_id:          userId,
+          title:            input.title,
+          description:      input.description ?? null,
+          due_at:           input.dueAt ?? null,
           estimated_minutes: input.estimatedMinutes ?? null,
-          priority: input.priority,
-          parent_task_id: input.parentTaskId ?? null,
-          ai_generated: input.aiGenerated,
+          priority:         input.priority,
+          category:         input.category,
+          parent_task_id:   input.parentTaskId ?? null,
+          ai_generated:     input.aiGenerated,
         })
         .select()
         .single()
@@ -92,25 +96,26 @@ export const tasksRouter = router({
 
   update: protectedProcedure
     .input(z.object({
-      id: z.string().uuid(),
-      title: z.string().min(1).max(500).optional(),
-      description: z.string().nullable().optional(),
-      dueAt: z.string().datetime().nullable().optional(),
+      id:               z.string().uuid(),
+      title:            z.string().min(1).max(500).optional(),
+      description:      z.string().nullable().optional(),
+      dueAt:            z.string().datetime().nullable().optional(),
       estimatedMinutes: z.number().int().positive().nullable().optional(),
-      priority: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
-      status: z.enum(['pending', 'in_progress', 'completed', 'cancelled']).optional(),
+      priority:         z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
+      category:         categorySchema.optional(),
+      status:           z.enum(['pending', 'in_progress', 'completed', 'cancelled']).optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const userId = await getUserId(ctx)
       const { id, ...fields } = input
-
       const updateData: Record<string, unknown> = {}
-      if (fields.title !== undefined) updateData.title = fields.title
-      if (fields.description !== undefined) updateData.description = fields.description
-      if (fields.dueAt !== undefined) updateData.due_at = fields.dueAt
+      if (fields.title !== undefined)            updateData.title             = fields.title
+      if (fields.description !== undefined)      updateData.description       = fields.description
+      if (fields.dueAt !== undefined)            updateData.due_at            = fields.dueAt
       if (fields.estimatedMinutes !== undefined) updateData.estimated_minutes = fields.estimatedMinutes
-      if (fields.priority !== undefined) updateData.priority = fields.priority
-      if (fields.status !== undefined) updateData.status = fields.status
+      if (fields.priority !== undefined)         updateData.priority          = fields.priority
+      if (fields.category !== undefined)         updateData.category          = fields.category
+      if (fields.status !== undefined)           updateData.status            = fields.status
 
       const { data, error } = await ctx.db
         .from('tasks')
@@ -136,7 +141,6 @@ export const tasksRouter = router({
         .eq('user_id', userId)
         .select()
         .single()
-
       if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
       if (!data) throw new TRPCError({ code: 'NOT_FOUND', message: 'Task not found' })
       return mapTask(data)
@@ -151,7 +155,6 @@ export const tasksRouter = router({
         .delete()
         .eq('id', input.id)
         .eq('user_id', userId)
-
       if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
       return { success: true }
     }),
