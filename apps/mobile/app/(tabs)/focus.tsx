@@ -296,7 +296,7 @@ export default function FocusScreen() {
             )}
 
             {status === 'running' && (
-              <View style={styles.row}>
+              <View style={styles.activeControls}>
                 <TouchableOpacity
                   onPress={handlePause}
                   style={[styles.secondaryBtn, { borderColor: t.cardBorder, flex: 1 }]}
@@ -305,15 +305,15 @@ export default function FocusScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={handleReset}
-                  style={[styles.secondaryBtn, { borderColor: t.cardBorder }]}
+                  style={[styles.cancelBtn]}
                 >
-                  <Text style={[styles.secondaryBtnText, { color: t.t3 }]}>↺  Reset</Text>
+                  <Text style={styles.cancelBtnText}>✕  Cancel session</Text>
                 </TouchableOpacity>
               </View>
             )}
 
             {status === 'paused' && (
-              <View style={styles.row}>
+              <View style={styles.activeControls}>
                 <TouchableOpacity onPress={() => handleResume(secondsLeft)} style={styles.fullWidth}>
                   <LinearGradient
                     colors={[t.ctaStart, t.ctaEnd]}
@@ -326,9 +326,9 @@ export default function FocusScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={handleReset}
-                  style={[styles.secondaryBtn, { borderColor: t.cardBorder }]}
+                  style={styles.cancelBtn}
                 >
-                  <Text style={[styles.secondaryBtnText, { color: t.t3 }]}>↺</Text>
+                  <Text style={styles.cancelBtnText}>✕  Cancel session</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -376,6 +376,9 @@ const styles = StyleSheet.create({
   customApply:      { borderRadius: 10, paddingHorizontal: 14, paddingVertical: 10 },
   customApplyText:  { color: '#fff', fontSize: 13, fontWeight: '700' },
   fullWidth:        { width: '100%' },
+  activeControls:   { width: '100%', gap: 10 },
+  cancelBtn:        { width: '100%', borderRadius: 14, borderWidth: 1, borderColor: '#dc2626', paddingVertical: 14, alignItems: 'center', backgroundColor: 'rgba(220,38,38,0.06)' },
+  cancelBtnText:    { fontSize: 14, fontWeight: '700', color: '#dc2626' },
   primaryBtn:       { borderRadius: 14, paddingHorizontal: 32, paddingVertical: 16, alignItems: 'center' },
   primaryBtnText:   { color: '#fff', fontSize: 15, fontWeight: '700' },
   row:              { flexDirection: 'row', gap: 10, width: '100%' },
