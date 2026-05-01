@@ -11,6 +11,7 @@ import { AiInsight } from '@/components/ai-insight'
 import { useTheme } from '@/lib/use-theme'
 import { useLocalTasks } from '@/lib/use-local-tasks'
 import type { LocalTask } from '@/lib/use-local-tasks'
+import { useAllTasks } from '@/lib/use-all-tasks'
 
 export default function TodayScreen() {
   const { t } = useTheme()
@@ -20,6 +21,7 @@ export default function TodayScreen() {
   const { user } = useUser()
 
   const { tasks, addTask, toggleTask, removeTask, loaded } = useLocalTasks()
+  const { active: allActive } = useAllTasks()
 
   const [editingSlot, setEditingSlot] = useState<number | null>(null)
   const [draftTitle, setDraftTitle] = useState('')
@@ -43,7 +45,7 @@ export default function TodayScreen() {
   }
 
   function handleStartFocus() {
-    const firstActive = tasks.find((t) => !t.done)
+    const firstActive = tasks.find((t) => !t.done) ?? allActive[0]
     router.push({
       pathname: '/(tabs)/focus',
       params: {
