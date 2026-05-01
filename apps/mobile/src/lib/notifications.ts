@@ -39,3 +39,29 @@ export async function scheduleReminderNotification(
 export async function cancelReminderNotification(reminderId: string): Promise<void> {
   await Notifications.cancelScheduledNotificationAsync(`reminder-${reminderId}`)
 }
+
+// Focus session end notification
+// Schedules a notification to fire exactly when the session timer hits zero.
+// Call again on resume (with remaining seconds) to reschedule after a pause.
+export async function scheduleFocusCompleteNotification(
+  durationMinutes: number,
+  fireAt: Date,
+): Promise<void> {
+  await Notifications.cancelScheduledNotificationAsync('focus-complete')
+  const granted = await requestNotificationPermissions()
+  if (!granted) return
+  if (fireAt <= new Date()) return
+  await Notifications.scheduleNotificationAsync({
+    identifier: 'focus-complete',
+    content: {
+      title: 'Focus session complete!',
+      body:  `${durationMinutes} min well spent. Take a short break.`,
+      sound: true,
+    },
+    trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: fireAt },
+  })
+}
+
+export async function cancelFocusCompleteNotification(): Promise<void> {
+  await Notifications.cancelScheduledNotificationAsync('focus-complete')
+}

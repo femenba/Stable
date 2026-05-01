@@ -5,6 +5,11 @@ import { useLocalSearchParams } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useTheme } from '@/lib/use-theme'
+import {
+  requestNotificationPermissions,
+  scheduleFocusCompleteNotification,
+  cancelFocusCompleteNotification,
+} from '@/lib/notifications'
 
 const PRESET_MINUTES = [5, 10, 15, 25, 45] as const
 const DURATION_KEY = 'stable:focus-duration'
@@ -36,6 +41,9 @@ export default function FocusScreen() {
   const [totalSeconds, setTotal]  = useState(DEFAULT_MINUTES * 60)
   const [activeTask, setActiveTask] = useState('')
   const lastStartTs = useRef('')
+
+  // Request notification permission on mount so the prompt appears naturally
+  useEffect(() => { requestNotificationPermissions() }, [])
 
   // Load saved duration on mount
   useEffect(() => {
@@ -84,6 +92,10 @@ export default function FocusScreen() {
       setSeconds(secs)
       setTotal(secs)
       setStatus('running')
+      scheduleFocusCompleteNotification(
+        selectedMinutes,
+        new Date(Date.now() + secs * 1000),
+      )
     }
   }, [startTs, paramTask, selectedMinutes])
 
@@ -109,12 +121,28 @@ export default function FocusScreen() {
     setSeconds(secs)
     setTotal(secs)
     setStatus('running')
+    scheduleFocusCompleteNotification(selectedMinutes, new Date(Date.now() + secs * 1000))
+  }
+
+  function handlePause() {
+    setStatus('paused')
+    cancelFocusCompleteNotification()
+  }
+
+  // secondsLeft is passed in because state reads inside async closures can be stale
+  function handleResume(remaining: number) {
+    setStatus('running')
+    scheduleFocusCompleteNotification(
+      Math.ceil(remaining / 60),
+      new Date(Date.now() + remaining * 1000),
+    )
   }
 
   function handleReset() {
     setStatus('idle')
     setSeconds(selectedMinutes * 60)
     setActiveTask('')
+    cancelFocusCompleteNotification()
   }
 
   const timerColor =
@@ -270,7 +298,7 @@ export default function FocusScreen() {
             {status === 'running' && (
               <View style={styles.row}>
                 <TouchableOpacity
-                  onPress={() => setStatus('paused')}
+                  onPress={handlePause}
                   style={[styles.secondaryBtn, { borderColor: t.cardBorder, flex: 1 }]}
                 >
                   <Text style={[styles.secondaryBtnText, { color: t.t1 }]}>⏸  Pause</Text>
@@ -286,7 +314,7 @@ export default function FocusScreen() {
 
             {status === 'paused' && (
               <View style={styles.row}>
-                <TouchableOpacity onPress={() => setStatus('running')} style={styles.fullWidth}>
+                <TouchableOpacity onPress={() => handleResume(secondsLeft)} style={styles.fullWidth}>
                   <LinearGradient
                     colors={[t.ctaStart, t.ctaEnd]}
                     start={{ x: 0, y: 0 }}
