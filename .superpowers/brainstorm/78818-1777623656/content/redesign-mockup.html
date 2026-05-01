@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stable. redesign</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a12; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; color: #fff; padding: 24px 16px 40px; }
+
+  .page-title { text-align: center; color: #666; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 32px; }
+
+  .screens { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+
+  .phone {
+    width: 375px;
+    background: #0f0f1a;
+    border-radius: 40px;
+    border: 1px solid #1e1d2e;
+    overflow: hidden;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    flex-shrink: 0;
+  }
+
+  /* Status bar */
+  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px 4px; }
+  .status-bar .time { font-size: 14px; font-weight: 600; color: #fff; }
+  .status-bar .icons { font-size: 12px; color: #fff; }
+
+  /* Screen label */
+  .screen-label { text-align: center; color: #4f6ef7; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; padding: 4px 0 8px; font-weight: 600; }
+
+  /* ---- TODAY SCREEN ---- */
+  .today-header { padding: 8px 22px 20px; }
+  .today-header .label { font-size: 11px; color: #555; letter-spacing: 1px; text-transform: uppercase; }
+  .today-header .headline { font-size: 30px; font-weight: 800; color: #fff; line-height: 1.1; margin-top: 6px; }
+  .today-header .sub { font-size: 13px; color: #8b8baa; margin-top: 6px; }
+
+  .stable-ai-card { margin: 0 16px 16px; background: linear-gradient(135deg, #1a1040, #0f1a30); border-radius: 16px; padding: 14px 16px; border: 1px solid #2a2060; }
+  .stable-ai-card .badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(79,110,247,0.2); border: 1px solid rgba(79,110,247,0.4); border-radius: 20px; padding: 3px 10px; margin-bottom: 8px; }
+  .stable-ai-card .badge span { font-size: 10px; color: #4f6ef7; font-weight: 600; letter-spacing: 0.5px; }
+  .stable-ai-card .ai-text { font-size: 12px; color: #8b8baa; line-height: 1.5; }
+  .stable-ai-card .ai-text strong { color: #bbb; }
+
+  .tasks-label { padding: 0 22px 10px; font-size: 11px; color: #555; letter-spacing: 1px; text-transform: uppercase; }
+
+  .task-card { margin: 0 16px 10px; background: #13121e; border-radius: 14px; padding: 14px 16px; border-left: 3px solid #4f6ef7; position: relative; }
+  .task-card.purple { border-left-color: #7c3aed; }
+  .task-card.cyan { border-left-color: #06b6d4; }
+  .task-card .task-title { font-size: 14px; font-weight: 600; color: #fff; }
+  .task-card .task-meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .task-card .tag { font-size: 10px; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+  .task-card .tag.work { background: rgba(79,110,247,0.15); color: #7b9bff; }
+  .task-card .tag.family { background: rgba(236,72,153,0.15); color: #f472b6; }
+  .task-card .tag.health { background: rgba(16,185,129,0.15); color: #34d399; }
+  .task-card .task-time { font-size: 11px; color: #555; }
+  .task-card .task-priority { position: absolute; right: 14px; top: 14px; font-size: 10px; color: #555; }
+
+  .focus-cta { margin: 16px 16px 0; background: #4f6ef7; border-radius: 14px; padding: 16px; display: flex; align-items: center; justify-content: space-between; }
+  .focus-cta .cta-text { font-size: 14px; font-weight: 700; color: #fff; }
+  .focus-cta .cta-sub { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .focus-cta .arrow { font-size: 20px; color: rgba(255,255,255,0.8); }
+
+  /* ---- FOCUS SCREEN ---- */
+  .focus-header { padding: 8px 22px 16px; }
+  .focus-header .label { font-size: 11px; color: #555; letter-spacing: 1px; text-transform: uppercase; }
+  .focus-header .headline { font-size: 26px; font-weight: 800; color: #fff; margin-top: 4px; }
+
+  .timer-card { margin: 0 16px 16px; background: linear-gradient(135deg, #1a1040, #0d1535); border-radius: 24px; padding: 32px 20px; text-align: center; border: 1px solid #2a2060; }
+  .timer-display { font-size: 64px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; letter-spacing: -2px; }
+  .timer-sub { font-size: 12px; color: #8b8baa; margin-top: 8px; }
+  .timer-btns { display: flex; gap: 12px; margin-top: 24px; justify-content: center; }
+  .timer-btn { padding: 14px 28px; border-radius: 14px; font-size: 14px; font-weight: 700; }
+  .timer-btn.primary { background: #22c55e; color: #fff; }
+  .timer-btn.secondary { background: #1e1d2e; color: #8b8baa; }
+
+  .session-label { padding: 0 22px 10px; font-size: 11px; color: #555; letter-spacing: 1px; text-transform: uppercase; }
+  .session-card { margin: 0 16px 10px; background: #13121e; border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
+  .session-card .s-date { font-size: 13px; font-weight: 600; color: #fff; }
+  .session-card .s-time { font-size: 11px; color: #555; margin-top: 3px; }
+  .session-card .s-dur { font-size: 20px; font-weight: 800; color: #4f6ef7; }
+  .session-card .s-tag { font-size: 10px; color: #22c55e; font-weight: 600; margin-top: 2px; text-align: right; }
+
+  /* ---- TASKS SCREEN ---- */
+  .tasks-header { padding: 8px 22px 16px; display: flex; justify-content: space-between; align-items: flex-end; }
+  .tasks-header .headline { font-size: 26px; font-weight: 800; color: #fff; }
+  .tasks-header .add-btn { background: #4f6ef7; border-radius: 20px; padding: 8px 16px; font-size: 12px; font-weight: 700; color: #fff; }
+
+  .task-card-full { margin: 0 16px 10px; background: #13121e; border-radius: 14px; padding: 14px 16px; border-left: 3px solid #4f6ef7; }
+  .task-card-full.purple { border-left-color: #7c3aed; }
+  .task-card-full .row { display: flex; align-items: center; justify-content: space-between; }
+  .task-card-full .task-title { font-size: 14px; font-weight: 600; color: #fff; flex: 1; }
+  .task-card-full .check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #2a2940; flex-shrink: 0; margin-right: 12px; }
+  .task-card-full .task-meta2 { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding-left: 34px; }
+  .completed-task { opacity: 0.4; }
+  .completed-task .task-title { text-decoration: line-through; }
+  .completed-task .check { background: #4f6ef7; border-color: #4f6ef7; }
+  .section-sep { padding: 10px 22px 6px; font-size: 10px; color: #333; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ---- BOTTOM NAV ---- */
+  .bottom-nav { display: flex; justify-content: space-around; padding: 12px 0 20px; background: #0f0f1a; border-top: 1px solid #1e1d2e; margin-top: 16px; }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .nav-item .nav-icon { font-size: 22px; }
+  .nav-item .nav-label { font-size: 10px; color: #444; font-weight: 500; }
+  .nav-item.active .nav-label { color: #4f6ef7; }
+  .nav-item .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: #4f6ef7; margin: 0 auto; }
+</style>
+</head>
+<body>
+
+<div class="page-title">stable. — redesign preview</div>
+
+<div class="screens">
+
+  <!-- TODAY SCREEN -->
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">●●● 📶 🔋</span>
+    </div>
+    <div class="screen-label">TODAY</div>
+
+    <div class="today-header">
+      <div class="label">TUESDAY · TODAY'S FOCUS</div>
+      <div class="headline">Three things.<br/>That's it.</div>
+      <div class="sub">One at a time.</div>
+    </div>
+
+    <div class="stable-ai-card">
+      <div class="badge"><span>⬡ STABLE AI</span></div>
+      <div class="ai-text">You finished <strong>2 of 3 tasks</strong> yesterday — a solid day. Your focus tends to be sharpest before noon. <strong>Let's make this morning count.</strong></div>
+    </div>
+
+    <div class="tasks-label">TODAY'S THREE</div>
+
+    <div class="task-card">
+      <div class="task-priority">High</div>
+      <div class="task-title">Review Q2 budget report and send notes to manager</div>
+      <div class="task-meta">
+        <span class="tag work">Work</span>
+        <span class="task-time">45 min</span>
+      </div>
+    </div>
+
+    <div class="task-card purple">
+      <div class="task-priority">Medium</div>
+      <div class="task-title">Book Filippo's 18-month check-up</div>
+      <div class="task-meta">
+        <span class="tag family">Family</span>
+        <span class="task-time">10 min</span>
+      </div>
+    </div>
+
+    <div class="task-card cyan">
+      <div class="task-priority">Low</div>
+      <div class="task-title">Reply to outstanding emails — flag anything urgent</div>
+      <div class="task-meta">
+        <span class="tag work">Work</span>
+        <span class="task-time">20 min</span>
+      </div>
+    </div>
+
+    <div class="focus-cta">
+      <div>
+        <div class="cta-text">Start focus session</div>
+        <div class="cta-sub">25 min · Pomodoro</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item active">
+        <div class="nav-icon">🏠</div>
+        <div class="nav-dot"></div>
+        <div class="nav-label" style="color:#4f6ef7">Today</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">✓</div>
+        <div class="nav-label">Tasks</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">⏱</div>
+        <div class="nav-label">Focus</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">🔔</div>
+        <div class="nav-label">Reminders</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TASKS SCREEN -->
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">●●● 📶 🔋</span>
+    </div>
+    <div class="screen-label">TASKS</div>
+
+    <div class="tasks-header">
+      <div class="headline">All Tasks</div>
+      <div class="add-btn">+ Add task</div>
+    </div>
+
+    <div class="task-card-full">
+      <div class="row">
+        <div class="check"></div>
+        <div class="task-title">Review Q2 budget report</div>
+      </div>
+      <div class="task-meta2">
+        <span class="tag work">Work</span>
+        <span class="task-time">45 min</span>
+      </div>
+    </div>
+
+    <div class="task-card-full purple">
+      <div class="row">
+        <div class="check"></div>
+        <div class="task-title">Book Filippo's 18-month check-up</div>
+      </div>
+      <div class="task-meta2">
+        <span class="tag family">Family</span>
+        <span class="task-time">10 min</span>
+      </div>
+    </div>
+
+    <div class="task-card-full" style="border-left-color:#06b6d4">
+      <div class="row">
+        <div class="check"></div>
+        <div class="task-title">Reply to outstanding emails</div>
+      </div>
+      <div class="task-meta2">
+        <span class="tag work">Work</span>
+        <span class="task-time">20 min</span>
+      </div>
+    </div>
+
+    <div class="section-sep">Completed</div>
+
+    <div class="task-card-full completed-task">
+      <div class="row">
+        <div class="check"></div>
+        <div class="task-title">Call bank about mortgage</div>
+      </div>
+      <div class="task-meta2">
+        <span class="tag" style="background:rgba(255,255,255,0.05);color:#333">Personal</span>
+      </div>
+    </div>
+
+    <div class="task-card-full completed-task" style="border-left-color:#7c3aed">
+      <div class="row">
+        <div class="check"></div>
+        <div class="task-title">Prepare weekly report</div>
+      </div>
+      <div class="task-meta2">
+        <span class="tag" style="background:rgba(255,255,255,0.05);color:#333">Work</span>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item">
+        <div class="nav-icon">🏠</div>
+        <div class="nav-label">Today</div>
+      </div>
+      <div class="nav-item active">
+        <div class="nav-icon">✓</div>
+        <div class="nav-dot"></div>
+        <div class="nav-label" style="color:#4f6ef7">Tasks</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">⏱</div>
+        <div class="nav-label">Focus</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">🔔</div>
+        <div class="nav-label">Reminders</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOCUS SCREEN -->
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">●●● 📶 🔋</span>
+    </div>
+    <div class="screen-label">FOCUS</div>
+
+    <div class="focus-header">
+      <div class="label">SESSION</div>
+      <div class="headline">Ready to focus.</div>
+    </div>
+
+    <div class="timer-card">
+      <div class="timer-display">00:00</div>
+      <div class="timer-sub">Press start when you're ready</div>
+      <div class="timer-btns">
+        <div class="timer-btn primary">Start →</div>
+        <div class="timer-btn secondary">Settings</div>
+      </div>
+    </div>
+
+    <div class="session-label">Recent Sessions</div>
+
+    <div class="session-card">
+      <div>
+        <div class="s-date">Today, 8:15 AM</div>
+        <div class="s-time">8:15 → 8:40 AM</div>
+      </div>
+      <div style="text-align:right">
+        <div class="s-dur">25m</div>
+        <div class="s-tag">✓ Completed</div>
+      </div>
+    </div>
+
+    <div class="session-card">
+      <div>
+        <div class="s-date">Yesterday, 2:00 PM</div>
+        <div class="s-time">2:00 → 2:52 PM</div>
+      </div>
+      <div style="text-align:right">
+        <div class="s-dur">52m</div>
+        <div class="s-tag">✓ Completed</div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item">
+        <div class="nav-icon">🏠</div>
+        <div class="nav-label">Today</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">✓</div>
+        <div class="nav-label">Tasks</div>
+      </div>
+      <div class="nav-item active">
+        <div class="nav-icon">⏱</div>
+        <div class="nav-dot"></div>
+        <div class="nav-label" style="color:#4f6ef7">Focus</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">🔔</div>
+        <div class="nav-label">Reminders</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p style="text-align:center;color:#444;font-size:12px;margin-top:32px;">This is the web layout — same design will be used for the Expo mobile app. Let me know if anything needs adjusting.</p>
+
+</body>
+</html>

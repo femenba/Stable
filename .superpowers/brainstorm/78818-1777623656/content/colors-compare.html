@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stable. colors</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #080810; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; color: #fff; padding: 24px 16px 48px; }
+
+  h2 { text-align: center; color: #fff; font-size: 18px; margin-bottom: 6px; }
+  .sub { text-align: center; color: #555; font-size: 13px; margin-bottom: 32px; }
+
+  .screens { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+
+  .phone {
+    width: 340px;
+    border-radius: 36px;
+    overflow: hidden;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.7);
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid transparent;
+  }
+  .phone:hover { transform: translateY(-4px); }
+  .phone.selected { border-color: #4f6ef7; box-shadow: 0 0 0 4px rgba(79,110,247,0.3), 0 40px 80px rgba(0,0,0,0.7); }
+
+  .phone-label { text-align: center; color: #555; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; margin-top: 12px; }
+  .phone-label.selected-label { color: #4f6ef7; font-weight: 700; }
+
+  .status-bar { display: flex; justify-content: space-between; padding: 12px 18px 4px; font-size: 12px; }
+
+  /* ---- OPTION A: Pure dark (current) ---- */
+  .a-bg { background: #0f0f1a; }
+  .a-header { padding: 10px 20px 16px; background: #0f0f1a; }
+  .a-header .lbl { font-size: 10px; color: #444; letter-spacing: 1px; text-transform: uppercase; }
+  .a-header .h1 { font-size: 24px; font-weight: 800; color: #fff; margin-top: 4px; line-height: 1.15; }
+  .a-header .h2 { font-size: 12px; color: #8b8baa; margin-top: 4px; }
+  .a-ai { margin: 0 14px 12px; background: #1a1040; border-radius: 12px; padding: 12px 14px; border: 1px solid #2a2060; }
+  .a-ai .badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(79,110,247,0.2); border: 1px solid rgba(79,110,247,0.3); border-radius: 20px; padding: 2px 8px; margin-bottom: 6px; font-size: 9px; color: #4f6ef7; font-weight: 700; letter-spacing: 0.5px; }
+  .a-ai .txt { font-size: 11px; color: #777; line-height: 1.5; }
+  .a-ai .txt b { color: #aaa; }
+  .a-card { margin: 0 14px 8px; background: #13121e; border-radius: 12px; padding: 12px 14px; border-left: 3px solid #4f6ef7; }
+  .a-card.p { border-left-color: #7c3aed; }
+  .a-card.c { border-left-color: #06b6d4; }
+  .a-card .t { font-size: 13px; font-weight: 600; color: #fff; }
+  .a-card .m { display: flex; gap: 6px; margin-top: 6px; align-items: center; }
+  .a-card .tag { font-size: 9px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+  .tag-work { background: rgba(79,110,247,0.15); color: #7b9bff; }
+  .tag-fam { background: rgba(236,72,153,0.15); color: #f472b6; }
+  .a-card .dur { font-size: 10px; color: #444; }
+  .a-cta { margin: 12px 14px 0; background: #4f6ef7; border-radius: 12px; padding: 14px; display: flex; justify-content: space-between; align-items: center; }
+  .a-cta .l { font-size: 13px; font-weight: 700; color: #fff; }
+  .a-cta .s { font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .a-cta .arr { font-size: 18px; color: rgba(255,255,255,0.8); }
+  .a-nav { display: flex; justify-content: space-around; padding: 10px 0 18px; background: #0f0f1a; border-top: 1px solid #1a1a28; margin-top: 12px; }
+  .a-nav .ni { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .a-nav .ni .ic { font-size: 20px; }
+  .a-nav .ni .nl { font-size: 9px; color: #333; }
+  .a-nav .ni.act .nl { color: #4f6ef7; }
+  .a-nav .ni .dot { width: 4px; height: 4px; border-radius: 50%; background: #4f6ef7; }
+
+  /* ---- OPTION B: Purple dark (closer to mockup) ---- */
+  .b-bg { background: #120e24; }
+  .b-header { padding: 10px 20px 16px; background: linear-gradient(160deg, #1e1260 0%, #120e24 60%); }
+  .b-header .lbl { font-size: 10px; color: #6b5fa0; letter-spacing: 1px; text-transform: uppercase; }
+  .b-header .h1 { font-size: 24px; font-weight: 800; color: #fff; margin-top: 4px; line-height: 1.15; }
+  .b-header .h2 { font-size: 12px; color: #9d8fcf; margin-top: 4px; }
+  .b-ai { margin: 0 14px 12px; background: linear-gradient(135deg, #1e1260, #111830); border-radius: 12px; padding: 12px 14px; border: 1px solid #2e1f80; }
+  .b-ai .badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(124,58,237,0.25); border: 1px solid rgba(124,58,237,0.5); border-radius: 20px; padding: 2px 8px; margin-bottom: 6px; font-size: 9px; color: #a78bfa; font-weight: 700; letter-spacing: 0.5px; }
+  .b-ai .txt { font-size: 11px; color: #8070b0; line-height: 1.5; }
+  .b-ai .txt b { color: #c4b5fd; }
+  .b-card { margin: 0 14px 8px; background: #1a1535; border-radius: 12px; padding: 12px 14px; border-left: 3px solid #6366f1; }
+  .b-card.p { border-left-color: #a855f7; }
+  .b-card.c { border-left-color: #38bdf8; }
+  .b-card .t { font-size: 13px; font-weight: 600; color: #e2d9f3; }
+  .b-card .m { display: flex; gap: 6px; margin-top: 6px; align-items: center; }
+  .b-card .tag { font-size: 9px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+  .b-tag-work { background: rgba(99,102,241,0.2); color: #a5b4fc; }
+  .b-tag-fam { background: rgba(236,72,153,0.15); color: #f9a8d4; }
+  .b-card .dur { font-size: 10px; color: #4a3d70; }
+  .b-cta { margin: 12px 14px 0; background: linear-gradient(135deg, #6366f1, #a855f7); border-radius: 12px; padding: 14px; display: flex; justify-content: space-between; align-items: center; }
+  .b-cta .l { font-size: 13px; font-weight: 700; color: #fff; }
+  .b-cta .s { font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .b-cta .arr { font-size: 18px; color: rgba(255,255,255,0.8); }
+  .b-nav { display: flex; justify-content: space-around; padding: 10px 0 18px; background: #120e24; border-top: 1px solid #1e1a38; margin-top: 12px; }
+  .b-nav .ni { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .b-nav .ni .ic { font-size: 20px; }
+  .b-nav .ni .nl { font-size: 9px; color: #3a305a; }
+  .b-nav .ni.act .nl { color: #a78bfa; }
+  .b-nav .ni .dot { width: 4px; height: 4px; border-radius: 50%; background: #a78bfa; }
+
+  /* ---- OPTION C: Warm dark (midnight indigo) ---- */
+  .c-bg { background: #0d0d1f; }
+  .c-header { padding: 10px 20px 16px; background: #0d0d1f; }
+  .c-header .lbl { font-size: 10px; color: #3a3a5c; letter-spacing: 1px; text-transform: uppercase; }
+  .c-header .h1 { font-size: 24px; font-weight: 800; color: #f0efff; margin-top: 4px; line-height: 1.15; }
+  .c-header .h2 { font-size: 12px; color: #6b6b9a; margin-top: 4px; }
+  .c-ai { margin: 0 14px 12px; background: #16163a; border-radius: 12px; padding: 12px 14px; border: 1px solid #252560; }
+  .c-ai .badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(99,102,241,0.2); border: 1px solid rgba(99,102,241,0.4); border-radius: 20px; padding: 2px 8px; margin-bottom: 6px; font-size: 9px; color: #818cf8; font-weight: 700; letter-spacing: 0.5px; }
+  .c-ai .txt { font-size: 11px; color: #6b6b9a; line-height: 1.5; }
+  .c-ai .txt b { color: #a5b4fc; }
+  .c-card { margin: 0 14px 8px; background: #16163a; border-radius: 12px; padding: 12px 14px; border-left: 3px solid #6366f1; }
+  .c-card.p { border-left-color: #c084fc; }
+  .c-card.c { border-left-color: #22d3ee; }
+  .c-card .t { font-size: 13px; font-weight: 600; color: #e0e0ff; }
+  .c-card .m { display: flex; gap: 6px; margin-top: 6px; align-items: center; }
+  .c-card .tag { font-size: 9px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+  .c-tag-work { background: rgba(99,102,241,0.2); color: #818cf8; }
+  .c-tag-fam { background: rgba(192,132,252,0.15); color: #c084fc; }
+  .c-card .dur { font-size: 10px; color: #333360; }
+  .c-cta { margin: 12px 14px 0; background: #6366f1; border-radius: 12px; padding: 14px; display: flex; justify-content: space-between; align-items: center; }
+  .c-cta .l { font-size: 13px; font-weight: 700; color: #fff; }
+  .c-cta .s { font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .c-cta .arr { font-size: 18px; color: rgba(255,255,255,0.8); }
+  .c-nav { display: flex; justify-content: space-around; padding: 10px 0 18px; background: #0d0d1f; border-top: 1px solid #1a1a3a; margin-top: 12px; }
+  .c-nav .ni { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .c-nav .ni .ic { font-size: 20px; }
+  .c-nav .ni .nl { font-size: 9px; color: #2a2a4a; }
+  .c-nav .ni.act .nl { color: #818cf8; }
+  .c-nav .ni .dot { width: 4px; height: 4px; border-radius: 50%; background: #818cf8; }
+
+  .selected-badge { display: block; text-align: center; background: #4f6ef7; color: #fff; font-size: 11px; font-weight: 700; padding: 6px; margin-top: 10px; border-radius: 8px; display: none; }
+  .phone.selected .selected-badge { display: block; }
+</style>
+<script>
+  function pick(el) {
+    document.querySelectorAll('.phone').forEach(p => { p.classList.remove('selected'); });
+    document.querySelectorAll('.phone-label').forEach(l => l.classList.remove('selected-label'));
+    el.classList.add('selected');
+    const id = el.dataset.choice;
+    document.querySelector('[data-label="' + id + '"]').classList.add('selected-label');
+    if (window.recordChoice) recordChoice(id);
+  }
+</script>
+</head>
+<body>
+
+<h2>Which colour palette feels most like stable.?</h2>
+<p class="sub">Click the one that feels right. All use the same layout — only colours differ.</p>
+
+<div class="screens">
+
+  <!-- OPTION A -->
+  <div>
+    <div class="phone-label" data-label="a">A — Pure Dark (current)</div>
+    <div class="phone" data-choice="a" onclick="pick(this)">
+      <div class="status-bar a-bg"><span>9:41</span><span>●●● 🔋</span></div>
+      <div class="a-header a-bg">
+        <div class="lbl">TUESDAY · TODAY'S FOCUS</div>
+        <div class="h1">Three things.<br/>That's it.</div>
+        <div class="h2">One at a time.</div>
+      </div>
+      <div class="a-bg" style="padding-bottom:4px">
+        <div class="a-ai">
+          <div class="badge">⬡ STABLE AI</div>
+          <div class="txt">You finished <b>2 of 3 tasks</b> yesterday. Your focus tends to be sharpest <b>before noon</b>.</div>
+        </div>
+        <div class="a-card"><div class="t">Review Q2 budget report</div><div class="m"><span class="tag tag-work">Work</span><span class="dur">45 min</span></div></div>
+        <div class="a-card p"><div class="t">Book Filippo's check-up</div><div class="m"><span class="tag tag-fam">Family</span><span class="dur">10 min</span></div></div>
+        <div class="a-card c"><div class="t">Reply to outstanding emails</div><div class="m"><span class="tag tag-work">Work</span><span class="dur">20 min</span></div></div>
+        <div class="a-cta"><div><div class="l">Start focus session</div><div class="s">Ready when you are</div></div><div class="arr">→</div></div>
+      </div>
+      <div class="a-nav">
+        <div class="ni act"><div class="ic">🏠</div><div class="dot"></div><div class="nl" style="color:#4f6ef7">Today</div></div>
+        <div class="ni"><div class="ic">✓</div><div class="nl">Tasks</div></div>
+        <div class="ni"><div class="ic">⏱</div><div class="nl">Focus</div></div>
+        <div class="ni"><div class="ic">🔔</div><div class="nl">Reminders</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION B -->
+  <div>
+    <div class="phone-label" data-label="b">B — Deep Purple (closest to your mockup)</div>
+    <div class="phone" data-choice="b" onclick="pick(this)">
+      <div class="status-bar b-bg"><span>9:41</span><span>●●● 🔋</span></div>
+      <div class="b-header">
+        <div class="lbl">TUESDAY · TODAY'S FOCUS</div>
+        <div class="h1">Three things.<br/>That's it.</div>
+        <div class="h2">One at a time.</div>
+      </div>
+      <div class="b-bg" style="padding-bottom:4px">
+        <div class="b-ai">
+          <div class="badge">⬡ STABLE AI</div>
+          <div class="txt">You finished <b>2 of 3 tasks</b> yesterday. Your focus tends to be sharpest <b>before noon</b>.</div>
+        </div>
+        <div class="b-card"><div class="t">Review Q2 budget report</div><div class="m"><span class="tag b-tag-work">Work</span><span class="dur">45 min</span></div></div>
+        <div class="b-card p"><div class="t">Book Filippo's check-up</div><div class="m"><span class="tag b-tag-fam">Family</span><span class="dur">10 min</span></div></div>
+        <div class="b-card c"><div class="t">Reply to outstanding emails</div><div class="m"><span class="tag b-tag-work">Work</span><span class="dur">20 min</span></div></div>
+        <div class="b-cta"><div><div class="l">Start focus session</div><div class="s">Ready when you are</div></div><div class="arr">→</div></div>
+      </div>
+      <div class="b-nav">
+        <div class="ni act"><div class="ic">🏠</div><div class="dot"></div><div class="nl" style="color:#a78bfa">Today</div></div>
+        <div class="ni"><div class="ic">✓</div><div class="nl">Tasks</div></div>
+        <div class="ni"><div class="ic">⏱</div><div class="nl">Focus</div></div>
+        <div class="ni"><div class="ic">🔔</div><div class="nl">Reminders</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION C -->
+  <div>
+    <div class="phone-label" data-label="c">C — Midnight Indigo</div>
+    <div class="phone" data-choice="c" onclick="pick(this)">
+      <div class="status-bar c-bg"><span>9:41</span><span>●●● 🔋</span></div>
+      <div class="c-header">
+        <div class="lbl">TUESDAY · TODAY'S FOCUS</div>
+        <div class="h1">Three things.<br/>That's it.</div>
+        <div class="h2">One at a time.</div>
+      </div>
+      <div class="c-bg" style="padding-bottom:4px">
+        <div class="c-ai">
+          <div class="badge">⬡ STABLE AI</div>
+          <div class="txt">You finished <b>2 of 3 tasks</b> yesterday. Your focus tends to be sharpest <b>before noon</b>.</div>
+        </div>
+        <div class="c-card"><div class="t">Review Q2 budget report</div><div class="m"><span class="tag c-tag-work">Work</span><span class="dur">45 min</span></div></div>
+        <div class="c-card p"><div class="t">Book Filippo's check-up</div><div class="m"><span class="tag c-tag-fam">Family</span><span class="dur">10 min</span></div></div>
+        <div class="c-card c"><div class="t">Reply to outstanding emails</div><div class="m"><span class="tag c-tag-work">Work</span><span class="dur">20 min</span></div></div>
+        <div class="c-cta"><div><div class="l">Start focus session</div><div class="s">Ready when you are</div></div><div class="arr">→</div></div>
+      </div>
+      <div class="c-nav">
+        <div class="ni act"><div class="ic">🏠</div><div class="dot"></div><div class="nl" style="color:#818cf8">Today</div></div>
+        <div class="ni"><div class="ic">✓</div><div class="nl">Tasks</div></div>
+        <div class="ni"><div class="ic">⏱</div><div class="nl">Focus</div></div>
+        <div class="ni"><div class="ic">🔔</div><div class="nl">Reminders</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p style="text-align:center;color:#333;font-size:12px;margin-top:28px;">Click your pick — or tell me in the terminal.</p>
+
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stable. light + dark</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #111; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; color: #fff; padding: 24px 16px 48px; }
+
+  h2 { text-align: center; color: #fff; font-size: 18px; margin-bottom: 6px; }
+  .sub { text-align: center; color: #666; font-size: 13px; margin-bottom: 32px; }
+
+  .screens { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
+
+  .phone {
+    width: 340px;
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .mode-label {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 10px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+
+  .mode-wrap { display: flex; flex-direction: column; align-items: center; }
+
+  /* Toggle button preview */
+  .toggle-preview {
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    padding: 4px;
+    width: fit-content;
+  }
+  .toggle-preview .t-btn {
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .toggle-preview .t-btn.on {
+    background: #fff;
+    color: #111;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .toggle-preview .t-btn.on.dark-btn {
+    background: #1a1535;
+    color: #a78bfa;
+  }
+
+  /* ============ LIGHT MODE ============ */
+  .lm { background: #fafafe; }
+  .lm .status { display: flex; justify-content: space-between; padding: 12px 18px 4px; font-size: 12px; color: #333; }
+  .lm .header { padding: 10px 20px 20px; background: linear-gradient(160deg, #4f3aff 0%, #7c3aed 50%, #c026d3 100%); }
+  .lm .header .lbl { font-size: 10px; color: rgba(255,255,255,0.6); letter-spacing: 1.5px; text-transform: uppercase; }
+  .lm .header .h1 { font-size: 26px; font-weight: 800; color: #fff; margin-top: 4px; line-height: 1.15; }
+  .lm .header .h2 { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 4px; }
+  .lm .body { background: #fafafe; padding: 4px 0; }
+  .lm .ai { margin: 14px 14px 0; background: #fff; border-radius: 14px; padding: 12px 14px; border: 1px solid #ede9ff; box-shadow: 0 2px 12px rgba(79,58,255,0.06); }
+  .lm .ai .badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(79,58,255,0.08); border: 1px solid rgba(79,58,255,0.2); border-radius: 20px; padding: 2px 8px; margin-bottom: 6px; font-size: 9px; color: #4f3aff; font-weight: 700; letter-spacing: 0.5px; }
+  .lm .ai .txt { font-size: 11px; color: #888; line-height: 1.5; }
+  .lm .ai .txt b { color: #333; }
+  .lm .card { margin: 10px 14px 0; background: #fff; border-radius: 14px; padding: 12px 14px; border-left: 3px solid #4f3aff; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid #f0eeff; border-left-width: 3px; border-left-color: #4f3aff; }
+  .lm .card.p { border-left-color: #7c3aed; }
+  .lm .card.c { border-left-color: #0891b2; }
+  .lm .card .t { font-size: 13px; font-weight: 600; color: #111; }
+  .lm .card .m { display: flex; gap: 6px; margin-top: 6px; align-items: center; }
+  .lm .card .tag { font-size: 9px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+  .lm .tag-w { background: #eef0ff; color: #4f3aff; }
+  .lm .tag-f { background: #fdf2f8; color: #be185d; }
+  .lm .card .dur { font-size: 10px; color: #bbb; }
+  .lm .cta { margin: 14px 14px 0; background: linear-gradient(135deg, #4f3aff, #7c3aed); border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
+  .lm .cta .l { font-size: 13px; font-weight: 700; color: #fff; }
+  .lm .cta .s { font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .lm .cta .arr { font-size: 18px; }
+  .lm .nav { display: flex; justify-content: space-around; padding: 10px 0 20px; background: #fff; border-top: 1px solid #f0eeff; margin-top: 14px; }
+  .lm .nav .ni { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .lm .nav .ni .ic { font-size: 20px; }
+  .lm .nav .ni .nl { font-size: 9px; color: #ccc; font-weight: 500; }
+  .lm .nav .ni.act .nl { color: #4f3aff; font-weight: 700; }
+  .lm .nav .ni .dot { width: 4px; height: 4px; border-radius: 50%; background: #4f3aff; }
+
+  /* ============ DARK MODE ============ */
+  .dm { background: #120e24; }
+  .dm .status { display: flex; justify-content: space-between; padding: 12px 18px 4px; font-size: 12px; color: #888; }
+  .dm .header { padding: 10px 20px 20px; background: linear-gradient(160deg, #1e1260 0%, #120e24 70%); }
+  .dm .header .lbl { font-size: 10px; color: #5a4a8a; letter-spacing: 1.5px; text-transform: uppercase; }
+  .dm .header .h1 { font-size: 26px; font-weight: 800; color: #fff; margin-top: 4px; line-height: 1.15; }
+  .dm .header .h2 { font-size: 12px; color: #8b7ab8; margin-top: 4px; }
+  .dm .body { background: #120e24; padding: 4px 0; }
+  .dm .ai { margin: 14px 14px 0; background: #1a1540; border-radius: 14px; padding: 12px 14px; border: 1px solid #2a1f60; }
+  .dm .ai .badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(124,58,237,0.2); border: 1px solid rgba(124,58,237,0.4); border-radius: 20px; padding: 2px 8px; margin-bottom: 6px; font-size: 9px; color: #a78bfa; font-weight: 700; letter-spacing: 0.5px; }
+  .dm .ai .txt { font-size: 11px; color: #7060a0; line-height: 1.5; }
+  .dm .ai .txt b { color: #c4b5fd; }
+  .dm .card { margin: 10px 14px 0; background: #1a1535; border-radius: 14px; padding: 12px 14px; border-left: 3px solid #6366f1; }
+  .dm .card.p { border-left-color: #a855f7; }
+  .dm .card.c { border-left-color: #22d3ee; }
+  .dm .card .t { font-size: 13px; font-weight: 600; color: #e2d9f3; }
+  .dm .card .m { display: flex; gap: 6px; margin-top: 6px; align-items: center; }
+  .dm .card .tag { font-size: 9px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+  .dm .tag-w { background: rgba(99,102,241,0.2); color: #a5b4fc; }
+  .dm .tag-f { background: rgba(236,72,153,0.12); color: #f9a8d4; }
+  .dm .card .dur { font-size: 10px; color: #3a2f5a; }
+  .dm .cta { margin: 14px 14px 0; background: linear-gradient(135deg, #6366f1, #a855f7); border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
+  .dm .cta .l { font-size: 13px; font-weight: 700; color: #fff; }
+  .dm .cta .s { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+  .dm .cta .arr { font-size: 18px; }
+  .dm .nav { display: flex; justify-content: space-around; padding: 10px 0 20px; background: #120e24; border-top: 1px solid #1e1a38; margin-top: 14px; }
+  .dm .nav .ni { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .dm .nav .ni .ic { font-size: 20px; }
+  .dm .nav .ni .nl { font-size: 9px; color: #2a2050; font-weight: 500; }
+  .dm .nav .ni.act .nl { color: #a78bfa; font-weight: 700; }
+  .dm .nav .ni .dot { width: 4px; height: 4px; border-radius: 50%; background: #a78bfa; }
+</style>
+</head>
+<body>
+
+<h2>stable. — Light Mode + Dark Mode</h2>
+<p class="sub">Same layout, same structure. Toggle button in the app switches between them.</p>
+
+<!-- Toggle preview -->
+<div style="text-align:center;margin-bottom:28px;">
+  <p style="color:#444;font-size:11px;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">The toggle button will look like this:</p>
+  <div class="toggle-preview" style="margin:0 auto;">
+    <div class="t-btn on">☀️ Light</div>
+    <div class="t-btn dark-btn">🌙 Dark</div>
+  </div>
+  <p style="color:#333;font-size:11px;margin-top:8px;">Sits in the top-right corner on every screen</p>
+</div>
+
+<div class="screens">
+
+  <!-- LIGHT MODE -->
+  <div class="mode-wrap">
+    <div style="text-align:center;margin-bottom:12px;">
+      <span class="mode-label" style="background:rgba(79,58,255,0.1);color:#4f3aff;border:1px solid rgba(79,58,255,0.2);">☀️ Light Mode</span>
+    </div>
+    <div class="phone lm">
+      <div class="status lm"><span style="color:#333">9:41</span><span style="color:#333">●●● 🔋</span></div>
+      <div class="header lm">
+        <div class="lbl">TUESDAY · TODAY'S FOCUS</div>
+        <div class="h1">Three things.<br/>That's it.</div>
+        <div class="h2">One at a time.</div>
+      </div>
+      <div class="body lm">
+        <div class="ai lm">
+          <div class="badge">⬡ STABLE AI</div>
+          <div class="txt">You finished <b>2 of 3 tasks</b> yesterday — a solid day. Your focus is sharpest <b>before noon</b>.</div>
+        </div>
+        <div class="card lm"><div class="t">Review Q2 budget report</div><div class="m"><span class="tag tag-w lm">Work</span><span class="dur lm">45 min</span></div></div>
+        <div class="card p lm"><div class="t">Book Filippo's check-up</div><div class="m"><span class="tag tag-f lm">Family</span><span class="dur lm">10 min</span></div></div>
+        <div class="card c lm"><div class="t">Reply to outstanding emails</div><div class="m"><span class="tag tag-w lm">Work</span><span class="dur lm">20 min</span></div></div>
+        <div class="cta lm"><div><div class="l">Start focus session</div><div class="s">Ready when you are</div></div><div class="arr">→</div></div>
+      </div>
+      <div class="nav lm">
+        <div class="ni act"><div class="ic">🏠</div><div class="dot"></div><div class="nl" style="color:#4f3aff">Today</div></div>
+        <div class="ni"><div class="ic">✓</div><div class="nl">Tasks</div></div>
+        <div class="ni"><div class="ic">⏱</div><div class="nl">Focus</div></div>
+        <div class="ni"><div class="ic">🔔</div><div class="nl">Reminders</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DARK MODE -->
+  <div class="mode-wrap">
+    <div style="text-align:center;margin-bottom:12px;">
+      <span class="mode-label" style="background:rgba(167,139,250,0.1);color:#a78bfa;border:1px solid rgba(167,139,250,0.2);">🌙 Dark Mode</span>
+    </div>
+    <div class="phone dm">
+      <div class="status dm"><span>9:41</span><span>●●● 🔋</span></div>
+      <div class="header dm">
+        <div class="lbl">TUESDAY · TODAY'S FOCUS</div>
+        <div class="h1">Three things.<br/>That's it.</div>
+        <div class="h2">One at a time.</div>
+      </div>
+      <div class="body dm">
+        <div class="ai dm">
+          <div class="badge">⬡ STABLE AI</div>
+          <div class="txt">You finished <b>2 of 3 tasks</b> yesterday — a solid day. Your focus is sharpest <b>before noon</b>.</div>
+        </div>
+        <div class="card dm"><div class="t">Review Q2 budget report</div><div class="m"><span class="tag tag-w dm">Work</span><span class="dur dm">45 min</span></div></div>
+        <div class="card p dm"><div class="t">Book Filippo's check-up</div><div class="m"><span class="tag tag-f dm">Family</span><span class="dur dm">10 min</span></div></div>
+        <div class="card c dm"><div class="t">Reply to outstanding emails</div><div class="m"><span class="tag tag-w dm">Work</span><span class="dur dm">20 min</span></div></div>
+        <div class="cta dm"><div><div class="l">Start focus session</div><div class="s">Ready when you are</div></div><div class="arr">→</div></div>
+      </div>
+      <div class="nav dm">
+        <div class="ni act"><div class="ic">🏠</div><div class="dot"></div><div class="nl" style="color:#a78bfa">Today</div></div>
+        <div class="ni"><div class="ic">✓</div><div class="nl">Tasks</div></div>
+        <div class="ni"><div class="ic">⏱</div><div class="nl">Focus</div></div>
+        <div class="ni"><div class="ic">🔔</div><div class="nl">Reminders</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p style="text-align:center;color:#333;font-size:12px;margin-top:32px;">Happy with both? Say the word and I'll write the full build plan.</p>
+
+</body>
+</html>

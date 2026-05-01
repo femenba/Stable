@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>stable. — Investment Pitch Deck</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    background: #0a0814;
+    color: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .slide {
+    width: 100%;
+    min-height: 100vh;
+    padding: 56px 72px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: #0a0814;
+    page-break-after: always;
+  }
+
+  .slide-num {
+    position: absolute;
+    top: 24px;
+    right: 32px;
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 2px;
+  }
+
+  /* ── Typography ── */
+  .label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #a78bfa;
+    margin-bottom: 14px;
+  }
+  .title {
+    font-size: 38px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    color: #ffffff;
+    margin-bottom: 32px;
+  }
+  .divider {
+    width: 44px;
+    height: 3px;
+    background: #6366f1;
+    border-radius: 4px;
+    margin-bottom: 28px;
+  }
+
+  /* ── Cover ── */
+  .s-cover { background: linear-gradient(160deg, #1e1260 0%, #120e24 55%, #0a0814 100%) !important; align-items: center; text-align: center; }
+  .cover-logo { font-size: 80px; font-weight: 900; letter-spacing: -4px; color: #c4b5fd; margin-bottom: 12px; }
+  .cover-sub  { font-size: 12px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: #a78bfa; margin-bottom: 40px; }
+  .cover-pill { display: inline-block; background: #6366f1; border-radius: 100px; padding: 12px 32px; font-size: 13px; font-weight: 700; color: #fff; }
+  .cover-conf { position: absolute; bottom: 24px; font-size: 9px; color: rgba(255,255,255,0.2); letter-spacing: 2px; text-transform: uppercase; }
+
+  /* ── Cards ── */
+  .grid { display: grid; gap: 14px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: 1fr 1fr 1fr; }
+  .g4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 14px;
+    padding: 22px;
+  }
+  .card.blue   { border-color: rgba(99,102,241,0.4);  background: rgba(99,102,241,0.09); }
+  .card.purple { border-color: rgba(168,85,247,0.4);  background: rgba(168,85,247,0.09); }
+  .card.green  { border-color: rgba(74,222,128,0.4);  background: rgba(74,222,128,0.07); }
+  .card.gold   { border-color: rgba(251,191,36,0.4);  background: rgba(251,191,36,0.07); }
+  .card.red    { border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.07); }
+
+  .card-big   { font-size: 44px; font-weight: 900; color: #a78bfa; line-height: 1; margin-bottom: 6px; }
+  .card-lbl   { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 8px; }
+  .card-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 7px; }
+  .card-body  { font-size: 12px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+
+  /* ── Two-col ── */
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start; }
+  .two-wide { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 36px; align-items: start; }
+
+  /* ── Feature list ── */
+  .flist { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .flist li { display: flex; align-items: flex-start; gap: 12px; font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.4; }
+  .flist li .dot { width: 7px; height: 7px; border-radius: 50%; background: #6366f1; flex-shrink: 0; margin-top: 4px; }
+
+  /* ── Phone mockup ── */
+  .phone { background: #120e24; border-radius: 28px; border: 1px solid #2a1f60; overflow: hidden; max-width: 240px; margin: 0 auto; box-shadow: 0 24px 48px rgba(0,0,0,0.6); }
+  .ph-head { padding: 18px 14px 14px; background: linear-gradient(160deg,#4f3aff,#7c3aed,#c026d3); }
+  .ph-head .lbl { font-size: 7px; color: rgba(255,255,255,0.6); letter-spacing: 1.5px; text-transform: uppercase; }
+  .ph-head .h1  { font-size: 18px; font-weight: 800; color: #fff; margin-top: 3px; line-height: 1.2; }
+  .ph-head .h2  { font-size: 9px; color: rgba(255,255,255,0.6); margin-top: 3px; }
+  .ph-body { padding: 8px; background: #120e24; }
+  .ph-ai { background: #1a1540; border-radius: 9px; padding: 9px 10px; margin-bottom: 7px; border: 1px solid #2a1f60; }
+  .ph-ai .badge { font-size: 7px; font-weight: 800; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.5px; }
+  .ph-ai .txt { font-size: 9px; color: #8b7ab8; margin-top: 4px; line-height: 1.4; }
+  .ph-ai .txt b { color: #c4b5fd; }
+  .ph-card { background: #1a1535; border-radius: 9px; padding: 9px 11px; margin-bottom: 7px; border-left: 3px solid #6366f1; }
+  .ph-card.p { border-left-color: #a855f7; }
+  .ph-card.f { border-left-color: #ec4899; }
+  .ph-card .ct { font-size: 10px; font-weight: 600; color: #e2d9f3; }
+  .ph-card .tag { font-size: 7px; font-weight: 700; padding: 1px 5px; border-radius: 20px; display: inline-block; margin-top: 3px; background: rgba(99,102,241,0.2); color: #a5b4fc; }
+  .ph-card.p .tag { background: rgba(168,85,247,0.2); color: #d8b4fe; }
+  .ph-card.f .tag { background: rgba(236,72,153,0.15); color: #fbcfe8; }
+  .ph-cta { background: linear-gradient(135deg,#6366f1,#a855f7); border-radius: 9px; padding: 10px; text-align: center; font-size: 11px; font-weight: 700; color: #fff; margin-top: 7px; }
+  .ph-nav { display: flex; justify-content: space-around; padding: 8px 0 10px; background: #120e24; border-top: 1px solid #1e1a38; }
+  .ph-nav span { font-size: 8px; text-align: center; display: block; color: #3a2f5a; }
+  .ph-nav span:first-child { color: #a78bfa; }
+
+  /* ── Pricing ── */
+  .price-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-radius: 18px; padding: 24px 20px; text-align: center; position: relative; }
+  .price-card.featured { background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.5); }
+  .price-card .best { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #6366f1; border-radius: 100px; padding: 3px 12px; font-size: 9px; font-weight: 700; letter-spacing: 1px; white-space: nowrap; color: #fff; }
+  .price-card .tier { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 10px; }
+  .price-card .amt  { font-size: 38px; font-weight: 900; color: #fff; line-height: 1; }
+  .price-card .per  { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 16px; }
+  .price-card ul { list-style: none; text-align: left; display: flex; flex-direction: column; gap: 7px; }
+  .price-card ul li { font-size: 11px; color: rgba(255,255,255,0.6); display: flex; gap: 7px; align-items: flex-start; }
+  .price-card ul li::before { content: '✓'; color: #a78bfa; font-weight: 700; flex-shrink: 0; }
+
+  /* ── Revenue table ── */
+  .table-wrap { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); padding: 12px 18px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  td { padding: 13px 18px; font-size: 13px; color: rgba(255,255,255,0.7); border-bottom: 1px solid rgba(255,255,255,0.05); }
+  tr:last-child td { font-weight: 700; font-size: 15px; color: #fff; border-bottom: none; }
+  .hi { color: #a78bfa !important; font-weight: 700; }
+
+  /* ── Include list ── */
+  .inc { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .inc li { display: flex; align-items: flex-start; gap: 12px; font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.4; }
+  .inc li .ck { width: 20px; height: 20px; border-radius: 50%; background: rgba(99,102,241,0.2); border: 1px solid rgba(99,102,241,0.5); display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; margin-top: 1px; color: #a78bfa; }
+
+  /* ── CTA slide ── */
+  .s-cta { background: linear-gradient(160deg, #1e1260 0%, #120e24 55%, #0a0814 100%) !important; align-items: center; text-align: center; }
+  .cta-logo { font-size: 30px; font-weight: 900; color: #a78bfa; letter-spacing: -1px; margin-bottom: 20px; }
+  .cta-h { font-size: 50px; font-weight: 900; color: #fff; letter-spacing: -2px; line-height: 1.1; margin-bottom: 18px; }
+  .cta-sub { font-size: 15px; color: rgba(255,255,255,0.45); max-width: 520px; margin: 0 auto 40px; line-height: 1.6; }
+  .cta-btn { display: inline-block; background: #6366f1; border-radius: 100px; padding: 15px 36px; font-size: 14px; font-weight: 700; color: #fff; }
+  .cta-conf { margin-top: 40px; font-size: 9px; color: rgba(255,255,255,0.2); letter-spacing: 2px; text-transform: uppercase; }
+
+  /* ── Asking price ── */
+  .ask { font-size: 76px; font-weight: 900; color: #fbbf24; line-height: 1; letter-spacing: -3px; }
+
+  /* ── Insight box ── */
+  .insight { padding: 18px 22px; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.25); border-radius: 13px; font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.6; margin-top: 20px; }
+  .insight strong { color: #a78bfa; }
+
+  /* ── Winner box ── */
+  .winner { display: flex; align-items: center; gap: 20px; padding: 20px 24px; background: rgba(99,102,241,0.12); border: 1.5px solid rgba(99,102,241,0.4); border-radius: 14px; margin-top: 20px; }
+  .winner .icon { font-size: 32px; flex-shrink: 0; }
+  .winner .wt  { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 5px; }
+  .winner .wb  { font-size: 12px; color: rgba(255,255,255,0.55); line-height: 1.5; }
+
+  @media print {
+    body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .slide { page-break-after: always; min-height: 100vh; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ SLIDE 1: COVER ══════════════════════════════════════════ -->
+<div class="slide s-cover">
+  <span class="slide-num">01 / 11</span>
+  <div class="cover-logo">stable.</div>
+  <div class="cover-sub">ADHD &amp; Focus Productivity Platform</div>
+  <div class="cover-pill">Investment Opportunity · 2026</div>
+  <div class="cover-conf">Confidential · For qualified buyers only</div>
+</div>
+
+<!-- ══ SLIDE 2: THE PROBLEM ════════════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">02 / 11</span>
+  <div class="label">The Problem</div>
+  <div class="title">Most productivity apps fail ADHD brains.</div>
+  <div class="divider"></div>
+  <div class="grid g3">
+    <div class="card red">
+      <div class="card-big" style="color:#f87171;">366M</div>
+      <div class="card-lbl">Adults with ADHD globally</div>
+      <div class="card-body">The most underserved segment in the productivity market.</div>
+    </div>
+    <div class="card red">
+      <div class="card-big" style="color:#f87171;">~Zero</div>
+      <div class="card-lbl">Apps built specifically for them</div>
+      <div class="card-body">Todoist, Notion, Asana overwhelm ADHD users with too much complexity.</div>
+    </div>
+    <div class="card red">
+      <div class="card-big" style="color:#f87171;">71%</div>
+      <div class="card-lbl">Abandon general productivity apps within 30 days</div>
+      <div class="card-body">Too many features. Too much friction. Not built for ADHD brains.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 3: THE SOLUTION ═══════════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">03 / 11</span>
+  <div class="two-wide">
+    <div>
+      <div class="label">The Solution</div>
+      <div class="title" style="font-size:32px;">stable. — the focus app<br>built for ADHD adults.</div>
+      <div class="divider"></div>
+      <ul class="flist">
+        <li><span class="dot"></span><strong>Three tasks. That's it.</strong> — radical simplicity ADHD brains love</li>
+        <li><span class="dot"></span><strong>AI insight card</strong> — personalised daily coaching, no setup needed</li>
+        <li><span class="dot"></span><strong>Task categories</strong> — Work, Personal, Family, Health, Other</li>
+        <li><span class="dot"></span><strong>Focus sessions</strong> — built-in timer with full session history</li>
+        <li><span class="dot"></span><strong>Smart reminders</strong> — snooze, dismiss, recurring</li>
+        <li><span class="dot"></span><strong>Light + Dark mode</strong> — polished, professional design</li>
+        <li><span class="dot"></span><strong>Web + Mobile (Expo)</strong> — works on every device</li>
+      </ul>
+    </div>
+    <div>
+      <div class="phone">
+        <div class="ph-head">
+          <div class="lbl">MONDAY · TODAY'S FOCUS</div>
+          <div class="h1">Three things.<br>That's it.</div>
+          <div class="h2">One at a time.</div>
+        </div>
+        <div class="ph-body">
+          <div class="ph-ai">
+            <div class="badge">⬡ STABLE AI</div>
+            <div class="txt">You finished <b>2 tasks</b> yesterday. Focus sharpest <b>before noon.</b></div>
+          </div>
+          <div class="ph-card"><div class="ct">Review Q2 budget report</div><span class="tag">Work</span></div>
+          <div class="ph-card p"><div class="ct">Book Filippo's check-up</div><span class="tag">Family</span></div>
+          <div class="ph-card f"><div class="ct">30 min walk outside</div><span class="tag">Health</span></div>
+          <div class="ph-cta">Start focus session →</div>
+        </div>
+        <div class="ph-nav">
+          <span style="color:#a78bfa;">🏠<br>Today</span>
+          <span>✓<br>Tasks</span>
+          <span>⏱<br>Focus</span>
+          <span>🔔<br>Remind</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 4: MARKET OPPORTUNITY ════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">04 / 11</span>
+  <div class="label">Market Opportunity</div>
+  <div class="title">A $25 billion market with no clear winner.</div>
+  <div class="divider"></div>
+  <div class="grid g4">
+    <div class="card blue">
+      <div class="card-big">366M</div>
+      <div class="card-lbl">Adults with ADHD globally</div>
+      <div class="card-body">Primary audience. Underserved, high-intent, willing to pay for solutions.</div>
+    </div>
+    <div class="card purple">
+      <div class="card-big" style="color:#c084fc;">$25B</div>
+      <div class="card-lbl">ADHD management market by 2030</div>
+      <div class="card-body">Growing 8.4% CAGR. Digital tools are the fastest-growing segment.</div>
+    </div>
+    <div class="card">
+      <div class="card-big" style="color:#94a3b8;">$85B</div>
+      <div class="card-lbl">Global productivity app market by 2027</div>
+      <div class="card-body">Broader market stable. competes in with a sharp niche angle.</div>
+    </div>
+    <div class="card green">
+      <div class="card-big" style="color:#4ade80;">~10%</div>
+      <div class="card-lbl">Of all adults have ADHD-adjacent traits</div>
+      <div class="card-body">Even non-diagnosed users who struggle with focus are the target.</div>
+    </div>
+  </div>
+  <div class="insight"><strong>No dominant player</strong> in ADHD-specific productivity. Closest competitors (Focusmate, Inflow) are single-feature or coaching-only. stable. is the only AI-powered, full-stack focus OS for ADHD adults.</div>
+</div>
+
+<!-- ══ SLIDE 5: TECH & STATUS ══════════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">05 / 11</span>
+  <div class="label">Product Status</div>
+  <div class="title">Built, deployed, ready to scale.</div>
+  <div class="divider"></div>
+  <div class="two">
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card green">
+        <div class="card-title" style="color:#4ade80;">✅  Web App — LIVE</div>
+        <div class="card-body">Next.js 15 deployed on Vercel. Full auth (Clerk), PostgreSQL database (Supabase), type-safe real-time API (tRPC). All 4 core features complete and tested.</div>
+      </div>
+      <div class="card gold">
+        <div class="card-title" style="color:#fbbf24;">🚧  Mobile App — In Development</div>
+        <div class="card-body">React Native (Expo). Shares the same design system and API. Full iOS + Android support. Included in handover.</div>
+      </div>
+    </div>
+    <div>
+      <div class="label" style="margin-bottom:16px;">Tech Stack</div>
+      <ul class="flist">
+        <li><span class="dot"></span>Next.js 15 + TypeScript — modern scalable frontend</li>
+        <li><span class="dot"></span>tRPC + React Query — fully type-safe API layer</li>
+        <li><span class="dot"></span>Supabase (PostgreSQL) — managed, scales instantly</li>
+        <li><span class="dot"></span>Clerk — enterprise-grade user authentication</li>
+        <li><span class="dot"></span>Vercel — zero-config global deployment</li>
+        <li><span class="dot"></span>Expo (React Native) — iOS + Android from one codebase</li>
+        <li><span class="dot"></span>pnpm monorepo — shared code across web and mobile</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 6: PRICING ════════════════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">06 / 11</span>
+  <div class="label">Monetisation Model</div>
+  <div class="title">Four tiers. Freemium to enterprise.</div>
+  <div class="divider"></div>
+  <div class="grid g4" style="align-items:start;">
+    <div class="price-card">
+      <div class="tier">Free</div>
+      <div class="amt">£0</div>
+      <div class="per">forever</div>
+      <ul>
+        <li>3 active tasks</li>
+        <li>1 focus session/day</li>
+        <li>Basic reminders</li>
+        <li>Light mode only</li>
+      </ul>
+    </div>
+    <div class="price-card featured">
+      <div class="best">Most Popular</div>
+      <div class="tier">Pro</div>
+      <div class="amt">£7.99</div>
+      <div class="per">per month &nbsp;·&nbsp; £79.99/year</div>
+      <ul>
+        <li>Unlimited tasks</li>
+        <li>All task categories</li>
+        <li>Full AI insights</li>
+        <li>Focus analytics</li>
+        <li>Dark + light mode</li>
+        <li>Priority support</li>
+      </ul>
+    </div>
+    <div class="price-card">
+      <div class="tier">Family</div>
+      <div class="amt">£13.99</div>
+      <div class="per">per month &nbsp;·&nbsp; up to 4 members</div>
+      <ul>
+        <li>Everything in Pro</li>
+        <li>4 user accounts</li>
+        <li>Family reminders</li>
+        <li>Shared tasks</li>
+      </ul>
+    </div>
+    <div class="price-card gold" style="border-color:rgba(251,191,36,0.4);background:rgba(251,191,36,0.07);">
+      <div class="tier" style="color:rgba(251,191,36,0.7);">Teams / B2B</div>
+      <div class="amt" style="color:#fbbf24;">£6.99</div>
+      <div class="per">per user/month &nbsp;·&nbsp; min 5 seats</div>
+      <ul>
+        <li>Everything in Pro</li>
+        <li>Team dashboard</li>
+        <li>Admin controls</li>
+        <li>Invoiced billing</li>
+        <li>ADHD-aware onboarding</li>
+      </ul>
+    </div>
+  </div>
+  <div style="margin-top:18px;text-align:center;font-size:12px;color:rgba(255,255,255,0.35);">Annual plan saves ~16% · drives higher LTV and lower churn · App Store + Google Play + direct web billing</div>
+</div>
+
+<!-- ══ SLIDE 7: REVENUE PROJECTIONS ════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">07 / 11</span>
+  <div class="label">Revenue Projections</div>
+  <div class="title">£1M+ ARR reachable within 36 months.</div>
+  <div class="divider"></div>
+  <div class="two">
+    <div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Milestone</th><th>Paid Users</th><th>Avg Revenue</th><th>Annual Revenue</th></tr></thead>
+          <tbody>
+            <tr><td>Month 6</td><td>200</td><td>£7.99/mo</td><td class="hi">£19,200</td></tr>
+            <tr><td>Year 1</td><td>600</td><td>£7.99/mo</td><td class="hi">£57,500</td></tr>
+            <tr><td>Year 2</td><td>3,000</td><td>£8.50/mo</td><td class="hi">£306,000</td></tr>
+            <tr><td>Year 3</td><td>10,000</td><td>£8.99/mo</td><td class="hi">£1,080,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:14px;font-size:11px;color:rgba(255,255,255,0.35);padding:0 4px;">Projections based on organic growth via App Store SEO and ADHD communities. No paid ads assumed in Year 1.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card blue">
+        <div class="card-title">Growth channels</div>
+        <div class="card-body">App Store SEO, ADHD subreddits, TikTok + Instagram ADHD community. No paid ads needed in Year 1.</div>
+      </div>
+      <div class="card green">
+        <div class="card-title">~95% gross margin at scale</div>
+        <div class="card-body">SaaS infrastructure costs ~£400/mo at 10,000 users. Almost pure profit beyond that point.</div>
+      </div>
+      <div class="card purple">
+        <div class="card-title">Low churn expected</div>
+        <div class="card-body">Target &lt;4% monthly churn. ADHD users who find a system that works stay loyal.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 8: COMPETITIVE LANDSCAPE ═════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">08 / 11</span>
+  <div class="label">Competitive Landscape</div>
+  <div class="title">No one owns this space yet.</div>
+  <div class="divider"></div>
+  <div class="grid g3">
+    <div class="card">
+      <div class="card-title">Todoist / Any.do</div>
+      <div class="card-body">General productivity apps. Complex, feature-heavy, not designed for ADHD. No AI coaching. No emotional design.</div>
+      <div style="margin-top:14px;font-size:11px;font-weight:700;color:#f87171;">✕ Not built for ADHD</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Focusmate</div>
+      <div class="card-body">Body-doubling video sessions only. Single feature, no task management, no AI, no reminders. Completely different use case.</div>
+      <div style="margin-top:14px;font-size:11px;font-weight:700;color:#f87171;">✕ Single feature only</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Inflow / Numo</div>
+      <div class="card-body">ADHD coaching apps. Heavy on content, light on execution tools. Very expensive (£40–60/mo). No task + focus integration.</div>
+      <div style="margin-top:14px;font-size:11px;font-weight:700;color:#f87171;">✕ Coaching only, overpriced</div>
+    </div>
+  </div>
+  <div class="winner">
+    <div class="icon">🏆</div>
+    <div>
+      <div class="wt">stable. — the only AI-powered ADHD focus OS</div>
+      <div class="wb">Full task management + AI daily coaching + focus sessions + reminders. One app. One price. Built for ADHD brains from day one.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 9: WHAT'S INCLUDED ════════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">09 / 11</span>
+  <div class="label">What You're Buying</div>
+  <div class="title">Everything. Turnkey. Ready to launch.</div>
+  <div class="divider"></div>
+  <div class="two">
+    <ul class="inc">
+      <li><span class="ck">✓</span>Full source code (pnpm monorepo — web + mobile)</li>
+      <li><span class="ck">✓</span>Web app deployed on Vercel (production-ready)</li>
+      <li><span class="ck">✓</span>Supabase database with full schema and migrations</li>
+      <li><span class="ck">✓</span>Clerk authentication — user management, billing-ready</li>
+      <li><span class="ck">✓</span>stable. brand assets — logo, wordmark, full colour system</li>
+      <li><span class="ck">✓</span>Design system + all approved mockups (web + mobile)</li>
+    </ul>
+    <ul class="inc">
+      <li><span class="ck">✓</span>Expo mobile app codebase (in development, handed over)</li>
+      <li><span class="ck">✓</span>All 4 features live: Tasks, Focus, Reminders, Dashboard</li>
+      <li><span class="ck">✓</span>tRPC API — fully typed, easy to extend with new features</li>
+      <li><span class="ck">✓</span>Stripe-ready billing integration points (easy to wire up)</li>
+      <li><span class="ck">✓</span>30-day handover support from original developer</li>
+      <li><span class="ck">✓</span>Full documentation and implementation plans</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══ SLIDE 10: ASKING PRICE ══════════════════════════════════ -->
+<div class="slide">
+  <span class="slide-num">10 / 11</span>
+  <div class="label">Investment Ask</div>
+  <div class="title">Own a platform with £1M+ ARR potential.</div>
+  <div class="divider"></div>
+  <div class="two">
+    <div>
+      <div class="ask">£65,000</div>
+      <div style="font-size:14px;color:rgba(255,255,255,0.4);margin-top:8px;margin-bottom:28px;">Asking price · one-time payment</div>
+      <div class="card gold" style="margin-bottom:14px;">
+        <div class="card-title" style="color:#fbbf24;">Why £65k is a bargain</div>
+        <div class="card-body">Year 3 revenue projection of £1.08M ARR = 16× return on investment. Equivalent to hiring one developer for 8 months — except you get a finished, deployed product.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Payment options</div>
+        <div class="card-body">Full payment &nbsp;·&nbsp; or 50% upfront + 50% at 6-month milestone (£5k MRR). Open to discuss terms.</div>
+      </div>
+    </div>
+    <div class="grid g2" style="align-content:start;">
+      <div class="card blue" style="text-align:center;">
+        <div class="card-big" style="font-size:32px;">£1.08M</div>
+        <div class="card-lbl">Year 3 projected ARR</div>
+      </div>
+      <div class="card green" style="text-align:center;">
+        <div class="card-big" style="font-size:32px;color:#4ade80;">~95%</div>
+        <div class="card-lbl">Gross margin at scale</div>
+      </div>
+      <div class="card gold" style="text-align:center;">
+        <div class="card-big" style="font-size:32px;color:#fbbf24;">16×</div>
+        <div class="card-lbl">ROI on £65k by Year 3</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="card-big" style="font-size:32px;color:#94a3b8;">0</div>
+        <div class="card-lbl">Technical debt</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 11: CTA ═══════════════════════════════════════════ -->
+<div class="slide s-cta">
+  <span class="slide-num">11 / 11</span>
+  <div class="cta-logo">stable.</div>
+  <div class="cta-h">Ready to own<br>this market?</div>
+  <div class="cta-sub">stable. is a finished product in a massive underserved market. The team is here for a smooth handover. First serious buyer wins.</div>
+  <div class="cta-btn">Get in touch to start due diligence →</div>
+  <div class="cta-conf">Confidential · Not for distribution · stable. · 2026</div>
+</div>
+
+</body>
+</html>
