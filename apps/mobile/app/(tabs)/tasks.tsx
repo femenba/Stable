@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
-  ScrollView, Modal, Pressable,
+  ScrollView, Modal, Pressable, KeyboardAvoidingView, Platform, Keyboard,
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -156,11 +156,15 @@ export default function TasksScreen() {
         animationType="slide"
         onRequestClose={() => setShowModal(false)}
       >
-        <Pressable style={styles.overlay} onPress={() => setShowModal(false)}>
-          <Pressable
-            style={[styles.sheet, { backgroundColor: t.card }]}
-            onPress={() => {}}
-          >
+        <KeyboardAvoidingView
+          style={styles.kavWrapper}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <Pressable style={styles.overlay} onPress={() => { Keyboard.dismiss(); setShowModal(false) }}>
+            <Pressable
+              style={[styles.sheet, { backgroundColor: t.card, paddingBottom: insets.bottom + 16 }]}
+              onPress={() => {}}
+            >
             <View style={[styles.handle, { backgroundColor: t.cardBorder }]} />
 
             <Text style={[styles.sheetTitle, { color: t.t1 }]}>New task</Text>
@@ -235,6 +239,7 @@ export default function TasksScreen() {
             </TouchableOpacity>
           </Pressable>
         </Pressable>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   )
@@ -252,8 +257,9 @@ const styles = StyleSheet.create({
   sectionLabel: { marginHorizontal: 12, marginTop: 12, marginBottom: 6, fontSize: 10, fontWeight: '700', letterSpacing: 1.5, textTransform: 'uppercase', color: '#ccc' },
   empty:        { marginHorizontal: 12, marginTop: 8, borderRadius: 16, borderWidth: 1, padding: 32, alignItems: 'center' },
   emptyText:    { fontSize: 14, textAlign: 'center' },
+  kavWrapper:   { flex: 1 },
   overlay:      { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-  sheet:        { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, paddingBottom: 40, gap: 12 },
+  sheet:        { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, gap: 12 },
   handle:       { width: 36, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 4 },
   sheetTitle:   { fontSize: 18, fontWeight: '800' },
   input:        { borderWidth: 1, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15 },
