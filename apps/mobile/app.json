@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "stable.",
+    "slug": "stable",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "stable",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.stable.app",
+      "infoPlist": {
+        "NSUserNotificationsUsageDescription": "stable. uses notifications to remind you at the time you set."
+      }
+    },
+    "android": {
+      "package": "com.stable.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#4f3aff"
+      },
+      "permissions": ["RECEIVE_BOOT_COMPLETED", "SCHEDULE_EXACT_ALARM"]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "color": "#4f3aff"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
