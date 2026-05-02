@@ -48,14 +48,14 @@ export default function TasksPage() {
   return (
     <div>
       {/* Header */}
-      <div className="px-5 pt-12 pb-6" style={{ background: 'var(--stable-header)' }}>
+      <div className="px-5 pt-12 pb-6 md:px-8 md:pt-10 md:pb-8" style={{ background: 'var(--stable-header)' }}>
         <div className="flex items-start justify-between mb-3">
           <p className="text-[10px] font-medium uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.6)' }}>
             YOUR TASKS
           </p>
-          <ThemeToggle />
+          <span className="md:hidden"><ThemeToggle /></span>
         </div>
-        <h1 className="text-[26px] font-extrabold text-white leading-tight">Tasks</h1>
+        <h1 className="text-[26px] md:text-5xl font-extrabold text-white leading-tight">Tasks</h1>
         <button
           onClick={() => setShowForm((v) => !v)}
           className="mt-4 rounded-xl px-4 py-2.5 text-sm font-semibold text-white"
@@ -68,7 +68,7 @@ export default function TasksPage() {
       {/* Create form */}
       {showForm && (
         <div
-          className="mx-3 mt-3 rounded-xl px-4 py-4"
+          className="mx-3 mt-3 rounded-xl px-4 py-4 md:mx-6 md:mt-5"
           style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)' }}
         >
           <form onSubmit={handleCreate} className="space-y-3">
@@ -130,7 +130,7 @@ export default function TasksPage() {
       )}
 
       {/* Task list */}
-      <div className="px-3 mt-3 pb-4 space-y-2">
+      <div className="px-3 mt-3 pb-4 space-y-2 md:px-6 md:mt-5 md:space-y-3">
         {isLoading ? (
           [0, 1, 2].map((i) => (
             <div key={i} className="h-16 rounded-xl animate-pulse" style={{ background: 'var(--stable-card)' }} />

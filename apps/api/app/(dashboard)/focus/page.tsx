@@ -39,19 +39,19 @@ export default function FocusPage() {
   return (
     <div>
       {/* Header */}
-      <div className="px-5 pt-12 pb-6" style={{ background: 'var(--stable-header)' }}>
+      <div className="px-5 pt-12 pb-6 md:px-8 md:pt-10 md:pb-8" style={{ background: 'var(--stable-header)' }}>
         <div className="flex items-start justify-between mb-3">
           <p className="text-[10px] font-medium uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.6)' }}>
             FOCUS MODE
           </p>
-          <ThemeToggle />
+          <span className="md:hidden"><ThemeToggle /></span>
         </div>
-        <h1 className="text-[26px] font-extrabold text-white leading-tight">Focus</h1>
+        <h1 className="text-[26px] md:text-5xl font-extrabold text-white leading-tight">Focus</h1>
       </div>
 
       {/* Timer card */}
       <div
-        className="mx-3 mt-3 rounded-xl px-5 py-8 text-center"
+        className="mx-3 mt-3 rounded-xl px-5 py-8 text-center md:mx-6 md:mt-5"
         style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)' }}
       >
         {activeSession ? (
@@ -108,7 +108,7 @@ export default function FocusPage() {
       </div>
 
       {/* Session history */}
-      <div className="px-3 mt-4 pb-4">
+      <div className="px-3 mt-4 pb-4 md:px-6 md:mt-5">
         <p className="text-[10px] font-semibold uppercase tracking-widest mb-2" style={{ color: 'var(--stable-t3)' }}>
           Recent sessions
         </p>
