@@ -39,7 +39,7 @@ export default function FocusPage() {
   return (
     <div>
       {/* Header */}
-      <div className="px-5 pt-12 pb-6 md:px-8 md:pt-10 md:pb-8" style={{ background: 'var(--stable-header)' }}>
+      <div className="px-4 pt-12 pb-6 md:px-10 lg:px-12 md:pt-10 md:pb-8" style={{ background: 'var(--stable-header)' }}>
         <div className="flex items-start justify-between mb-3">
           <p className="text-[10px] font-medium uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.6)' }}>
             FOCUS MODE
@@ -51,7 +51,7 @@ export default function FocusPage() {
 
       {/* Timer card */}
       <div
-        className="mx-3 mt-3 rounded-xl px-5 py-8 text-center md:mx-6 md:mt-5"
+        className="mx-4 mt-4 rounded-xl px-5 py-10 text-center md:mx-10 lg:mx-12 md:mt-6 md:py-14"
         style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)' }}
       >
         {activeSession ? (
@@ -108,27 +108,27 @@ export default function FocusPage() {
       </div>
 
       {/* Session history */}
-      <div className="px-3 mt-4 pb-4 md:px-6 md:mt-5">
-        <p className="text-[10px] font-semibold uppercase tracking-widest mb-2" style={{ color: 'var(--stable-t3)' }}>
+      <div className="px-4 mt-4 pb-6 md:px-10 lg:px-12 md:mt-6">
+        <p className="text-[10px] font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--stable-t3)' }}>
           Recent sessions
         </p>
         {isLoading ? (
           [0, 1].map((i) => (
-            <div key={i} className="h-14 rounded-xl animate-pulse mb-2" style={{ background: 'var(--stable-card)' }} />
+            <div key={i} className="h-14 rounded-xl animate-pulse mb-3" style={{ background: 'var(--stable-card)' }} />
           ))
         ) : !pastSessions.length ? (
           <div
-            className="rounded-xl px-5 py-6 text-center text-sm"
+            className="rounded-xl px-5 py-8 text-center text-sm"
             style={{ background: 'var(--stable-card)', color: 'var(--stable-t3)' }}
           >
             No completed sessions yet.
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-3 md:space-y-4">
             {pastSessions.map((s) => (
               <div
                 key={s.id}
-                className="rounded-xl px-4 py-3 flex items-center justify-between"
+                className="rounded-xl px-4 py-4 flex items-center justify-between"
                 style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)' }}
               >
                 <div>

@@ -70,8 +70,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
       {/* ── Page content ──────────────────────────────────── */}
       <main className="md:ml-56 min-h-svh">
-        {/* Mobile: 480px centred  |  Desktop: up to 760px, left-padded */}
-        <div className="max-w-[480px] mx-auto pb-[72px] md:max-w-[760px] md:mx-0 md:pb-10">
+        {/* Mobile: 480px centred  |  Desktop: max-w-5xl centred in remaining space */}
+        <div className="max-w-[480px] mx-auto pb-[72px] md:max-w-5xl md:mx-auto md:pb-12">
           {children}
         </div>
       </main>

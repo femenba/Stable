@@ -22,7 +22,7 @@ export default function DashboardPage() {
     <div>
       {/* Gradient header */}
       <div
-        className="px-5 pt-12 pb-6 md:px-8 md:pt-10 md:pb-8"
+        className="px-4 pt-12 pb-6 md:px-10 lg:px-12 md:pt-10 md:pb-8"
         style={{ background: 'var(--stable-header)' }}
       >
         <div className="flex items-start justify-between mb-3">
@@ -48,7 +48,7 @@ export default function DashboardPage() {
         <AiInsight />
 
         {isLoading ? (
-          <div className="space-y-2 px-3 mt-3 md:px-6 md:mt-5">
+          <div className="space-y-3 px-4 mt-4 md:px-10 lg:px-12 md:mt-6">
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
@@ -58,13 +58,13 @@ export default function DashboardPage() {
             ))}
           </div>
         ) : (
-          <div className="space-y-2 px-3 mt-3 md:px-6 md:mt-5 md:space-y-3">
+          <div className="space-y-3 px-4 mt-4 md:px-10 lg:px-12 md:mt-6 md:space-y-4">
             {(topTasks ?? []).map((task) => (
               <TaskCard key={task.id} task={task} onUpdate={handleUpdate} />
             ))}
             {!topTasks?.length && (
               <div
-                className="rounded-xl px-5 py-8 text-center text-sm"
+                className="rounded-xl px-5 py-10 text-center text-sm"
                 style={{ background: 'var(--stable-card)', color: 'var(--stable-t3)' }}
               >
                 No active tasks — add one in{' '}
@@ -78,10 +78,10 @@ export default function DashboardPage() {
         )}
 
         {/* CTA */}
-        <div className="px-3 mt-3 md:px-6 md:mt-5">
+        <div className="px-4 mt-4 md:px-10 lg:px-12 md:mt-6">
           <Link
             href="/focus"
-            className="flex items-center justify-between rounded-xl px-4 py-4 md:py-5"
+            className="flex items-center justify-between rounded-xl px-5 py-4 md:py-6"
             style={{ background: 'var(--stable-cta)' }}
           >
             <div>
