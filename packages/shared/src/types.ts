@@ -50,3 +50,15 @@ export interface FocusSession {
   completed: boolean
   createdAt: string
 }
+
+export type MoodTag = 'focused' | 'calm' | 'anxious' | 'overwhelmed' | 'sad' | 'irritable' | 'motivated' | 'tired'
+
+export interface MoodEntry {
+  id:        string
+  userId:    string
+  rating:    number
+  energy:    number | null
+  note:      string | null
+  tags:      string[]
+  createdAt: string
+}
