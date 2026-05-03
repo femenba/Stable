@@ -62,5 +62,6 @@ export async function cleanTestData(ctx: Context) {
   await ctx.db.from('focus_sessions').delete().eq('user_id', user.id)
   await ctx.db.from('reminders').delete().eq('user_id', user.id)
   await ctx.db.from('tasks').delete().eq('user_id', user.id)
+  await ctx.db.from('mood_entries').delete().eq('user_id', user.id)
   if (ctx.redis) await ctx.redis.del(`user:clerk:${TEST_CLERK_ID}`)
 }
