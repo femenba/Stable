@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { ThemeToggle } from '../../../../src/components/theme-toggle'
@@ -548,7 +548,7 @@ function renderSession(id: string | null, onBack: () => void) {
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 
-export default function SupportPage() {
+function SupportPageInner() {
   const searchParams   = useSearchParams()
   const initialTool    = searchParams.get('tool')
 
@@ -755,5 +755,19 @@ export default function SupportPage() {
       </div>
 
     </div>
+  )
+}
+
+// ─── Page export with Suspense boundary (required by Next.js 15 for useSearchParams) ──
+
+export default function SupportPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-svh" style={{ color: 'var(--stable-t3)' }}>
+        Loading…
+      </div>
+    }>
+      <SupportPageInner />
+    </Suspense>
   )
 }
