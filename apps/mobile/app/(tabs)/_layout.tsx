@@ -50,6 +50,10 @@ export default function TabLayout() {
         name="reminders"
         options={{ tabBarIcon: ({ focused }) => <TabIcon icon="🔔" label="Reminders" focused={focused} /> }}
       />
+      <Tabs.Screen
+        name="mind"
+        options={{ tabBarIcon: ({ focused }) => <TabIcon icon="🧘" label="Mind" focused={focused} /> }}
+      />
     </Tabs>
   )
 }
