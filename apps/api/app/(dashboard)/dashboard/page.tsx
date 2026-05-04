@@ -6,8 +6,11 @@ import { ThemeToggle } from '../../../src/components/theme-toggle'
 import { AiInsight } from '../../../src/components/ai-insight'
 import { TaskCard } from '../../../src/components/task-card'
 
+const MOOD_EMOJIS = ['😔', '😕', '😐', '🙂', '😊']
+
 export default function DashboardPage() {
   const { data: topTasks, isLoading } = trpc.tasks.listTopThree.useQuery()
+  const { data: todayMood } = trpc.moodEntries.today.useQuery({ date: new Date().toISOString().slice(0, 10) })
   const utils = trpc.useUtils()
 
   const today = new Date()
@@ -145,7 +148,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* ── Side column (1/3): AI + Focus CTA ───────────── */}
+          {/* ── Side column (1/3): AI + Focus + Mood + Support ── */}
           <div className="col-span-1 space-y-5">
 
             {/* AI suggestion widget */}
@@ -202,6 +205,56 @@ export default function DashboardPage() {
                   </p>
                 </div>
                 <span className="text-white text-xl font-semibold">→</span>
+              </Link>
+            </div>
+
+            {/* Mood quick card */}
+            <div>
+              <p
+                className="text-[10px] font-semibold uppercase tracking-widest mb-3"
+                style={{ color: 'var(--stable-t3)' }}
+              >
+                Mood
+              </p>
+              <Link
+                href="/mind/mood"
+                className="flex items-center justify-between rounded-xl px-4 py-4 transition-opacity hover:opacity-90"
+                style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)' }}
+              >
+                <div>
+                  <p className="text-sm font-bold" style={{ color: 'var(--stable-t1)' }}>
+                    {todayMood
+                      ? `Today: ${MOOD_EMOJIS[todayMood.rating - 1]}`
+                      : 'How are you feeling?'}
+                  </p>
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--stable-t2)' }}>
+                    {todayMood ? 'Tap to update' : 'Check in now'}
+                  </p>
+                </div>
+                <span className="text-lg" style={{ color: 'var(--stable-t3)' }}>→</span>
+              </Link>
+            </div>
+
+            {/* Support quick card */}
+            <div>
+              <p
+                className="text-[10px] font-semibold uppercase tracking-widest mb-3"
+                style={{ color: 'var(--stable-t3)' }}
+              >
+                Support
+              </p>
+              <Link
+                href="/mind/support"
+                className="flex items-center justify-between rounded-xl px-4 py-4 transition-opacity hover:opacity-90"
+                style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)' }}
+              >
+                <div>
+                  <p className="text-sm font-bold" style={{ color: 'var(--stable-t1)' }}>Take a moment</p>
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--stable-t2)' }}>
+                    Breathing, grounding & more
+                  </p>
+                </div>
+                <span className="text-lg" style={{ color: 'var(--stable-t3)' }}>→</span>
               </Link>
             </div>
 

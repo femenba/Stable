@@ -9,6 +9,7 @@ const TABS = [
   { href: '/tasks',     label: 'Tasks',     icon: '✓'  },
   { href: '/focus',     label: 'Focus',     icon: '⏱' },
   { href: '/reminders', label: 'Reminders', icon: '🔔' },
+  { href: '/mind',      label: 'Mind',      icon: '🧘' },
 ] as const
 
 export function Shell({ children }: { children: React.ReactNode }) {
@@ -33,7 +34,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
         {/* Nav links */}
         <nav className="flex-1 px-3 py-4 space-y-0.5">
           {TABS.map((tab) => {
-            const isActive = pathname === tab.href
+            const isActive = tab.href === '/dashboard'
+              ? pathname === '/dashboard'
+              : pathname === tab.href || pathname.startsWith(tab.href + '/')
             return (
               <Link
                 key={tab.href}
@@ -81,14 +84,16 @@ export function Shell({ children }: { children: React.ReactNode }) {
         className="md:hidden fixed bottom-0 left-0 right-0 border-t"
         style={{ background: 'var(--stable-nav)', borderColor: 'var(--stable-nav-border)', zIndex: 50 }}
       >
-        <div className="max-w-[480px] mx-auto flex justify-around py-2">
+        <div className="max-w-[480px] mx-auto flex justify-around py-2 px-1">
           {TABS.map((tab) => {
-            const isActive = pathname === tab.href
+            const isActive = tab.href === '/dashboard'
+              ? pathname === '/dashboard'
+              : pathname === tab.href || pathname.startsWith(tab.href + '/')
             return (
               <Link
                 key={tab.href}
                 href={tab.href}
-                className="flex flex-col items-center gap-0.5 py-1 px-5"
+                className="flex flex-col items-center gap-0.5 py-1 px-3"
               >
                 <span className="text-xl leading-none">{tab.icon}</span>
                 {isActive && (
