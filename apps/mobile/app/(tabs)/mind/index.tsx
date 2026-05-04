@@ -37,10 +37,10 @@ export default function MindHome() {
         t1={mt.t1} t2={mt.t2} t3={mt.t3} card={mt.card} cardBorder={`${mt.t3}88`}
       />
       <MindCard
-        icon="🧠" title="DBT Skills" subtitle="Coming soon"
-        disabled dashed
+        icon="🧠" title="DBT Skills" subtitle="STOP · Grounding · Wise Mind"
+        onPress={() => router.push('/(tabs)/mind/dbt')}
         accent={mt.accent} accentSoft={mt.accentSoft}
-        t1={mt.t1} t2={mt.t2} t3={mt.t3} card={mt.card} cardBorder={mt.t3}
+        t1={mt.t1} t2={mt.t2} t3={mt.t3} card={mt.card} cardBorder={`${mt.t3}88`}
       />
     </>
   )

@@ -11,10 +11,10 @@ import { MIND_THEMES } from '@/lib/mind-themes'
 import { MoodEmojiRow } from '@/components/mind/mood-emoji-row'
 import { MoodTagPicker, type MoodTag } from '@/components/mind/mood-tag-picker'
 import { MoodHistoryRow } from '@/components/mind/mood-history-row'
+import { EnergySlider } from '@/components/mind/energy-slider'
 import { trpc } from '@/lib/trpc-client'
 
-const MOOD_EMOJIS   = ['😔', '😕', '😐', '🙂', '😊']
-const ENERGY_EMOJIS = ['🪫', '🔋', '🔋', '⚡', '⚡']
+const MOOD_EMOJIS = ['😔', '😕', '😐', '🙂', '😊']
 
 export default function MoodScreen() {
   const router  = useRouter()
@@ -84,11 +84,10 @@ export default function MoodScreen() {
                 value={rating} onChange={setRating}
                 t2={mt.t2} accent={mt.accent} accentSoft={mt.accentSoft}
               />
-              <MoodEmojiRow
-                label="Energy level (optional)"
-                emojis={ENERGY_EMOJIS}
+              <EnergySlider
                 value={energy} onChange={setEnergy}
-                t2={mt.t2} accent={mt.accent} accentSoft={mt.accentSoft}
+                accent={mt.accent} accentSoft={mt.accentSoft}
+                t2={mt.t2} t3={mt.t3} card={mt.card}
               />
               <MoodTagPicker
                 selected={tags} onChange={setTags}
