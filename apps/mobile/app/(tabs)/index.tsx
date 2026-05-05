@@ -102,7 +102,7 @@ export default function TodayScreen() {
 
           if (isEditing) {
             return (
-              <View key={`slot-${i}`} style={[styles.slot, { backgroundColor: t.card, borderColor: '#4f3aff' }]}>
+              <View key={`slot-${i}`} style={[styles.slot, { backgroundColor: t.card, borderColor: '#6366F1' }]}>
                 <TextInput
                   ref={inputRef}
                   style={[styles.slotInput, { color: t.t1 }]}
@@ -220,44 +220,44 @@ export default function TodayScreen() {
 
 const styles = StyleSheet.create({
   container:           { flex: 1 },
-  header:              { paddingHorizontal: 20, paddingBottom: 24 },
+  header:              { paddingHorizontal: 22, paddingBottom: 28 },
   headerRow:           { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
   headerText:          { flex: 1 },
-  label:               { fontSize: 10, fontWeight: '600', letterSpacing: 2, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', marginBottom: 8 },
-  title:               { fontSize: 26, fontWeight: '900', color: '#fff', lineHeight: 32 },
-  subtitle:            { fontSize: 12, color: 'rgba(255,255,255,0.65)', marginTop: 4 },
-  avatarBtn:           { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center', marginLeft: 12, marginTop: 2 },
-  avatarLetter:        { fontSize: 15, fontWeight: '800', color: '#fff' },
+  label:               { fontSize: 10, fontWeight: '600', letterSpacing: 2, color: 'rgba(255,255,255,0.65)', textTransform: 'uppercase', marginBottom: 10 },
+  title:               { fontSize: 28, fontWeight: '900', color: '#fff', lineHeight: 34 },
+  subtitle:            { fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 6 },
+  avatarBtn:           { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.3)', alignItems: 'center', justifyContent: 'center', marginLeft: 12, marginTop: 2 },
+  avatarLetter:        { fontSize: 16, fontWeight: '800', color: '#fff' },
   scroll:              { flex: 1 },
-  content:             { paddingBottom: 32 },
+  content:             { paddingTop: 4, paddingBottom: 36 },
 
-  slot:                { marginHorizontal: 12, marginTop: 8, borderRadius: 16, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 14, flexDirection: 'row', alignItems: 'center', gap: 10 },
-  slotEmpty:           { justifyContent: 'center', paddingVertical: 18 },
+  slot:                { marginHorizontal: 16, marginTop: 10, borderRadius: 18, borderWidth: 1, borderColor: '#ECEAFF', paddingHorizontal: 16, paddingVertical: 16, flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#fff', shadowColor: '#6366F1', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.06, shadowRadius: 10, elevation: 2 },
+  slotEmpty:           { justifyContent: 'center', paddingVertical: 20, borderStyle: 'dashed' },
   slotEmptyText:       { fontSize: 14, fontWeight: '500' },
-  slotInput:           { flex: 1, fontSize: 14, paddingVertical: 0 },
+  slotInput:           { flex: 1, fontSize: 15, paddingVertical: 0 },
   slotActions:         { flexDirection: 'row', gap: 10, alignItems: 'center' },
   slotActionCancel:    { fontSize: 13 },
-  slotActionAdd:       { backgroundColor: '#4f3aff', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6 },
+  slotActionAdd:       { backgroundColor: '#6366F1', borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 },
   slotActionAddText:   { color: '#fff', fontSize: 13, fontWeight: '700' },
-  slotTitle:           { fontSize: 14, fontWeight: '600' },
+  slotTitle:           { fontSize: 15, fontWeight: '600' },
   checkBtn:            { padding: 2 },
-  checkbox:            { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: '#4f3aff' },
-  checkboxDone:        { backgroundColor: '#4f3aff' },
-  removeBtn:           { fontSize: 13, paddingHorizontal: 4 },
+  checkbox:            { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: '#6366F1' },
+  checkboxDone:        { backgroundColor: '#6366F1' },
+  removeBtn:           { fontSize: 14, paddingHorizontal: 4 },
 
-  ctaWrap:             { marginHorizontal: 12, marginTop: 16 },
-  cta:                 { borderRadius: 16, paddingHorizontal: 16, paddingVertical: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  ctaTitle:            { fontSize: 14, fontWeight: '700', color: '#fff' },
-  ctaSub:              { fontSize: 12, color: 'rgba(255,255,255,0.6)', marginTop: 2 },
-  ctaArrow:            { fontSize: 18, color: '#fff', fontWeight: '600' },
+  ctaWrap:             { marginHorizontal: 16, marginTop: 20 },
+  cta:                 { borderRadius: 20, paddingHorizontal: 20, paddingVertical: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  ctaTitle:            { fontSize: 15, fontWeight: '700', color: '#fff' },
+  ctaSub:              { fontSize: 12, color: 'rgba(255,255,255,0.65)', marginTop: 3 },
+  ctaArrow:            { fontSize: 22, color: '#fff', fontWeight: '300' },
 
-  overlay:             { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
-  sheet:               { width: 280, borderRadius: 20, borderWidth: 1, padding: 24, alignItems: 'center' },
-  accountAvatar:       { width: 64, height: 64, borderRadius: 32, backgroundColor: '#4f3aff', alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
-  accountAvatarLetter: { fontSize: 28, fontWeight: '900', color: '#fff' },
-  accountName:         { fontSize: 16, fontWeight: '700', marginBottom: 4 },
+  overlay:             { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'center', alignItems: 'center' },
+  sheet:               { width: 300, borderRadius: 24, borderWidth: 1, padding: 28, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 10 },
+  accountAvatar:       { width: 72, height: 72, borderRadius: 36, backgroundColor: '#6366F1', alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
+  accountAvatarLetter: { fontSize: 30, fontWeight: '900', color: '#fff' },
+  accountName:         { fontSize: 17, fontWeight: '700', marginBottom: 4 },
   accountEmail:        { fontSize: 13, marginBottom: 4 },
-  divider:             { width: '100%', height: 1, marginVertical: 16 },
-  signOutBtn:          { backgroundColor: 'rgba(220,38,38,0.1)', borderRadius: 10, paddingHorizontal: 24, paddingVertical: 10 },
+  divider:             { width: '100%', height: 1, marginVertical: 18 },
+  signOutBtn:          { backgroundColor: 'rgba(220,38,38,0.08)', borderRadius: 12, paddingHorizontal: 28, paddingVertical: 12 },
   signOutText:         { color: '#dc2626', fontSize: 14, fontWeight: '700' },
 })

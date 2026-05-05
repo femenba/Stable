@@ -38,13 +38,13 @@ export function MoodEmojiRow({ label, emojis, value, onChange, t2, accent, accen
 }
 
 const styles = StyleSheet.create({
-  label:  { fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 },
-  row:    { flexDirection: 'row', gap: 8 },
+  label:  { fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 },
+  row:    { flexDirection: 'row', gap: 10, justifyContent: 'center' },
   btn: {
-    width: 52, height: 52, borderRadius: 26,
+    width: 56, height: 56, borderRadius: 28,
     alignItems: 'center', justifyContent: 'center',
     borderWidth: 1.5, borderColor: 'transparent',
     backgroundColor: 'transparent',
   },
-  emoji: { fontSize: 26 },
+  emoji: { fontSize: 28 },
 })

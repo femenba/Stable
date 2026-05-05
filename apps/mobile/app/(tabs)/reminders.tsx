@@ -92,10 +92,10 @@ export default function RemindersScreen() {
                   onPress={() => setType(opt)}
                   style={[styles.pill, {
                     backgroundColor: type === opt ? 'rgba(99,102,241,0.12)' : t.bg,
-                    borderColor:     type === opt ? '#4f3aff' : t.cardBorder,
+                    borderColor:     type === opt ? '#6366F1' : t.cardBorder,
                   }]}
                 >
-                  <Text style={{ fontSize: 12, fontWeight: '700', color: type === opt ? '#4f3aff' : t.t2, textTransform: 'capitalize' }}>{opt}</Text>
+                  <Text style={{ fontSize: 12, fontWeight: '700', color: type === opt ? '#6366F1' : t.t2, textTransform: 'capitalize' }}>{opt}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -106,7 +106,7 @@ export default function RemindersScreen() {
               <TouchableOpacity
                 onPress={() => create.mutate({ remindAt: remindAt.toISOString(), type })}
                 disabled={create.isPending}
-                style={[styles.createBtn, { backgroundColor: '#4f3aff', opacity: create.isPending ? 0.5 : 1 }]}
+                style={[styles.createBtn, { backgroundColor: '#6366F1', opacity: create.isPending ? 0.5 : 1 }]}
               >
                 <Text style={styles.createBtnText}>{create.isPending ? '...' : 'Create'}</Text>
               </TouchableOpacity>

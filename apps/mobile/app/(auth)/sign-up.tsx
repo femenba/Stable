@@ -65,7 +65,7 @@ export default function SignUpScreen() {
             onChangeText={setPassword}
           />
           {!!error && <Text style={styles.error}>{error}</Text>}
-          <TouchableOpacity style={[styles.button, { backgroundColor: '#4f3aff' }]} onPress={handleSignUp}>
+          <TouchableOpacity style={[styles.button, { backgroundColor: '#6366F1' }]} onPress={handleSignUp}>
             <Text style={styles.buttonText}>Create account</Text>
           </TouchableOpacity>
         </>
@@ -81,7 +81,7 @@ export default function SignUpScreen() {
             onChangeText={setCode}
           />
           {!!error && <Text style={styles.error}>{error}</Text>}
-          <TouchableOpacity style={[styles.button, { backgroundColor: '#4f3aff' }]} onPress={handleVerify}>
+          <TouchableOpacity style={[styles.button, { backgroundColor: '#6366F1' }]} onPress={handleVerify}>
             <Text style={styles.buttonText}>Verify email</Text>
           </TouchableOpacity>
         </>
@@ -90,7 +90,7 @@ export default function SignUpScreen() {
       <Link href="/(auth)/sign-in" asChild>
         <TouchableOpacity style={styles.link}>
           <Text style={[styles.linkText, { color: t.t2 }]}>
-            Already have an account? <Text style={{ color: '#4f3aff' }}>Sign in</Text>
+            Already have an account? <Text style={{ color: '#6366F1' }}>Sign in</Text>
           </Text>
         </TouchableOpacity>
       </Link>

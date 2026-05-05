@@ -81,11 +81,11 @@ export default function MindHome() {
 
 const styles = StyleSheet.create({
   container:   { flex: 1 },
-  header:      { paddingHorizontal: 20, paddingBottom: 24 },
+  header:      { paddingHorizontal: 22, paddingBottom: 28 },
   headerRow:   { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
-  headerLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 2, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', marginBottom: 6 },
-  headerTitle: { fontSize: 22, fontWeight: '900', color: '#fff', lineHeight: 28 },
-  gearBtn:     { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' },
+  headerLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 2, color: 'rgba(255,255,255,0.65)', textTransform: 'uppercase', marginBottom: 8 },
+  headerTitle: { fontSize: 24, fontWeight: '900', color: '#fff', lineHeight: 30 },
+  gearBtn:     { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.18)', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center' },
   gearIcon:    { fontSize: 18, color: '#fff' },
-  body:        { flex: 1, padding: 16 },
+  body:        { flex: 1, padding: 20 },
 })

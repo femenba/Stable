@@ -86,16 +86,16 @@ export function EnergySlider({ value, onChange, accent, accentSoft, t2, t3, card
 }
 
 const styles = StyleSheet.create({
-  container:  { gap: 12 },
+  container:  { gap: 14 },
   label:      { fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 },
-  icons:      { flexDirection: 'row', justifyContent: 'space-between', gap: 8 },
+  icons:      { flexDirection: 'row', justifyContent: 'space-between', gap: 10 },
   iconWrap: {
-    flex: 1, alignItems: 'center', gap: 4, paddingVertical: 10, paddingHorizontal: 8,
-    borderRadius: 12, borderWidth: 1.5, borderColor: 'transparent',
+    flex: 1, alignItems: 'center', gap: 5, paddingVertical: 12, paddingHorizontal: 8,
+    borderRadius: 16, borderWidth: 1.5, borderColor: 'transparent',
   },
-  iconEmoji:  { fontSize: 24 },
+  iconEmoji:  { fontSize: 26 },
   iconLabel:  { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
-  sliderWrap: { borderRadius: 12, paddingHorizontal: 4, paddingTop: 8, paddingBottom: 4 },
+  sliderWrap: { borderRadius: 14, paddingHorizontal: 6, paddingTop: 10, paddingBottom: 6 },
   slider:     { width: '100%', height: 40 },
-  pct:        { textAlign: 'center', fontSize: 13, fontWeight: '800', marginBottom: 4 },
+  pct:        { textAlign: 'center', fontSize: 14, fontWeight: '800', marginBottom: 4 },
 })

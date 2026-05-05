@@ -29,49 +29,50 @@ function TaskRow({ task, onToggle, onDelete, getCatColor }: {
   onDelete:    () => void
   getCatColor: (c: TaskCategory) => string
 }) {
+  const { t } = useTheme()
   const color = getCatColor(task.category)
   return (
-    <View style={[row.card, { borderLeftColor: color }]}>
+    <View style={[row.card, { backgroundColor: t.card, borderColor: t.cardBorder, borderLeftColor: color }]}>
       <TouchableOpacity onPress={onToggle} style={row.check} hitSlop={8}>
-        <View style={[row.checkbox, task.done && { backgroundColor: '#4f3aff', borderColor: '#4f3aff' }]} />
+        <View style={[row.checkbox, { borderColor: '#6366F1' }, task.done && { backgroundColor: '#6366F1', borderColor: '#6366F1' }]} />
       </TouchableOpacity>
       <View style={row.body}>
         <Text
-          style={[row.title, task.done && { color: '#aaa', textDecorationLine: 'line-through' }]}
+          style={[row.title, { color: t.t1 }, task.done && { color: t.t3, textDecorationLine: 'line-through' }]}
           numberOfLines={2}
         >
           {task.title}
         </Text>
         <View style={row.meta}>
-          <View style={[row.tag, { backgroundColor: `${color}22` }]}>
+          <View style={[row.tag, { backgroundColor: `${color}18` }]}>
             <Text style={[row.tagText, { color }]}>{task.category}</Text>
           </View>
-          <Text style={row.dot}>·</Text>
-          <Text style={row.priority}>
+          <Text style={[row.dot, { color: t.t3 }]}>·</Text>
+          <Text style={[row.priority, { color: t.t2 }]}>
             {task.priority === 1 ? 'High' : task.priority === 2 ? 'Medium' : 'Low'}
           </Text>
         </View>
       </View>
       <TouchableOpacity onPress={onDelete} hitSlop={8} style={row.del}>
-        <Text style={row.delText}>✕</Text>
+        <Text style={[row.delText, { color: t.t3 }]}>✕</Text>
       </TouchableOpacity>
     </View>
   )
 }
 
 const row = StyleSheet.create({
-  card:     { marginHorizontal: 12, marginBottom: 8, borderRadius: 16, borderWidth: 1, borderColor: '#f0eeff', borderLeftWidth: 3, padding: 12, flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: '#fff' },
+  card:     { marginHorizontal: 16, marginBottom: 10, borderRadius: 18, borderWidth: 1, borderLeftWidth: 4, paddingHorizontal: 14, paddingVertical: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 12, shadowColor: '#6366F1', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
   check:    { paddingTop: 2 },
-  checkbox: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: '#4f3aff' },
+  checkbox: { width: 22, height: 22, borderRadius: 11, borderWidth: 2 },
   body:     { flex: 1, minWidth: 0 },
-  title:    { fontSize: 14, fontWeight: '600', color: '#111' },
-  meta:     { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4, flexWrap: 'wrap' },
-  tag:      { borderRadius: 999, paddingHorizontal: 8, paddingVertical: 2 },
-  tagText:  { fontSize: 9, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.5 },
-  dot:      { fontSize: 10, color: '#ccc' },
-  priority: { fontSize: 11, color: '#888' },
-  del:      { paddingLeft: 4 },
-  delText:  { fontSize: 13, color: '#ccc' },
+  title:    { fontSize: 15, fontWeight: '600' },
+  meta:     { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 5, flexWrap: 'wrap' },
+  tag:      { borderRadius: 999, paddingHorizontal: 10, paddingVertical: 3 },
+  tagText:  { fontSize: 9, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.6 },
+  dot:      { fontSize: 10 },
+  priority: { fontSize: 11, fontWeight: '500' },
+  del:      { paddingLeft: 4, paddingTop: 2 },
+  delText:  { fontSize: 14 },
 })
 
 export default function TasksScreen() {
@@ -211,11 +212,11 @@ export default function TasksScreen() {
                     key={p.value}
                     onPress={() => setPriority(p.value)}
                     style={[styles.pill, {
-                      backgroundColor: active ? 'rgba(79,58,255,0.12)' : t.bg,
-                      borderColor:     active ? '#4f3aff' : t.cardBorder,
+                      backgroundColor: active ? 'rgba(99,102,241,0.1)' : t.bg,
+                      borderColor:     active ? '#6366F1' : t.cardBorder,
                     }]}
                   >
-                    <Text style={[styles.pillText, { color: active ? '#4f3aff' : t.t2 }]}>
+                    <Text style={[styles.pillText, { color: active ? '#6366F1' : t.t2 }]}>
                       {p.label}
                     </Text>
                   </TouchableOpacity>
@@ -247,27 +248,27 @@ export default function TasksScreen() {
 
 const styles = StyleSheet.create({
   container:    { flex: 1 },
-  header:       { paddingHorizontal: 20, paddingBottom: 24 },
-  label:        { fontSize: 10, fontWeight: '600', letterSpacing: 2, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', marginBottom: 8 },
-  title:        { fontSize: 26, fontWeight: '900', color: '#fff' },
-  addBtn:       { alignSelf: 'flex-start', marginTop: 16, backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 10 },
+  header:       { paddingHorizontal: 22, paddingBottom: 28 },
+  label:        { fontSize: 10, fontWeight: '600', letterSpacing: 2, color: 'rgba(255,255,255,0.65)', textTransform: 'uppercase', marginBottom: 10 },
+  title:        { fontSize: 28, fontWeight: '900', color: '#fff' },
+  addBtn:       { alignSelf: 'flex-start', marginTop: 18, backgroundColor: 'rgba(255,255,255,0.18)', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.28)', borderRadius: 14, paddingHorizontal: 18, paddingVertical: 12 },
   addBtnText:   { color: '#fff', fontSize: 14, fontWeight: '700' },
   scroll:       { flex: 1 },
-  content:      { paddingTop: 12, paddingBottom: 32 },
-  sectionLabel: { marginHorizontal: 12, marginTop: 12, marginBottom: 6, fontSize: 10, fontWeight: '700', letterSpacing: 1.5, textTransform: 'uppercase', color: '#ccc' },
-  empty:        { marginHorizontal: 12, marginTop: 8, borderRadius: 16, borderWidth: 1, padding: 32, alignItems: 'center' },
-  emptyText:    { fontSize: 14, textAlign: 'center' },
+  content:      { paddingTop: 14, paddingBottom: 36 },
+  sectionLabel: { marginHorizontal: 16, marginTop: 16, marginBottom: 8, fontSize: 10, fontWeight: '700', letterSpacing: 1.5, textTransform: 'uppercase' },
+  empty:        { marginHorizontal: 16, marginTop: 12, borderRadius: 20, borderWidth: 1, padding: 40, alignItems: 'center' },
+  emptyText:    { fontSize: 14, textAlign: 'center', lineHeight: 22 },
   kavWrapper:   { flex: 1 },
-  overlay:      { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-  sheet:        { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, gap: 12 },
-  handle:       { width: 36, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 4 },
-  sheetTitle:   { fontSize: 18, fontWeight: '800' },
-  input:        { borderWidth: 1, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15 },
-  fieldLabel:   { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, textTransform: 'uppercase', marginTop: 4 },
+  overlay:      { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end' },
+  sheet:        { borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, gap: 14 },
+  handle:       { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 6 },
+  sheetTitle:   { fontSize: 19, fontWeight: '800' },
+  input:        { borderWidth: 1, borderRadius: 14, paddingHorizontal: 16, paddingVertical: 14, fontSize: 15 },
+  fieldLabel:   { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, textTransform: 'uppercase', marginTop: 6 },
   pills:        { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  pill:         { borderWidth: 1, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 7 },
+  pill:         { borderWidth: 1.5, borderRadius: 999, paddingHorizontal: 16, paddingVertical: 8 },
   pillText:     { fontSize: 12, fontWeight: '700' },
-  createBtn:    { marginTop: 4 },
-  createGradient:{ borderRadius: 14, paddingVertical: 16, alignItems: 'center' },
+  createBtn:    { marginTop: 6 },
+  createGradient:{ borderRadius: 16, paddingVertical: 18, alignItems: 'center' },
   createBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 })

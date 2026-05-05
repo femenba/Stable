@@ -1,0 +1,14 @@
+{
+  "id": "session-1777975579158",
+  "startedAt": "2026-05-05T10:06:19.158Z",
+  "cwd": "/Users/femenba/stable",
+  "context": {},
+  "metrics": {
+    "edits": 0,
+    "commands": 0,
+    "tasks": 0,
+    "errors": 0
+  },
+  "endedAt": "2026-05-05T10:18:19.562Z",
+  "duration": 720408
+}

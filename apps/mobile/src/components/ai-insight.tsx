@@ -19,8 +19,8 @@ export function AiInsight() {
 }
 
 const styles = StyleSheet.create({
-  card:      { marginHorizontal: 12, marginTop: 12, borderRadius: 16, borderWidth: 1, padding: 14 },
-  badge:     { alignSelf: 'flex-start', backgroundColor: 'rgba(99,102,241,0.12)', borderWidth: 1, borderColor: 'rgba(99,102,241,0.3)', borderRadius: 999, paddingHorizontal: 8, paddingVertical: 3, marginBottom: 8 },
-  badgeText: { fontSize: 9, fontWeight: '800', letterSpacing: 1, color: '#4f3aff', textTransform: 'uppercase' },
-  body:      { fontSize: 13, lineHeight: 20 },
+  card:      { marginHorizontal: 16, marginTop: 14, borderRadius: 18, borderWidth: 1, padding: 16, shadowColor: '#6366F1', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
+  badge:     { alignSelf: 'flex-start', backgroundColor: 'rgba(99,102,241,0.1)', borderWidth: 1, borderColor: 'rgba(99,102,241,0.25)', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4, marginBottom: 10 },
+  badgeText: { fontSize: 9, fontWeight: '800', letterSpacing: 1, color: '#6366F1', textTransform: 'uppercase' },
+  body:      { fontSize: 14, lineHeight: 21 },
 })

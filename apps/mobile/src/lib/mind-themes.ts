@@ -13,15 +13,15 @@ export type MindTheme = {
 
 export const MIND_THEMES: Record<string, MindTheme> = {
   minimal: {
-    bg:            '#fafafe',
-    card:          '#ffffff',
-    accent:        '#4f3aff',
-    accentSoft:    'rgba(79,58,255,0.08)',
-    t1:            '#111111',
-    t2:            '#888888',
-    t3:            '#cccccc',
-    gradientStart: '#4f3aff',
-    gradientEnd:   '#7c3aed',
+    bg:            '#F6F5FF',
+    card:          '#FFFFFF',
+    accent:        '#6366F1',
+    accentSoft:    'rgba(99,102,241,0.09)',
+    t1:            '#1C1A3A',
+    t2:            '#6B688A',
+    t3:            '#C0BDDA',
+    gradientStart: '#5B4FCE',
+    gradientEnd:   '#7260D8',
   },
   night: {
     bg:            '#0d0d1a',

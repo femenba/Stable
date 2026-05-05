@@ -779,94 +779,96 @@ export default function SupportScreen() {
 // ─── StyleSheets ──────────────────────────────────────────────────────────────
 
 const cmpStyles = StyleSheet.create({
-  wrap:    { alignItems: 'center', gap: 14, padding: 24 },
-  emoji:   { fontSize: 56 },
-  title:   { fontSize: 28, fontWeight: '900' },
-  sub:     { fontSize: 16, textAlign: 'center', lineHeight: 24 },
-  btns:    { gap: 12, width: '100%', marginTop: 12 },
-  btn:     { borderRadius: 14, paddingVertical: 18, alignItems: 'center' },
+  wrap:    { alignItems: 'center', gap: 16, padding: 28 },
+  emoji:   { fontSize: 64 },
+  title:   { fontSize: 30, fontWeight: '900' },
+  sub:     { fontSize: 16, textAlign: 'center', lineHeight: 26 },
+  btns:    { gap: 12, width: '100%', marginTop: 16 },
+  btn:     { borderRadius: 16, paddingVertical: 18, alignItems: 'center' },
   btnText: { color: '#fff', fontSize: 16, fontWeight: '800' },
 })
 
 const shlStyles = StyleSheet.create({
-  header:   { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 8 },
+  header:   { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingBottom: 10 },
   backText: { fontSize: 16, fontWeight: '600' },
   title:    { fontSize: 17, fontWeight: '800' },
   step:     { fontSize: 11, fontWeight: '600', marginTop: 2 },
-  body:     { padding: 20, gap: 20, paddingBottom: 60 },
+  body:     { padding: 24, gap: 22, paddingBottom: 64 },
 })
 
 const chipStyles = StyleSheet.create({
-  row:  { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { borderWidth: 1.5, borderRadius: 999, paddingHorizontal: 16, paddingVertical: 10 },
+  row:  { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  chip: { borderWidth: 1.5, borderRadius: 999, paddingHorizontal: 18, paddingVertical: 11 },
   text: { fontSize: 14, fontWeight: '700' },
 })
 
 const sessStyles = StyleSheet.create({
   fullCentre: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  q:          { fontSize: 24, fontWeight: '900', lineHeight: 32 },
-  qSub:       { fontSize: 15, lineHeight: 22 },
-  nextBtn:    { borderRadius: 16, paddingVertical: 18, alignItems: 'center' },
-  nextBtnText:{ color: '#fff', fontSize: 16, fontWeight: '800' },
+  q:          { fontSize: 26, fontWeight: '900', lineHeight: 34 },
+  qSub:       { fontSize: 16, lineHeight: 24 },
+  nextBtn:    { borderRadius: 18, paddingVertical: 20, alignItems: 'center' },
+  nextBtnText:{ color: '#fff', fontSize: 16, fontWeight: '800', letterSpacing: 0.3 },
   input: {
-    borderWidth: 1.5, borderRadius: 12,
-    paddingHorizontal: 16, paddingVertical: 14,
-    fontSize: 15, minHeight: 80, textAlignVertical: 'top',
+    borderWidth: 1, borderRadius: 16,
+    paddingHorizontal: 18, paddingVertical: 16,
+    fontSize: 15, minHeight: 90, textAlignVertical: 'top',
   },
 })
 
 const grndStyles = StyleSheet.create({
-  row:     { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: 12, borderWidth: 1.5 },
-  dot:     { width: 24, height: 24, borderRadius: 12, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+  row:     { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 18, borderRadius: 16, borderWidth: 1.5 },
+  dot:     { width: 26, height: 26, borderRadius: 13, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   tick:    { color: '#fff', fontSize: 12, fontWeight: '800' },
   rowText: { fontSize: 15, fontWeight: '600' },
 })
 
 const waveStyles = StyleSheet.create({
-  track: { borderRadius: 8, height: 14, overflow: 'hidden' },
-  fill:  { height: '100%', borderRadius: 8 },
-  timer: { textAlign: 'center', fontSize: 40, fontWeight: '900' },
+  track: { borderRadius: 10, height: 16, overflow: 'hidden' },
+  fill:  { height: '100%', borderRadius: 10 },
+  timer: { textAlign: 'center', fontSize: 48, fontWeight: '900', letterSpacing: -1 },
 })
 
 const bStyles = StyleSheet.create({
   container:   { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  centreWrap:  { alignItems: 'center', gap: 20 },
+  centreWrap:  { alignItems: 'center', gap: 24 },
   circle: {
-    width: 200, height: 200, borderRadius: 100,
+    width: 220, height: 220, borderRadius: 110,
     borderWidth: 3, alignItems: 'center', justifyContent: 'center',
+    shadowColor: '#6366F1', shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2, shadowRadius: 20, elevation: 6,
   },
-  idleTitle:   { fontSize: 22, fontWeight: '900' },
-  idleSub:     { fontSize: 14 },
-  startBtn:    { borderRadius: 16, paddingVertical: 16, paddingHorizontal: 40 },
+  idleTitle:   { fontSize: 24, fontWeight: '900' },
+  idleSub:     { fontSize: 15 },
+  startBtn:    { borderRadius: 18, paddingVertical: 18, paddingHorizontal: 44 },
   startBtnText:{ color: '#fff', fontSize: 16, fontWeight: '800' },
-  cancelLink:  { paddingVertical: 8 },
-  cancelText:  { fontSize: 14 },
+  cancelLink:  { paddingVertical: 10 },
+  cancelText:  { fontSize: 15 },
   cycleCount:  { fontSize: 12, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase' },
-  phaseLabel:  { fontSize: 16, fontWeight: '700' },
-  countdown:   { fontSize: 40, fontWeight: '900', marginTop: 4 },
-  stopBtn:     { borderWidth: 1.5, borderRadius: 14, paddingVertical: 14, paddingHorizontal: 32 },
+  phaseLabel:  { fontSize: 17, fontWeight: '700' },
+  countdown:   { fontSize: 44, fontWeight: '900', marginTop: 4 },
+  stopBtn:     { borderWidth: 1.5, borderRadius: 16, paddingVertical: 16, paddingHorizontal: 36 },
   stopBtnText: { fontSize: 15, fontWeight: '700' },
 })
 
 const scrnStyles = StyleSheet.create({
   container:    { flex: 1 },
-  header:       { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 8 },
+  header:       { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingBottom: 10 },
   backText:     { fontSize: 16, fontWeight: '600' },
   headerTitle:  { flex: 1, textAlign: 'center', fontSize: 17, fontWeight: '800' },
-  body:         { padding: 16, gap: 14 },
-  heroSub:      { fontSize: 15, textAlign: 'center', lineHeight: 22 },
-  section:      { borderRadius: 18, borderWidth: 1.5, padding: 18, gap: 14 },
-  sectionLabel: { fontSize: 15, fontWeight: '800' },
-  feelingMsg:   { borderWidth: 1.5, borderRadius: 12, padding: 12 },
-  feelingMsgText:{ fontSize: 14, fontWeight: '600', lineHeight: 20, textAlign: 'center' },
+  body:         { padding: 20, gap: 16 },
+  heroSub:      { fontSize: 16, textAlign: 'center', lineHeight: 24 },
+  section:      { borderRadius: 22, borderWidth: 1, padding: 20, gap: 16, shadowColor: '#6366F1', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.06, shadowRadius: 12, elevation: 2 },
+  sectionLabel: { fontSize: 16, fontWeight: '800' },
+  feelingMsg:   { borderWidth: 1, borderRadius: 14, padding: 14 },
+  feelingMsgText:{ fontSize: 14, fontWeight: '600', lineHeight: 21, textAlign: 'center' },
   toolsLabel:   { fontSize: 10, fontWeight: '800', letterSpacing: 1.5, textTransform: 'uppercase', marginTop: 4 },
-  card:         { borderRadius: 16, borderWidth: 1.5, overflow: 'hidden' },
-  cardRow:      { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 },
-  iconWrap:     { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  icon:         { fontSize: 22 },
+  card:         { borderRadius: 20, borderWidth: 1, overflow: 'hidden', shadowColor: '#6366F1', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 2 },
+  cardRow:      { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16 },
+  iconWrap:     { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  icon:         { fontSize: 24 },
   cardBody:     { flex: 1, minWidth: 0 },
   cardTitle:    { fontSize: 15, fontWeight: '800' },
-  cardSummary:  { fontSize: 12, marginTop: 2, lineHeight: 16 },
-  startBtn:     { borderTopWidth: 1, paddingVertical: 14, alignItems: 'center' },
+  cardSummary:  { fontSize: 13, marginTop: 3, lineHeight: 18 },
+  startBtn:     { borderTopWidth: 1, paddingVertical: 16, alignItems: 'center' },
   startBtnText: { fontSize: 14, fontWeight: '800' },
 })

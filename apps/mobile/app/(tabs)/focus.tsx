@@ -157,9 +157,9 @@ export default function FocusScreen() {
   }
 
   const timerColor =
-    status === 'done'  ? '#16a34a' :
+    status === 'done'  ? '#22c55e' :
     status === 'idle'  ? t.t3      :
-    '#4f3aff'
+    '#6366F1'
 
   const progress = totalSeconds > 0 ? secondsLeft / totalSeconds : 1
 
@@ -209,7 +209,7 @@ export default function FocusScreen() {
                   styles.progressFill,
                   {
                     width:           `${progress * 100}%`,
-                    backgroundColor: status === 'done' ? '#16a34a' : '#4f3aff',
+                    backgroundColor: status === 'done' ? '#22c55e' : '#6366F1',
                   },
                 ]}
               />
@@ -237,12 +237,12 @@ export default function FocusScreen() {
                         style={[
                           styles.pill,
                           {
-                            backgroundColor: active ? 'rgba(79,58,255,0.12)' : t.bg,
-                            borderColor:     active ? '#4f3aff' : t.cardBorder,
+                            backgroundColor: active ? 'rgba(99,102,241,0.1)' : t.bg,
+                            borderColor:     active ? '#6366F1' : t.cardBorder,
                           },
                         ]}
                       >
-                        <Text style={[styles.pillText, { color: active ? '#4f3aff' : t.t2 }]}>
+                        <Text style={[styles.pillText, { color: active ? '#6366F1' : t.t2 }]}>
                           {m}m
                         </Text>
                       </TouchableOpacity>
@@ -253,12 +253,12 @@ export default function FocusScreen() {
                     style={[
                       styles.pill,
                       {
-                        backgroundColor: isCustom ? 'rgba(79,58,255,0.12)' : t.bg,
-                        borderColor:     isCustom ? '#4f3aff' : t.cardBorder,
+                        backgroundColor: isCustom ? 'rgba(99,102,241,0.1)' : t.bg,
+                        borderColor:     isCustom ? '#6366F1' : t.cardBorder,
                       },
                     ]}
                   >
-                    <Text style={[styles.pillText, { color: isCustom ? '#4f3aff' : t.t2 }]}>
+                    <Text style={[styles.pillText, { color: isCustom ? '#6366F1' : t.t2 }]}>
                       Custom
                     </Text>
                   </TouchableOpacity>
@@ -268,7 +268,7 @@ export default function FocusScreen() {
                 {isCustom && (
                   <View style={styles.customRow}>
                     <TextInput
-                      style={[styles.customInput, { backgroundColor: t.bg, borderColor: '#4f3aff', color: t.t1 }]}
+                      style={[styles.customInput, { backgroundColor: t.bg, borderColor: '#6366F1', color: t.t1 }]}
                       value={customInput}
                       onChangeText={setCustomInput}
                       onBlur={applyCustomInput}
@@ -282,7 +282,7 @@ export default function FocusScreen() {
                     <Text style={[styles.customUnit, { color: t.t2 }]}>min</Text>
                     <TouchableOpacity
                       onPress={applyCustomInput}
-                      style={[styles.customApply, { backgroundColor: '#4f3aff', opacity: customInput ? 1 : 0.4 }]}
+                      style={[styles.customApply, { backgroundColor: '#6366F1', opacity: customInput ? 1 : 0.4 }]}
                       disabled={!customInput}
                     >
                       <Text style={styles.customApplyText}>Set</Text>
@@ -347,7 +347,7 @@ export default function FocusScreen() {
             {status === 'done' && (
               <TouchableOpacity onPress={handleReset} style={styles.fullWidth}>
                 <LinearGradient
-                  colors={['#16a34a', '#15803d']}
+                  colors={['#22c55e', '#16a34a']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.primaryBtn}
@@ -365,34 +365,34 @@ export default function FocusScreen() {
 
 const styles = StyleSheet.create({
   container:        { flex: 1 },
-  header:           { paddingHorizontal: 20, paddingBottom: 24 },
-  label:            { fontSize: 10, fontWeight: '600', letterSpacing: 2, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', marginBottom: 8 },
-  title:            { fontSize: 26, fontWeight: '900', color: '#fff' },
+  header:           { paddingHorizontal: 22, paddingBottom: 28 },
+  label:            { fontSize: 10, fontWeight: '600', letterSpacing: 2, color: 'rgba(255,255,255,0.65)', textTransform: 'uppercase', marginBottom: 10 },
+  title:            { fontSize: 28, fontWeight: '900', color: '#fff' },
   scroll:           { flex: 1 },
-  content:          { paddingTop: 20, paddingHorizontal: 12, paddingBottom: 32 },
-  timerCard:        { borderRadius: 20, borderWidth: 1, padding: 24, alignItems: 'center', gap: 12 },
-  taskName:         { fontSize: 13, fontWeight: '600', textAlign: 'center', marginBottom: -4 },
-  timer:            { fontSize: 64, fontWeight: '900', fontVariant: ['tabular-nums'], letterSpacing: -2 },
-  progressTrack:    { width: '100%', height: 4, borderRadius: 2, overflow: 'hidden' },
-  progressFill:     { height: 4, borderRadius: 2 },
-  timerSub:         { fontSize: 13, textAlign: 'center' },
-  pickerSection:    { width: '100%', gap: 10 },
+  content:          { paddingTop: 24, paddingHorizontal: 16, paddingBottom: 36 },
+  timerCard:        { borderRadius: 24, borderWidth: 1, padding: 28, alignItems: 'center', gap: 16, shadowColor: '#6366F1', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.08, shadowRadius: 16, elevation: 4 },
+  taskName:         { fontSize: 14, fontWeight: '600', textAlign: 'center', marginBottom: -8 },
+  timer:            { fontSize: 72, fontWeight: '900', fontVariant: ['tabular-nums'], letterSpacing: -3 },
+  progressTrack:    { width: '100%', height: 6, borderRadius: 3, overflow: 'hidden' },
+  progressFill:     { height: 6, borderRadius: 3 },
+  timerSub:         { fontSize: 14, textAlign: 'center' },
+  pickerSection:    { width: '100%', gap: 12 },
   pickerLabel:      { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, textTransform: 'uppercase' },
   pills:            { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  pill:             { borderWidth: 1, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 7 },
+  pill:             { borderWidth: 1.5, borderRadius: 999, paddingHorizontal: 16, paddingVertical: 9 },
   pillText:         { fontSize: 13, fontWeight: '700' },
   customRow:        { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  customInput:      { borderWidth: 1, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, fontSize: 16, fontWeight: '700', width: 90, textAlign: 'center' },
+  customInput:      { borderWidth: 1.5, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 16, fontWeight: '700', width: 96, textAlign: 'center' },
   customUnit:       { fontSize: 14, fontWeight: '600' },
-  customApply:      { borderRadius: 10, paddingHorizontal: 14, paddingVertical: 10 },
+  customApply:      { borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12 },
   customApplyText:  { color: '#fff', fontSize: 13, fontWeight: '700' },
   fullWidth:        { width: '100%' },
-  activeControls:   { width: '100%', gap: 10 },
-  cancelBtn:        { width: '100%', borderRadius: 14, borderWidth: 1, borderColor: '#dc2626', paddingVertical: 14, alignItems: 'center', backgroundColor: 'rgba(220,38,38,0.06)' },
-  cancelBtnText:    { fontSize: 14, fontWeight: '700', color: '#dc2626' },
-  primaryBtn:       { borderRadius: 14, paddingHorizontal: 32, paddingVertical: 16, alignItems: 'center' },
-  primaryBtnText:   { color: '#fff', fontSize: 15, fontWeight: '700' },
+  activeControls:   { width: '100%', gap: 12 },
+  cancelBtn:        { width: '100%', borderRadius: 16, borderWidth: 1, borderColor: '#ef4444', paddingVertical: 16, alignItems: 'center', backgroundColor: 'rgba(239,68,68,0.05)' },
+  cancelBtnText:    { fontSize: 14, fontWeight: '700', color: '#ef4444' },
+  primaryBtn:       { borderRadius: 16, paddingHorizontal: 32, paddingVertical: 18, alignItems: 'center' },
+  primaryBtnText:   { color: '#fff', fontSize: 15, fontWeight: '700', letterSpacing: 0.3 },
   row:              { flexDirection: 'row', gap: 10, width: '100%' },
-  secondaryBtn:     { borderRadius: 14, borderWidth: 1, paddingHorizontal: 20, paddingVertical: 16, alignItems: 'center' },
+  secondaryBtn:     { borderRadius: 16, borderWidth: 1.5, paddingHorizontal: 20, paddingVertical: 16, alignItems: 'center' },
   secondaryBtnText: { fontSize: 14, fontWeight: '600' },
 })

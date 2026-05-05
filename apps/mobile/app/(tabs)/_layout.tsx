@@ -5,11 +5,13 @@ import { useTheme } from '@/lib/use-theme'
 
 function TabIcon({ icon, label, focused }: { icon: string; label: string; focused: boolean }) {
   const { t } = useTheme()
-  const activeColor = '#4f3aff'
+  const activeColor = '#6366F1'
   return (
     <View style={styles.iconWrap}>
-      <Text style={styles.iconEmoji}>{icon}</Text>
-      {focused && <View style={[styles.dot, { backgroundColor: activeColor }]} />}
+      {focused && <View style={[styles.indicator, { backgroundColor: activeColor }]} />}
+      <View style={[styles.iconPill, focused && { backgroundColor: 'rgba(99,102,241,0.1)' }]}>
+        <Text style={[styles.iconEmoji, { opacity: focused ? 1 : 0.55 }]}>{icon}</Text>
+      </View>
       <Text style={[styles.iconLabel, { color: focused ? activeColor : t.t3 }]}>{label}</Text>
     </View>
   )
@@ -27,9 +29,14 @@ export default function TabLayout() {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: t.nav,
-          borderTopColor:  t.navBorder,
-          height: 72,
-          paddingBottom: 12,
+          borderTopWidth: 0,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -3 },
+          shadowOpacity: 0.06,
+          shadowRadius: 16,
+          elevation: 12,
+          height: 80,
+          paddingBottom: 8,
         },
         tabBarShowLabel: false,
       }}
@@ -59,8 +66,9 @@ export default function TabLayout() {
 }
 
 const styles = StyleSheet.create({
-  iconWrap:  { alignItems: 'center', gap: 2, paddingTop: 8 },
-  iconEmoji: { fontSize: 20 },
-  dot:       { width: 4, height: 4, borderRadius: 2 },
+  iconWrap:  { alignItems: 'center', gap: 3, paddingTop: 6, minWidth: 56 },
+  indicator: { position: 'absolute', top: -8, width: 20, height: 3, borderRadius: 1.5 },
+  iconPill:  { width: 40, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  iconEmoji: { fontSize: 19 },
   iconLabel: { fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
 })

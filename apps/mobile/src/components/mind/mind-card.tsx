@@ -50,16 +50,18 @@ export function MindCard({
 
 const styles = StyleSheet.create({
   card: {
-    flexDirection: 'row', alignItems: 'center', gap: 14,
-    borderWidth: 1.5, borderRadius: 16, padding: 14,
+    flexDirection: 'row', alignItems: 'center', gap: 16,
+    borderWidth: 1, borderRadius: 20, padding: 18,
+    shadowColor: '#6366F1', shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.07, shadowRadius: 12, elevation: 3,
   },
   iconWrap: {
-    width: 44, height: 44, borderRadius: 22,
+    width: 50, height: 50, borderRadius: 25,
     alignItems: 'center', justifyContent: 'center',
   },
-  icon:     { fontSize: 22 },
+  icon:     { fontSize: 24 },
   body:     { flex: 1, minWidth: 0 },
-  title:    { fontSize: 15, fontWeight: '800' },
-  subtitle: { fontSize: 12, marginTop: 2 },
-  chevron:  { fontSize: 22, fontWeight: '300' },
+  title:    { fontSize: 16, fontWeight: '800' },
+  subtitle: { fontSize: 13, marginTop: 3, lineHeight: 18 },
+  chevron:  { fontSize: 24, fontWeight: '300' },
 })

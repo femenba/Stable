@@ -54,7 +54,7 @@ export default function SignInScreen() {
       {!!error && <Text style={styles.error}>{error}</Text>}
 
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: '#4f3aff' }]}
+        style={[styles.button, { backgroundColor: '#6366F1' }]}
         onPress={handleSignIn}
       >
         <Text style={styles.buttonText}>Sign in</Text>
@@ -63,7 +63,7 @@ export default function SignInScreen() {
       <Link href="/(auth)/sign-up" asChild>
         <TouchableOpacity style={styles.link}>
           <Text style={[styles.linkText, { color: t.t2 }]}>
-            No account? <Text style={{ color: '#4f3aff' }}>Sign up</Text>
+            No account? <Text style={{ color: '#6366F1' }}>Sign up</Text>
           </Text>
         </TouchableOpacity>
       </Link>

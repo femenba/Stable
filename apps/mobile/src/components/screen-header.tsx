@@ -27,8 +27,8 @@ export function ScreenHeader({ label, title, subtitle }: ScreenHeaderProps) {
 }
 
 const styles = StyleSheet.create({
-  header:   { paddingHorizontal: 20, paddingBottom: 24 },
-  label:    { fontSize: 10, fontWeight: '600', letterSpacing: 2, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', marginBottom: 8 },
-  title:    { fontSize: 26, fontWeight: '900', color: '#ffffff', lineHeight: 32 },
-  subtitle: { fontSize: 12, color: 'rgba(255,255,255,0.65)', marginTop: 4 },
+  header:   { paddingHorizontal: 22, paddingBottom: 28 },
+  label:    { fontSize: 10, fontWeight: '600', letterSpacing: 2, color: 'rgba(255,255,255,0.65)', textTransform: 'uppercase', marginBottom: 10 },
+  title:    { fontSize: 28, fontWeight: '900', color: '#ffffff', lineHeight: 34 },
+  subtitle: { fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 6 },
 })

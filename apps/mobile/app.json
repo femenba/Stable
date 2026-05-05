@@ -10,7 +10,8 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.stable.app",
       "infoPlist": {
-        "NSUserNotificationsUsageDescription": "stable. uses notifications to remind you at the time you set."
+        "NSUserNotificationsUsageDescription": "stable. uses notifications to remind you at the time you set.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -18,7 +19,10 @@
       "adaptiveIcon": {
         "backgroundColor": "#4f3aff"
       },
-      "permissions": ["RECEIVE_BOOT_COMPLETED", "SCHEDULE_EXACT_ALARM"]
+      "permissions": [
+        "RECEIVE_BOOT_COMPLETED",
+        "SCHEDULE_EXACT_ALARM"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -32,6 +36,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "0b313b06-42af-47e1-9a95-aaf9537c25cd"
+      }
     }
   }
 }
