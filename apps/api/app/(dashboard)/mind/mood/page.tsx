@@ -68,14 +68,16 @@ export default function MoodPage() {
           MOBILE — hidden on md+
       ═══════════════════════════════════════════════════════ */}
       <div className="md:hidden">
-        <div className="px-4 pt-12 pb-5" style={{ background: 'var(--stable-header)' }}>
-          <div className="flex items-center justify-between mb-3">
+        <div className="relative overflow-hidden px-5 pt-12 pb-8" style={{ background: 'var(--stable-header)' }}>
+          <div style={{ position: 'absolute', top: -60, right: -60, width: 200, height: 200, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', filter: 'blur(40px)', pointerEvents: 'none' }} />
+          <div className="flex items-center justify-between mb-4">
             <Link href="/mind" className="text-sm font-semibold" style={{ color: 'rgba(255,255,255,0.8)' }}>
               ‹ Mind
             </Link>
             <ThemeToggle />
           </div>
-          <h1 className="text-2xl font-extrabold text-white">Mood Check-in</h1>
+          <h1 className="text-[26px] font-black text-white leading-tight">Mood Check-in</h1>
+          <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.58)' }}>A small moment of self-awareness.</p>
         </div>
 
         <div className="px-4 py-4 space-y-4">
@@ -98,20 +100,16 @@ export default function MoodPage() {
       {/* ═══════════════════════════════════════════════════════
           DESKTOP — hidden on mobile
       ═══════════════════════════════════════════════════════ */}
-      <div className="hidden md:block px-10 lg:px-14 pt-10 pb-12">
-        <div className="mb-8 flex items-start justify-between">
-          <div>
-            <Link href="/mind" className="text-xs font-semibold transition-opacity hover:opacity-70" style={{ color: 'var(--cat-work)' }}>
-              ← Mind
-            </Link>
-            <h1 className="text-[36px] font-extrabold mt-2" style={{ color: 'var(--stable-t1)' }}>
-              Mood Check-in
-            </h1>
-            <p className="text-sm mt-1" style={{ color: 'var(--stable-t2)' }}>
-              A small moment of self-awareness goes a long way.
-            </p>
+      <div className="hidden md:block">
+        <div className="relative overflow-hidden" style={{ background: 'var(--stable-header)' }}>
+          <div style={{ position: 'absolute', top: -80, right: -60, width: 260, height: 260, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', filter: 'blur(50px)', pointerEvents: 'none' }} />
+          <div className="px-10 lg:px-12 pt-12 pb-10">
+            <Link href="/mind" className="text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.65)' }}>← Mind</Link>
+            <h1 className="text-[44px] font-black text-white leading-[1.1] mt-3 mb-2">Mood Check-in</h1>
+            <p className="text-base" style={{ color: 'rgba(255,255,255,0.55)' }}>A small moment of self-awareness goes a long way.</p>
           </div>
         </div>
+        <div className="px-10 lg:px-12 pt-8 pb-12">
 
         <div className="grid grid-cols-3 gap-6 items-start">
           <div className="col-span-2">
@@ -131,6 +129,7 @@ export default function MoodPage() {
           <div className="col-span-1">
             <HistoryCard history={history} />
           </div>
+        </div>
         </div>
       </div>
     </div>
@@ -156,7 +155,7 @@ function MoodFormCard({
   return (
     <div
       className="rounded-2xl p-6"
-      style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)' }}
+      style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)', boxShadow: 'var(--shadow-card)' }}
     >
       {checkedIn && !showForm ? (
         <div className="text-center py-6 space-y-3">
@@ -195,14 +194,15 @@ function MoodFormCard({
                   <button
                     key={val}
                     onClick={() => setRating(val)}
-                    className="flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 transition-all"
+                    className="flex-1 flex flex-col items-center gap-2 py-4 rounded-2xl border-2 transition-all"
                     style={{
-                      borderColor:     active ? 'var(--cat-work)' : 'var(--stable-card-border)',
-                      background:      active ? 'rgba(99,102,241,0.08)' : 'transparent',
+                      borderColor: active ? 'var(--cat-work)' : 'var(--stable-card-border)',
+                      background:  active ? 'rgba(99,102,241,0.1)' : 'var(--stable-bg)',
+                      boxShadow:   active ? '0 4px 16px rgba(99,102,241,0.15)' : 'none',
                     }}
                   >
-                    <span className="text-2xl">{emoji}</span>
-                    <span className="text-[10px] font-semibold" style={{ color: active ? 'var(--cat-work)' : 'var(--stable-t3)' }}>
+                    <span className="text-3xl">{emoji}</span>
+                    <span className="text-[10px] font-bold" style={{ color: active ? 'var(--cat-work)' : 'var(--stable-t3)' }}>
                       {MOOD_LABELS[i]}
                     </span>
                   </button>
@@ -294,13 +294,14 @@ function MoodFormCard({
           <button
             onClick={onSubmit}
             disabled={!rating || isPending}
-            className="w-full py-4 rounded-xl text-white font-bold text-sm transition-opacity"
+            className="w-full py-4 rounded-2xl text-white font-black text-sm transition-opacity hover:opacity-90"
             style={{
-              background: 'var(--stable-cta)',
-              opacity: rating ? 1 : 0.4,
+              background:  'var(--stable-cta)',
+              boxShadow:   rating ? 'var(--shadow-cta)' : 'none',
+              opacity:     rating ? 1 : 0.35,
             }}
           >
-            {isPending ? 'Saving…' : 'Log mood'}
+            {isPending ? 'Saving…' : 'Log mood ✓'}
           </button>
         </div>
       )}
@@ -316,7 +317,7 @@ function HistoryCard({ history }: { history: { rating: number; createdAt: string
   return (
     <div
       className="rounded-2xl p-6"
-      style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)' }}
+      style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)', boxShadow: 'var(--shadow-card)' }}
     >
       <p className="text-[10px] font-semibold uppercase tracking-widest mb-4" style={{ color: 'var(--stable-t3)' }}>
         Recent entries

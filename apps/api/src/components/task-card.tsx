@@ -33,15 +33,22 @@ export function TaskCard({ task, onUpdate }: TaskCardProps) {
 
   return (
     <div
-      className="rounded-2xl px-4 py-3.5 flex items-start gap-3"
+      className="rounded-2xl px-4 py-4 flex items-start gap-3 transition-all"
       style={{
         background:      'var(--stable-card)',
         border:          '1px solid var(--stable-card-border)',
         borderLeftWidth: '4px',
-        borderLeftColor: color,
-        boxShadow:       '0 2px 12px rgba(99,102,241,0.05)',
+        borderLeftColor: isDone ? 'var(--stable-card-border)' : color,
+        boxShadow:       'var(--shadow-card)',
+        opacity:         isDone ? 0.6 : 1,
       }}
     >
+      {/* Category dot */}
+      <div
+        className="w-2 h-2 rounded-full shrink-0 mt-1.5"
+        style={{ background: isDone ? 'var(--stable-t3)' : color }}
+      />
+
       <div className="flex-1 min-w-0">
         <p
           className="text-sm font-semibold"
@@ -54,8 +61,8 @@ export function TaskCard({ task, onUpdate }: TaskCardProps) {
         </p>
         <div className="flex items-center gap-2 mt-1.5 flex-wrap">
           <span
-            className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide"
-            style={{ color, background: `${color}22` }}
+            className="text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider"
+            style={{ color, background: `${color}1A` }}
           >
             {CAT_LABEL[task.category] ?? 'Other'}
           </span>
@@ -72,12 +79,16 @@ export function TaskCard({ task, onUpdate }: TaskCardProps) {
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
+      <div className="flex items-center gap-1.5 shrink-0">
         <button
           onClick={() => complete.mutate({ id: task.id })}
           disabled={isDone || complete.isPending}
-          className="text-[11px] font-medium px-2.5 py-1 rounded-lg transition-colors disabled:opacity-40"
-          style={{ color: 'var(--stable-t2)', border: '1px solid var(--stable-card-border)' }}
+          className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold transition-all disabled:opacity-30"
+          style={{
+            background:  isDone ? 'rgba(99,102,241,0.12)' : 'var(--stable-bg)',
+            color:       isDone ? 'var(--cat-work)' : 'var(--stable-t2)',
+            border:      '1px solid var(--stable-card-border)',
+          }}
           title="Complete"
         >
           ✓
@@ -85,8 +96,12 @@ export function TaskCard({ task, onUpdate }: TaskCardProps) {
         <button
           onClick={() => del.mutate({ id: task.id })}
           disabled={del.isPending}
-          className="text-[11px] px-2.5 py-1 rounded-lg transition-colors disabled:opacity-40"
-          style={{ color: 'var(--stable-t3)', border: '1px solid var(--stable-card-border)' }}
+          className="w-8 h-8 rounded-xl flex items-center justify-center text-xs transition-all disabled:opacity-30 hover:opacity-60"
+          style={{
+            background: 'var(--stable-bg)',
+            color:      'var(--stable-t3)',
+            border:     '1px solid var(--stable-card-border)',
+          }}
           title="Delete"
         >
           ✕

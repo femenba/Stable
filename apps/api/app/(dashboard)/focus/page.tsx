@@ -39,101 +39,116 @@ export default function FocusPage() {
   return (
     <div>
       {/* Header */}
-      <div className="px-4 pt-12 pb-6 md:px-10 lg:px-12 md:pt-10 md:pb-8" style={{ background: 'var(--stable-header)' }}>
-        <div className="flex items-start justify-between mb-3">
-          <p className="text-[10px] font-medium uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.6)' }}>
+      <div className="relative overflow-hidden px-4 pt-12 pb-8 md:px-10 lg:px-12 md:pt-12 md:pb-10" style={{ background: 'var(--stable-header)' }}>
+        <div style={{ position: 'absolute', top: -60, right: -60, width: 200, height: 200, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', filter: 'blur(40px)', pointerEvents: 'none' }} />
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.5)' }}>
             FOCUS MODE
           </p>
           <span className="md:hidden"><ThemeToggle /></span>
         </div>
-        <h1 className="text-[26px] md:text-5xl font-extrabold text-white leading-tight">Focus</h1>
+        <h1 className="text-[28px] md:text-[44px] font-black text-white leading-tight">Focus</h1>
+        <p className="text-sm mt-1.5" style={{ color: 'rgba(255,255,255,0.58)' }}>
+          {activeSession ? 'Session in progress — stay with it.' : 'Deep work, one session at a time.'}
+        </p>
       </div>
 
       {/* Timer card */}
-      <div
-        className="mx-4 mt-4 rounded-2xl px-5 py-12 text-center md:mx-10 lg:mx-12 md:mt-6 md:py-16"
-        style={{
-          background: 'var(--stable-card)',
-          border:     '1px solid var(--stable-card-border)',
-          boxShadow:  '0 4px 24px rgba(99,102,241,0.08)',
-        }}
-      >
-        {activeSession ? (
-          <>
-            <div
-              className="text-6xl md:text-7xl font-mono font-bold tabular-nums mb-2"
-              style={{ color: 'var(--cat-work)', letterSpacing: '-2px' }}
-            >
-              <ElapsedTimer startedAt={activeSession.startedAt} />
-            </div>
-            <p className="text-xs mb-6" style={{ color: 'var(--stable-t2)' }}>
-              Focus session in progress
-            </p>
-            <div className="flex justify-center gap-3">
-              <button
-                onClick={() => end.mutate({ id: activeSession.id, completed: true })}
-                disabled={end.isPending}
-                className="text-sm font-semibold px-6 py-3 rounded-xl text-white disabled:opacity-50"
-                style={{ background: 'var(--stable-cta)' }}
+      <div className="px-4 md:px-10 lg:px-12 mt-6">
+        <div
+          className="rounded-2xl text-center"
+          style={{
+            background: 'var(--stable-card)',
+            border:     '1px solid var(--stable-card-border)',
+            boxShadow:  'var(--shadow-float)',
+            padding:    '56px 32px',
+          }}
+        >
+          {activeSession ? (
+            <>
+              <p className="text-[10px] font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--stable-t3)' }}>
+                Session running
+              </p>
+              <div
+                className="font-mono font-black tabular-nums mb-3 leading-none"
+                style={{ fontSize: 80, color: 'var(--cat-work)', letterSpacing: '-3px' }}
               >
-                End session ✓
-              </button>
-              <button
-                onClick={() => end.mutate({ id: activeSession.id, completed: false })}
-                disabled={end.isPending}
-                className="text-sm font-semibold px-6 py-3 rounded-xl disabled:opacity-50"
-                style={{ color: 'var(--stable-t2)', border: '1px solid var(--stable-card-border)' }}
+                <ElapsedTimer startedAt={activeSession.startedAt} />
+              </div>
+              <p className="text-sm mb-8" style={{ color: 'var(--stable-t2)' }}>
+                You&apos;re doing great. Keep going.
+              </p>
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={() => end.mutate({ id: activeSession.id, completed: true })}
+                  disabled={end.isPending}
+                  className="text-sm font-black px-8 py-4 rounded-2xl text-white disabled:opacity-50 transition-opacity hover:opacity-90"
+                  style={{ background: 'var(--stable-cta)', boxShadow: 'var(--shadow-cta)' }}
+                >
+                  End session ✓
+                </button>
+                <button
+                  onClick={() => end.mutate({ id: activeSession.id, completed: false })}
+                  disabled={end.isPending}
+                  className="text-sm font-semibold px-6 py-4 rounded-2xl disabled:opacity-50 transition-all hover:opacity-70"
+                  style={{ color: 'var(--stable-t2)', background: 'var(--stable-bg)', border: '1px solid var(--stable-card-border)' }}
+                >
+                  Abandon
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-[10px] font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--stable-t3)' }}>
+                Ready to focus
+              </p>
+              <div
+                className="font-mono font-black tabular-nums mb-3 leading-none"
+                style={{ fontSize: 80, color: 'var(--stable-t3)', letterSpacing: '-3px' }}
               >
-                Abandon
+                00:00
+              </div>
+              <p className="text-sm mb-8" style={{ color: 'var(--stable-t2)' }}>
+                Start a session and track your deep work time.
+              </p>
+              <button
+                onClick={() => start.mutate({})}
+                disabled={start.isPending}
+                className="text-sm font-black px-10 py-4 rounded-2xl text-white disabled:opacity-50 transition-opacity hover:opacity-90"
+                style={{ background: 'var(--stable-cta)', boxShadow: 'var(--shadow-cta)' }}
+              >
+                ▶ Start session
               </button>
-            </div>
-          </>
-        ) : (
-          <>
-            <div
-              className="text-6xl md:text-7xl font-mono font-bold tabular-nums mb-2"
-              style={{ color: 'var(--stable-t3)', letterSpacing: '-2px' }}
-            >
-              00:00
-            </div>
-            <p className="text-xs mb-6" style={{ color: 'var(--stable-t2)' }}>
-              Ready to focus
-            </p>
-            <button
-              onClick={() => start.mutate({})}
-              disabled={start.isPending}
-              className="text-sm font-semibold px-8 py-3 rounded-xl text-white disabled:opacity-50"
-              style={{ background: 'var(--stable-cta)' }}
-            >
-              ▶ Start session
-            </button>
-          </>
-        )}
+            </>
+          )}
+        </div>
       </div>
 
       {/* Session history */}
-      <div className="px-4 mt-4 pb-6 md:px-10 lg:px-12 md:mt-6">
-        <p className="text-[10px] font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--stable-t3)' }}>
+      <div className="px-4 mt-6 pb-8 md:px-10 lg:px-12">
+        <p className="text-[10px] font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--stable-t3)' }}>
           Recent sessions
         </p>
         {isLoading ? (
-          [0, 1].map((i) => (
-            <div key={i} className="h-14 rounded-xl animate-pulse mb-3" style={{ background: 'var(--stable-card)' }} />
-          ))
+          <div className="space-y-2">
+            {[0, 1].map((i) => (
+              <div key={i} className="h-16 rounded-2xl animate-pulse" style={{ background: 'var(--stable-card-border)' }} />
+            ))}
+          </div>
         ) : !pastSessions.length ? (
           <div
-            className="rounded-xl px-5 py-8 text-center text-sm"
-            style={{ background: 'var(--stable-card)', color: 'var(--stable-t3)' }}
+            className="rounded-2xl px-5 py-10 text-center text-sm"
+            style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)', color: 'var(--stable-t3)' }}
           >
             No completed sessions yet.
           </div>
         ) : (
-          <div className="space-y-3 md:space-y-4">
+          <div className="space-y-2">
             {pastSessions.map((s) => (
               <div
                 key={s.id}
-                className="rounded-xl px-4 py-4 flex items-center justify-between"
-                style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)' }}
+                className="rounded-2xl px-5 py-4 flex items-center justify-between"
+                style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)', boxShadow: 'var(--shadow-card)' }}
               >
                 <div>
                   <p className="text-sm font-semibold" style={{ color: 'var(--stable-t1)' }}>
@@ -141,20 +156,18 @@ export default function FocusPage() {
                   </p>
                   <p className="text-[10px] mt-0.5" style={{ color: 'var(--stable-t2)' }}>
                     {new Date(s.startedAt).toLocaleTimeString(undefined, { timeStyle: 'short' })}
-                    {s.endedAt
-                      ? ` → ${new Date(s.endedAt).toLocaleTimeString(undefined, { timeStyle: 'short' })}`
-                      : ''}
+                    {s.endedAt ? ` → ${new Date(s.endedAt).toLocaleTimeString(undefined, { timeStyle: 'short' })}` : ''}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold" style={{ color: 'var(--stable-t1)' }}>
+                  <p className="text-sm font-black" style={{ color: 'var(--stable-t1)' }}>
                     {s.durationMinutes != null ? `${s.durationMinutes}m` : '—'}
                   </p>
                   <p
-                    className="text-[10px]"
+                    className="text-[10px] font-semibold mt-0.5"
                     style={{ color: s.completed ? 'var(--cat-health)' : 'var(--stable-t3)' }}
                   >
-                    {s.completed ? 'Completed' : 'Abandoned'}
+                    {s.completed ? '✓ Completed' : 'Abandoned'}
                   </p>
                 </div>
               </div>

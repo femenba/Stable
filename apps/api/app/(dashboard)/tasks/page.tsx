@@ -14,11 +14,19 @@ const CATEGORIES: { value: TaskCategory; label: string }[] = [
   { value: 'other',    label: 'Other'    },
 ]
 
+const CAT_COLOR: Record<TaskCategory, string> = {
+  work:     'var(--cat-work)',
+  personal: 'var(--cat-personal)',
+  family:   'var(--cat-family)',
+  health:   'var(--cat-health)',
+  other:    'var(--cat-other)',
+}
+
 export default function TasksPage() {
-  const [title,     setTitle]     = useState('')
-  const [priority,  setPriority]  = useState<1 | 2 | 3>(2)
-  const [category,  setCategory]  = useState<TaskCategory>('work')
-  const [showForm,  setShowForm]  = useState(false)
+  const [title,    setTitle]    = useState('')
+  const [priority, setPriority] = useState<1 | 2 | 3>(2)
+  const [category, setCategory] = useState<TaskCategory>('work')
+  const [showForm, setShowForm] = useState(false)
 
   const utils = trpc.useUtils()
   const { data: tasks, isLoading } = trpc.tasks.list.useQuery({})
@@ -48,113 +56,176 @@ export default function TasksPage() {
   return (
     <div>
       {/* Header */}
-      <div className="px-4 pt-12 pb-6 md:px-10 lg:px-12 md:pt-10 md:pb-8" style={{ background: 'var(--stable-header)' }}>
-        <div className="flex items-start justify-between mb-3">
-          <p className="text-[10px] font-medium uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.6)' }}>
+      <div
+        className="relative overflow-hidden px-4 pt-12 pb-8 md:px-10 lg:px-12 md:pt-12 md:pb-10"
+        style={{ background: 'var(--stable-header)' }}
+      >
+        <div style={{ position: 'absolute', top: -60, right: -60, width: 200, height: 200, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', filter: 'blur(40px)', pointerEvents: 'none' }} />
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.5)' }}>
             YOUR TASKS
           </p>
           <span className="md:hidden"><ThemeToggle /></span>
         </div>
-        <h1 className="text-[26px] md:text-5xl font-extrabold text-white leading-tight">Tasks</h1>
-        <button
-          onClick={() => setShowForm((v) => !v)}
-          className="mt-4 rounded-xl px-4 py-2.5 text-sm font-semibold text-white"
-          style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)' }}
-        >
-          + Add task
-        </button>
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h1 className="text-[28px] md:text-[44px] font-black text-white leading-tight">Tasks</h1>
+            <p className="text-sm mt-1.5" style={{ color: 'rgba(255,255,255,0.58)' }}>
+              {isLoading ? '…' : `${pending.length} active · ${completed.length} done`}
+            </p>
+          </div>
+          <button
+            onClick={() => setShowForm((v) => !v)}
+            className="shrink-0 rounded-2xl px-5 py-3 text-sm font-black text-white transition-opacity hover:opacity-90"
+            style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.22)' }}
+          >
+            + Add task
+          </button>
+        </div>
       </div>
 
       {/* Create form */}
       {showForm && (
-        <div
-          className="mx-4 mt-4 rounded-xl px-4 py-5 md:mx-10 lg:mx-12 md:mt-6 md:px-6"
-          style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)' }}
-        >
-          <form onSubmit={handleCreate} className="space-y-3">
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Task title..."
-              autoFocus
-              className="w-full text-sm rounded-lg px-3 py-2.5 outline-none"
-              style={{
-                background: 'var(--stable-bg)',
-                color:      'var(--stable-t1)',
-                border:     '1px solid var(--stable-card-border)',
-              }}
-            />
-            <div className="flex gap-2 flex-wrap items-center">
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value as TaskCategory)}
-                className="text-xs rounded-lg px-3 py-2 outline-none"
-                style={{ background: 'var(--stable-bg)', color: 'var(--stable-t1)', border: '1px solid var(--stable-card-border)' }}
-              >
-                {CATEGORIES.map((c) => (
-                  <option key={c.value} value={c.value}>{c.label}</option>
-                ))}
-              </select>
-              <select
-                value={priority}
-                onChange={(e) => setPriority(Number(e.target.value) as 1 | 2 | 3)}
-                className="text-xs rounded-lg px-3 py-2 outline-none"
-                style={{ background: 'var(--stable-bg)', color: 'var(--stable-t1)', border: '1px solid var(--stable-card-border)' }}
-              >
-                <option value={1}>High priority</option>
-                <option value={2}>Medium priority</option>
-                <option value={3}>Low priority</option>
-              </select>
-              <div className="ml-auto flex gap-2">
+        <div className="px-4 mt-5 md:px-10 lg:px-12">
+          <div
+            className="rounded-2xl p-5"
+            style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)', boxShadow: 'var(--shadow-float)' }}
+          >
+            <p className="text-[10px] font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--stable-t3)' }}>
+              New task
+            </p>
+            <form onSubmit={handleCreate} className="space-y-4">
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="What do you need to do?"
+                autoFocus
+                className="w-full text-sm font-semibold rounded-xl px-4 py-3 outline-none"
+                style={{
+                  background: 'var(--stable-bg)',
+                  color:      'var(--stable-t1)',
+                  border:     '1px solid var(--stable-card-border)',
+                }}
+              />
+
+              {/* Category pills */}
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-widest mb-2" style={{ color: 'var(--stable-t3)' }}>Category</p>
+                <div className="flex gap-2 flex-wrap">
+                  {CATEGORIES.map((c) => {
+                    const active = category === c.value
+                    const color = CAT_COLOR[c.value]
+                    return (
+                      <button
+                        key={c.value}
+                        type="button"
+                        onClick={() => setCategory(c.value)}
+                        className="text-xs font-bold px-3 py-1.5 rounded-full border-2 transition-all"
+                        style={{
+                          borderColor: active ? color : 'var(--stable-card-border)',
+                          background:  active ? `${color}1A` : 'transparent',
+                          color:       active ? color : 'var(--stable-t2)',
+                        }}
+                      >
+                        {c.label}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Priority */}
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-widest mb-2" style={{ color: 'var(--stable-t3)' }}>Priority</p>
+                <div className="flex gap-2">
+                  {([1, 2, 3] as const).map((p) => {
+                    const labels = { 1: 'High', 2: 'Medium', 3: 'Low' }
+                    const active = priority === p
+                    return (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setPriority(p)}
+                        className="flex-1 text-xs font-bold py-2 rounded-xl border-2 transition-all"
+                        style={{
+                          borderColor: active ? 'var(--cat-work)' : 'var(--stable-card-border)',
+                          background:  active ? 'rgba(99,102,241,0.1)' : 'transparent',
+                          color:       active ? 'var(--cat-work)' : 'var(--stable-t2)',
+                        }}
+                      >
+                        {labels[p]}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-1">
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="text-xs px-3 py-2 rounded-lg"
-                  style={{ color: 'var(--stable-t2)' }}
+                  className="text-sm px-4 py-2.5 rounded-xl transition-opacity hover:opacity-70"
+                  style={{ color: 'var(--stable-t2)', background: 'var(--stable-bg)', border: '1px solid var(--stable-card-border)' }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={create.isPending || !title.trim()}
-                  className="text-xs font-semibold px-4 py-2 rounded-lg text-white disabled:opacity-50"
-                  style={{ background: 'var(--cat-work)' }}
+                  className="text-sm font-black px-6 py-2.5 rounded-xl text-white disabled:opacity-40 transition-opacity hover:opacity-90"
+                  style={{ background: 'var(--stable-cta)', boxShadow: 'var(--shadow-cta)' }}
                 >
-                  {create.isPending ? '...' : 'Create'}
+                  {create.isPending ? '…' : 'Create task'}
                 </button>
               </div>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       )}
 
       {/* Task list */}
-      <div className="px-4 mt-4 pb-6 space-y-3 md:px-10 lg:px-12 md:mt-6 md:space-y-4">
+      <div className="px-4 mt-5 pb-8 md:px-10 lg:px-12">
         {isLoading ? (
-          [0, 1, 2].map((i) => (
-            <div key={i} className="h-16 rounded-xl animate-pulse" style={{ background: 'var(--stable-card)' }} />
-          ))
+          <div className="space-y-2">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="h-[68px] rounded-2xl animate-pulse" style={{ background: 'var(--stable-card-border)' }} />
+            ))}
+          </div>
         ) : (
           <>
             {pending.map((task) => (
-              <TaskCard key={task.id} task={task} onUpdate={handleUpdate} />
+              <div key={task.id} className="mb-2">
+                <TaskCard task={task} onUpdate={handleUpdate} />
+              </div>
             ))}
             {!pending.length && !showForm && (
               <div
-                className="rounded-xl px-5 py-8 text-center text-sm"
-                style={{ background: 'var(--stable-card)', color: 'var(--stable-t3)' }}
+                className="rounded-2xl px-5 py-12 text-center"
+                style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)' }}
               >
-                No active tasks. Hit &quot;+ Add task&quot; above.
+                <p className="text-sm mb-2" style={{ color: 'var(--stable-t3)' }}>No active tasks</p>
+                <button
+                  onClick={() => setShowForm(true)}
+                  className="text-xs font-bold px-4 py-2 rounded-xl transition-opacity hover:opacity-70"
+                  style={{ background: 'rgba(99,102,241,0.1)', color: 'var(--cat-work)' }}
+                >
+                  + Add your first task
+                </button>
               </div>
             )}
             {completed.length > 0 && (
               <>
-                <p className="text-[10px] font-semibold uppercase tracking-widest pt-2" style={{ color: 'var(--stable-t3)' }}>
+                <p
+                  className="text-[10px] font-bold uppercase tracking-widest mt-6 mb-3"
+                  style={{ color: 'var(--stable-t3)' }}
+                >
                   Completed
                 </p>
                 {completed.map((task) => (
-                  <TaskCard key={task.id} task={task} onUpdate={handleUpdate} />
+                  <div key={task.id} className="mb-2">
+                    <TaskCard task={task} onUpdate={handleUpdate} />
+                  </div>
                 ))}
               </>
             )}

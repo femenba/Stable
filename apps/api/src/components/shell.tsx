@@ -14,8 +14,8 @@ const TABS = [
 ] as const
 
 export function Shell({ children }: { children: React.ReactNode }) {
-  const pathname  = usePathname()
-  const { user }  = useUser()
+  const pathname    = usePathname()
+  const { user }    = useUser()
   const { signOut } = useClerk()
 
   const initial = (user?.firstName?.[0] ?? user?.emailAddresses?.[0]?.emailAddress?.[0] ?? '?').toUpperCase()
@@ -23,27 +23,37 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const email   = user?.emailAddresses?.[0]?.emailAddress ?? ''
 
   return (
-    <div className="min-h-svh bg-stable-bg">
+    <div className="min-h-svh" style={{ background: 'var(--stable-bg)' }}>
 
-      {/* ── Desktop sidebar (md+) ─────────────────────────── */}
+      {/* ── Desktop sidebar ──────────────────────────────── */}
       <aside
         className="hidden md:flex md:flex-col md:fixed md:inset-y-0 md:left-0 md:w-60"
         style={{
           background:  'var(--stable-nav)',
           borderRight: '1px solid var(--stable-nav-border)',
-          boxShadow:   '2px 0 16px rgba(99,102,241,0.06)',
+          boxShadow:   '4px 0 24px rgba(99,102,241,0.06)',
           zIndex:      40,
         }}
       >
-        {/* Logo */}
-        <div className="px-6 py-6" style={{ borderBottom: '1px solid var(--stable-nav-border)' }}>
-          <p className="text-2xl font-black" style={{ color: 'var(--cat-work)' }}>stable.</p>
-          <p className="text-[10px] font-semibold mt-0.5 uppercase tracking-widest" style={{ color: 'var(--stable-t3)' }}>
-            Your focus companion
-          </p>
+        {/* Brand */}
+        <div className="px-5 py-6" style={{ borderBottom: '1px solid var(--stable-nav-border)' }}>
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-xs font-black shrink-0"
+              style={{ background: 'var(--stable-cta)', boxShadow: '0 4px 12px rgba(99,102,241,0.4)' }}
+            >
+              S
+            </div>
+            <div>
+              <p className="text-[17px] font-black leading-none" style={{ color: 'var(--stable-t1)' }}>stable.</p>
+              <p className="text-[10px] font-medium mt-0.5 uppercase tracking-widest" style={{ color: 'var(--stable-t3)' }}>
+                Focus companion
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* Nav links */}
+        {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-0.5">
           {TABS.map((tab) => {
             const isActive = tab.href === '/dashboard'
@@ -53,49 +63,60 @@ export function Shell({ children }: { children: React.ReactNode }) {
               <Link
                 key={tab.href}
                 href={tab.href}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                className="flex items-center gap-3 py-2.5 px-3 rounded-xl text-sm font-semibold transition-all"
                 style={{
-                  background:  isActive ? 'rgba(99,102,241,0.1)' : 'transparent',
-                  color:       isActive ? 'var(--cat-work)' : 'var(--stable-t2)',
-                  borderLeft:  isActive ? '3px solid var(--cat-work)' : '3px solid transparent',
+                  background: isActive ? 'rgba(99,102,241,0.1)' : 'transparent',
+                  color:      isActive ? 'var(--cat-work)' : 'var(--stable-t2)',
                 }}
               >
-                <span className="text-base leading-none w-5 text-center">{tab.icon}</span>
+                <span
+                  className="w-7 h-7 rounded-lg flex items-center justify-center text-sm shrink-0 transition-all"
+                  style={{
+                    background: isActive ? 'rgba(99,102,241,0.15)' : 'rgba(0,0,0,0.03)',
+                    fontSize:   '15px',
+                  }}
+                >
+                  {tab.icon}
+                </span>
                 <span>{tab.label}</span>
+                {isActive && (
+                  <span
+                    className="ml-auto w-1.5 h-4 rounded-full shrink-0"
+                    style={{ background: 'var(--cat-work)', opacity: 0.6 }}
+                  />
+                )}
               </Link>
             )
           })}
         </nav>
 
-        {/* User section */}
+        {/* User */}
         {user && (
           <div className="px-4 py-4" style={{ borderTop: '1px solid var(--stable-nav-border)' }}>
             <div className="flex items-center gap-3 mb-3">
               <div
-                className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
-                style={{ background: 'var(--stable-cta)' }}
+                className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-black shrink-0"
+                style={{ background: 'var(--stable-cta)', boxShadow: '0 2px 8px rgba(99,102,241,0.35)' }}
               >
                 {initial}
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-semibold truncate" style={{ color: 'var(--stable-t1)' }}>{name}</p>
-                {email && (
-                  <p className="text-[11px] truncate" style={{ color: 'var(--stable-t3)' }}>{email}</p>
-                )}
+                {email && <p className="text-[11px] truncate" style={{ color: 'var(--stable-t3)' }}>{email}</p>}
               </div>
             </div>
             <button
               onClick={() => signOut()}
-              className="w-full text-xs font-semibold py-2 rounded-lg transition-opacity hover:opacity-70"
-              style={{ color: 'var(--stable-t2)', background: 'var(--stable-card-border)' }}
+              className="w-full text-xs font-semibold py-2 rounded-xl transition-opacity hover:opacity-70"
+              style={{ color: 'var(--stable-t2)', background: 'var(--stable-bg)', border: '1px solid var(--stable-card-border)' }}
             >
               Sign out
             </button>
           </div>
         )}
 
-        {/* Theme toggle */}
-        <div className="px-6 py-5" style={{ borderTop: '1px solid var(--stable-nav-border)' }}>
+        {/* Theme */}
+        <div className="px-5 py-4" style={{ borderTop: '1px solid var(--stable-nav-border)' }}>
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium" style={{ color: 'var(--stable-t3)' }}>Appearance</span>
             <ThemeToggle />
@@ -103,20 +124,20 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      {/* ── Page content ──────────────────────────────────── */}
+      {/* ── Page content ─────────────────────────────────── */}
       <main className="md:ml-60 min-h-svh">
-        <div className="max-w-[480px] mx-auto pb-[76px] md:max-w-7xl md:mx-auto md:pb-12">
+        <div className="max-w-[480px] mx-auto pb-[80px] md:max-w-none md:pb-12">
           {children}
         </div>
       </main>
 
-      {/* ── Mobile bottom tab bar (hidden md+) ──────────────── */}
+      {/* ── Mobile bottom nav ────────────────────────────── */}
       <nav
         className="md:hidden fixed bottom-0 left-0 right-0"
         style={{
           background: 'var(--stable-nav)',
           borderTop:  '1px solid var(--stable-nav-border)',
-          boxShadow:  '0 -4px 20px rgba(99,102,241,0.08)',
+          boxShadow:  '0 -4px 24px rgba(99,102,241,0.08)',
           zIndex:     50,
         }}
       >
@@ -129,8 +150,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
               <Link
                 key={tab.href}
                 href={tab.href}
-                className="relative flex flex-col items-center pt-1 pb-3 px-3"
-                style={{ minWidth: 56 }}
+                className="relative flex flex-col items-center pt-1 pb-3 px-2"
+                style={{ minWidth: 52 }}
               >
                 {isActive && (
                   <span
@@ -138,9 +159,16 @@ export function Shell({ children }: { children: React.ReactNode }) {
                     style={{ background: 'var(--cat-work)' }}
                   />
                 )}
-                <span className="text-xl leading-none mt-2">{tab.icon}</span>
                 <span
-                  className="text-[9px] font-semibold uppercase tracking-wide mt-1"
+                  className="mt-2 w-8 h-8 rounded-xl flex items-center justify-center text-[17px] transition-all"
+                  style={{
+                    background: isActive ? 'rgba(99,102,241,0.1)' : 'transparent',
+                  }}
+                >
+                  {tab.icon}
+                </span>
+                <span
+                  className="text-[9px] font-semibold uppercase tracking-wide mt-0.5"
                   style={{ color: isActive ? 'var(--cat-work)' : 'var(--stable-t3)' }}
                 >
                   {tab.label}
@@ -150,17 +178,17 @@ export function Shell({ children }: { children: React.ReactNode }) {
           })}
           <button
             onClick={() => signOut()}
-            className="flex flex-col items-center pt-1 pb-3 px-3"
-            style={{ minWidth: 56 }}
+            className="flex flex-col items-center pt-1 pb-3 px-2"
+            style={{ minWidth: 52 }}
           >
             <span
-              className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[11px] font-bold leading-none mt-2"
-              style={{ background: 'var(--cat-work)' }}
+              className="mt-2 w-8 h-8 rounded-full flex items-center justify-center text-white text-[12px] font-black"
+              style={{ background: 'var(--stable-cta)' }}
             >
               {initial}
             </span>
-            <span className="text-[9px] font-semibold uppercase tracking-wide mt-1" style={{ color: 'var(--stable-t3)' }}>
-              Sign out
+            <span className="text-[9px] font-semibold uppercase tracking-wide mt-0.5" style={{ color: 'var(--stable-t3)' }}>
+              Me
             </span>
           </button>
         </div>
