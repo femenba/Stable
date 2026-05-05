@@ -7,32 +7,41 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAuth, useUser } from '@clerk/clerk-expo'
-import { AiInsight } from '@/components/ai-insight'
 import { useTheme } from '@/lib/use-theme'
 import { useLocalTasks } from '@/lib/use-local-tasks'
 import type { LocalTask } from '@/lib/use-local-tasks'
 import { useAllTasks } from '@/lib/use-all-tasks'
+import { Card, Btn, Label, SectionHeader } from '@/components/ui'
 
 export default function TodayScreen() {
-  const { t } = useTheme()
-  const insets = useSafeAreaInsets()
-  const router = useRouter()
+  const { t }    = useTheme()
+  const insets   = useSafeAreaInsets()
+  const router   = useRouter()
   const { signOut } = useAuth()
   const { user } = useUser()
 
-  const { tasks, addTask, toggleTask, removeTask, loaded } = useLocalTasks()
+  const { tasks, addTask, toggleTask, removeTask } = useLocalTasks()
   const { active: allActive } = useAllTasks()
 
   const [editingSlot, setEditingSlot] = useState<number | null>(null)
-  const [draftTitle, setDraftTitle] = useState('')
+  const [draftTitle,  setDraftTitle]  = useState('')
   const [showAccount, setShowAccount] = useState(false)
 
   const inputRef = useRef<TextInput>(null)
 
-  const today = new Date().toLocaleDateString('en-GB', { weekday: 'long' }).toUpperCase()
+  const hour      = new Date().getHours()
+  const greeting  = hour < 12 ? 'Morning' : hour < 17 ? 'Afternoon' : 'Evening'
+  const dateLabel = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' })
+
+  const firstName   = user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress?.split('@')[0] ?? ''
+  const avatarLetter = (firstName[0] ?? '?').toUpperCase()
+  const email        = user?.emailAddresses?.[0]?.emailAddress ?? ''
+
+  const slots: (LocalTask | null)[] = [tasks[0] ?? null, tasks[1] ?? null, tasks[2] ?? null]
+  const doneCount = tasks.filter((t) => t.done).length
 
   function handleSlotPress(index: number) {
-    if (tasks[index]) return // already filled
+    if (tasks[index]) return
     setDraftTitle('')
     setEditingSlot(index)
     setTimeout(() => inputRef.current?.focus(), 50)
@@ -48,64 +57,65 @@ export default function TodayScreen() {
     const firstActive = tasks.find((t) => !t.done) ?? allActive[0]
     router.push({
       pathname: '/(tabs)/focus',
-      params: {
-        taskName: firstActive?.title ?? '',
-        startTs:  String(Date.now()),
-      },
+      params:   { taskName: firstActive?.title ?? '', startTs: String(Date.now()) },
     })
   }
 
-  async function handleSignOut() {
-    setShowAccount(false)
-    await signOut()
-  }
-
-  const displayName =
-    user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress?.split('@')[0] ?? '?'
-  const avatarLetter = displayName[0]?.toUpperCase() ?? '?'
-  const email = user?.emailAddresses?.[0]?.emailAddress ?? ''
-
-  const slots: (LocalTask | null)[] = [
-    tasks[0] ?? null,
-    tasks[1] ?? null,
-    tasks[2] ?? null,
-  ]
-
   return (
-    <View style={[styles.container, { backgroundColor: t.bg }]}>
-      {/* Header */}
+    <View style={[s.root, { backgroundColor: t.bg }]}>
+
+      {/* ── HERO HEADER ─────────────────────────────── */}
       <LinearGradient
         colors={[t.headerStart, t.headerMid, t.headerEnd]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={[styles.header, { paddingTop: insets.top + 16 }]}
+        style={[s.hero, { paddingTop: insets.top + 18 }]}
       >
-        <View style={styles.headerRow}>
-          <View style={styles.headerText}>
-            <Text style={styles.label}>{today} · TODAY'S FOCUS</Text>
-            <Text style={styles.title}>Three things.{'\n'}That's it.</Text>
-            <Text style={styles.subtitle}>One at a time.</Text>
+        {/* Decorative blur circle */}
+        <View style={s.heroBlob} pointerEvents="none" />
+
+        <View style={s.heroRow}>
+          <View style={{ flex: 1 }}>
+            <Text style={s.heroDate}>{dateLabel.toUpperCase()}</Text>
+            <Text style={s.heroTitle}>Good {greeting}{firstName ? `,\n${firstName}` : '.'}</Text>
+            <Text style={s.heroSub}>Three tasks. One at a time.</Text>
+
+            {/* Progress chips */}
+            {tasks.length > 0 && (
+              <View style={s.chipRow}>
+                <View style={s.chip}>
+                  <Text style={s.chipText}>✓ {doneCount}/{tasks.length} done</Text>
+                </View>
+              </View>
+            )}
           </View>
-          <TouchableOpacity onPress={() => setShowAccount(true)} style={styles.avatarBtn}>
-            <Text style={styles.avatarLetter}>{avatarLetter}</Text>
+
+          {/* Avatar */}
+          <TouchableOpacity onPress={() => setShowAccount(true)} style={s.avatar}>
+            <Text style={s.avatarLetter}>{avatarLetter}</Text>
           </TouchableOpacity>
         </View>
       </LinearGradient>
 
-      {/* Content */}
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-        <AiInsight />
+      {/* ── SCROLL CONTENT ──────────────────────────── */}
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={[s.body, { paddingBottom: 40 }]}
+        showsVerticalScrollIndicator={false}
+      >
 
-        {/* 3 task slots */}
+        {/* Task slots */}
+        <SectionHeader label="Today's Focus" action="View all" onAction={() => router.push('/(tabs)/tasks')} />
+
         {slots.map((task, i) => {
           const isEditing = editingSlot === i
 
           if (isEditing) {
             return (
-              <View key={`slot-${i}`} style={[styles.slot, { backgroundColor: t.card, borderColor: '#5E8B71' }]}>
+              <View key={`edit-${i}`} style={[s.taskCard, { borderColor: '#5E8B71', borderWidth: 2, backgroundColor: t.card }]}>
                 <TextInput
                   ref={inputRef}
-                  style={[styles.slotInput, { color: t.t1 }]}
+                  style={[s.taskInput, { color: t.t1 }]}
                   placeholder={`Task ${i + 1}…`}
                   placeholderTextColor={t.t3}
                   value={draftTitle}
@@ -114,17 +124,13 @@ export default function TodayScreen() {
                   returnKeyType="done"
                   autoFocus
                 />
-                <View style={styles.slotActions}>
+                <View style={s.editActions}>
                   <TouchableOpacity onPress={() => { setEditingSlot(null); setDraftTitle('') }}>
-                    <Text style={[styles.slotActionCancel, { color: t.t3 }]}>Cancel</Text>
+                    <Text style={[s.cancelText, { color: t.t3 }]}>Cancel</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={handleConfirmAdd}
-                    disabled={!draftTitle.trim()}
-                    style={[styles.slotActionAdd, { opacity: draftTitle.trim() ? 1 : 0.4 }]}
-                  >
-                    <Text style={styles.slotActionAddText}>Add</Text>
-                  </TouchableOpacity>
+                  <Btn variant="primary" size="sm" onPress={handleConfirmAdd} disabled={!draftTitle.trim()}>
+                    Add
+                  </Btn>
                 </View>
               </View>
             )
@@ -132,22 +138,30 @@ export default function TodayScreen() {
 
           if (task) {
             return (
-              <View key={task.id} style={[styles.slot, { backgroundColor: t.card, borderColor: t.cardBorder }]}>
-                <TouchableOpacity onPress={() => toggleTask(task.id)} style={styles.checkBtn}>
-                  <View style={[styles.checkbox, task.done && styles.checkboxDone]} />
+              <View key={task.id} style={[s.taskCard, { backgroundColor: t.card, borderColor: t.cardBorder }]}>
+                {/* Left accent bar */}
+                <View style={[s.taskAccent, { backgroundColor: task.done ? t.cardBorder : '#5E8B71' }]} />
+
+                {/* Checkbox */}
+                <TouchableOpacity onPress={() => toggleTask(task.id)} style={s.checkWrap}>
+                  <View style={[
+                    s.checkbox,
+                    { borderColor: task.done ? '#5E8B71' : t.cardBorder },
+                    task.done && s.checkboxDone,
+                  ]}>
+                    {task.done && <Text style={{ color: '#fff', fontSize: 11, fontWeight: '800' }}>✓</Text>}
+                  </View>
                 </TouchableOpacity>
-                <Text
-                  style={[styles.slotTitle, {
-                    color: task.done ? t.t3 : t.t1,
-                    textDecorationLine: task.done ? 'line-through' : 'none',
-                    flex: 1,
-                  }]}
-                  numberOfLines={2}
-                >
+
+                <Text style={[
+                  s.taskTitle,
+                  { color: task.done ? t.t3 : t.t1, textDecorationLine: task.done ? 'line-through' : 'none' },
+                ]} numberOfLines={2}>
                   {task.title}
                 </Text>
-                <TouchableOpacity onPress={() => removeTask(task.id)} hitSlop={8}>
-                  <Text style={[styles.removeBtn, { color: t.t3 }]}>✕</Text>
+
+                <TouchableOpacity onPress={() => removeTask(task.id)} hitSlop={10} style={s.removeWrap}>
+                  <Text style={[s.removeIcon, { color: t.t3 }]}>✕</Text>
                 </TouchableOpacity>
               </View>
             )
@@ -157,107 +171,136 @@ export default function TodayScreen() {
             <TouchableOpacity
               key={`empty-${i}`}
               onPress={() => handleSlotPress(i)}
-              style={[styles.slot, styles.slotEmpty, { borderColor: t.cardBorder, borderStyle: 'dashed' }]}
+              style={[s.taskCard, s.taskEmpty, { borderColor: t.cardBorder, backgroundColor: t.card }]}
             >
-              <Text style={[styles.slotEmptyText, { color: t.t3 }]}>
-                + Task {i + 1}
-              </Text>
+              <View style={[s.addDot, { borderColor: t.cardBorder }]}>
+                <Text style={{ color: t.t3, fontSize: 16, lineHeight: 20 }}>+</Text>
+              </View>
+              <Text style={[s.emptyLabel, { color: t.t3 }]}>Add task {i + 1}</Text>
             </TouchableOpacity>
           )
         })}
 
-        {/* Start focus CTA */}
-        <TouchableOpacity onPress={handleStartFocus} style={styles.ctaWrap}>
-          <LinearGradient
-            colors={[t.ctaStart, t.ctaEnd]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.cta}
+        {/* Focus CTA */}
+        <View style={s.ctaWrap}>
+          <Btn variant="primary" size="lg" full onPress={handleStartFocus}>
+            ▶  Start Focus Session
+          </Btn>
+        </View>
+
+        {/* Quick links */}
+        <View style={s.quickRow}>
+          <TouchableOpacity
+            style={[s.quickCard, { backgroundColor: t.card, borderColor: t.cardBorder }]}
+            onPress={() => router.push('/(tabs)/mind')}
+            activeOpacity={0.8}
           >
-            <View>
-              <Text style={styles.ctaTitle}>Start focus session</Text>
-              <Text style={styles.ctaSub}>
-                {tasks.find((t) => !t.done)?.title
-                  ? `Working on: ${tasks.find((tt) => !tt.done)!.title}`
-                  : 'Ready when you are'}
-              </Text>
-            </View>
-            <Text style={styles.ctaArrow}>→</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+            <Text style={s.quickIcon}>🧘</Text>
+            <Text style={[s.quickLabel, { color: t.t1 }]}>Mind</Text>
+            <Text style={[s.quickSub, { color: t.t3 }]}>Breathe & ground</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[s.quickCard, { backgroundColor: t.card, borderColor: t.cardBorder }]}
+            onPress={() => router.push('/(tabs)/mind/mood')}
+            activeOpacity={0.8}
+          >
+            <Text style={s.quickIcon}>🌟</Text>
+            <Text style={[s.quickLabel, { color: t.t1 }]}>Mood</Text>
+            <Text style={[s.quickSub, { color: t.t3 }]}>Log how you feel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[s.quickCard, { backgroundColor: t.card, borderColor: t.cardBorder }]}
+            onPress={() => router.push('/(tabs)/reminders')}
+            activeOpacity={0.8}
+          >
+            <Text style={s.quickIcon}>🔔</Text>
+            <Text style={[s.quickLabel, { color: t.t1 }]}>Remind</Text>
+            <Text style={[s.quickSub, { color: t.t3 }]}>Set reminders</Text>
+          </TouchableOpacity>
+        </View>
+
       </ScrollView>
 
-      {/* Account modal */}
-      <Modal
-        visible={showAccount}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowAccount(false)}
-      >
-        <Pressable style={styles.overlay} onPress={() => setShowAccount(false)}>
+      {/* ── ACCOUNT MODAL ───────────────────────────── */}
+      <Modal visible={showAccount} transparent animationType="fade" onRequestClose={() => setShowAccount(false)}>
+        <Pressable style={s.overlay} onPress={() => setShowAccount(false)}>
           <Pressable
-            style={[styles.sheet, { backgroundColor: t.card, borderColor: t.cardBorder }]}
+            style={[s.sheet, { backgroundColor: t.card, borderColor: t.cardBorder }]}
             onPress={() => {}}
           >
-            {/* Avatar */}
-            <View style={styles.accountAvatar}>
-              <Text style={styles.accountAvatarLetter}>{avatarLetter}</Text>
+            <View style={[s.sheetAvatar, { backgroundColor: '#5E8B71' }]}>
+              <Text style={s.sheetAvatarLetter}>{avatarLetter}</Text>
             </View>
-            <Text style={[styles.accountName, { color: t.t1 }]}>{displayName}</Text>
-            {email ? <Text style={[styles.accountEmail, { color: t.t2 }]}>{email}</Text> : null}
-
-            <View style={[styles.divider, { backgroundColor: t.cardBorder }]} />
-
-            <TouchableOpacity onPress={handleSignOut} style={styles.signOutBtn}>
-              <Text style={styles.signOutText}>Sign out</Text>
+            <Text style={[s.sheetName, { color: t.t1 }]}>{firstName || 'Account'}</Text>
+            {email ? <Text style={[s.sheetEmail, { color: t.t2 }]}>{email}</Text> : null}
+            <View style={[s.sheetDivider, { backgroundColor: t.cardBorder }]} />
+            <TouchableOpacity onPress={async () => { setShowAccount(false); await signOut() }} style={s.sheetSignOut}>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#C0445E' }}>Sign out</Text>
             </TouchableOpacity>
           </Pressable>
         </Pressable>
       </Modal>
+
     </View>
   )
 }
 
-const styles = StyleSheet.create({
-  container:           { flex: 1 },
-  header:              { paddingHorizontal: 22, paddingBottom: 28 },
-  headerRow:           { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
-  headerText:          { flex: 1 },
-  label:               { fontSize: 10, fontWeight: '600', letterSpacing: 2, color: 'rgba(255,255,255,0.65)', textTransform: 'uppercase', marginBottom: 10 },
-  title:               { fontSize: 28, fontWeight: '900', color: '#fff', lineHeight: 34 },
-  subtitle:            { fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 6 },
-  avatarBtn:           { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.3)', alignItems: 'center', justifyContent: 'center', marginLeft: 12, marginTop: 2 },
-  avatarLetter:        { fontSize: 16, fontWeight: '800', color: '#fff' },
-  scroll:              { flex: 1 },
-  content:             { paddingTop: 4, paddingBottom: 36 },
+const s = StyleSheet.create({
+  root:        { flex: 1 },
 
-  slot:                { marginHorizontal: 16, marginTop: 10, borderRadius: 18, borderWidth: 1, borderColor: 'rgba(94,139,113,0.15)', paddingHorizontal: 16, paddingVertical: 16, flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#fff', shadowColor: '#5E8B71', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.06, shadowRadius: 10, elevation: 2 },
-  slotEmpty:           { justifyContent: 'center', paddingVertical: 20, borderStyle: 'dashed' },
-  slotEmptyText:       { fontSize: 14, fontWeight: '500' },
-  slotInput:           { flex: 1, fontSize: 15, paddingVertical: 0 },
-  slotActions:         { flexDirection: 'row', gap: 10, alignItems: 'center' },
-  slotActionCancel:    { fontSize: 13 },
-  slotActionAdd:       { backgroundColor: '#5E8B71', borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 },
-  slotActionAddText:   { color: '#fff', fontSize: 13, fontWeight: '700' },
-  slotTitle:           { fontSize: 15, fontWeight: '600' },
-  checkBtn:            { padding: 2 },
-  checkbox:            { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: '#5E8B71' },
-  checkboxDone:        { backgroundColor: '#5E8B71' },
-  removeBtn:           { fontSize: 14, paddingHorizontal: 4 },
+  /* Hero */
+  hero:        { paddingHorizontal: 22, paddingBottom: 28, overflow: 'hidden' },
+  heroBlob:    { position: 'absolute', top: -60, right: -60, width: 180, height: 180, borderRadius: 90, backgroundColor: 'rgba(255,255,255,0.06)', transform: [{ scale: 1 }] },
+  heroRow:     { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
+  heroDate:    { fontSize: 10, fontWeight: '600', letterSpacing: 2, color: 'rgba(255,255,255,0.55)', marginBottom: 10 },
+  heroTitle:   { fontSize: 30, fontWeight: '900', color: '#fff', lineHeight: 36 },
+  heroSub:     { fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 6 },
+  chipRow:     { flexDirection: 'row', gap: 8, marginTop: 14 },
+  chip:        { backgroundColor: 'rgba(255,255,255,0.15)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', borderRadius: 100, paddingHorizontal: 12, paddingVertical: 5 },
+  chipText:    { fontSize: 11, fontWeight: '700', color: '#fff' },
+  avatar:      { width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 2, borderColor: 'rgba(255,255,255,0.3)', alignItems: 'center', justifyContent: 'center', marginLeft: 10 },
+  avatarLetter:{ fontSize: 16, fontWeight: '900', color: '#fff' },
 
-  ctaWrap:             { marginHorizontal: 16, marginTop: 20 },
-  cta:                 { borderRadius: 20, paddingHorizontal: 20, paddingVertical: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  ctaTitle:            { fontSize: 15, fontWeight: '700', color: '#fff' },
-  ctaSub:              { fontSize: 12, color: 'rgba(255,255,255,0.65)', marginTop: 3 },
-  ctaArrow:            { fontSize: 22, color: '#fff', fontWeight: '300' },
+  /* Body */
+  body:        { padding: 18, paddingTop: 20 },
 
-  overlay:             { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'center', alignItems: 'center' },
-  sheet:               { width: 300, borderRadius: 24, borderWidth: 1, padding: 28, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 10 },
-  accountAvatar:       { width: 72, height: 72, borderRadius: 36, backgroundColor: '#5E8B71', alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
-  accountAvatarLetter: { fontSize: 30, fontWeight: '900', color: '#fff' },
-  accountName:         { fontSize: 17, fontWeight: '700', marginBottom: 4 },
-  accountEmail:        { fontSize: 13, marginBottom: 4 },
-  divider:             { width: '100%', height: 1, marginVertical: 18 },
-  signOutBtn:          { backgroundColor: 'rgba(220,38,38,0.08)', borderRadius: 12, paddingHorizontal: 28, paddingVertical: 12 },
-  signOutText:         { color: '#dc2626', fontSize: 14, fontWeight: '700' },
+  /* Task cards */
+  taskCard:    { flexDirection: 'row', alignItems: 'center', borderRadius: 22, borderWidth: 1, marginBottom: 10, overflow: 'hidden', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2, backgroundColor: '#fff' },
+  taskAccent:  { width: 4, alignSelf: 'stretch' },
+  checkWrap:   { padding: 16 },
+  checkbox:    { width: 22, height: 22, borderRadius: 11, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+  checkboxDone:{ backgroundColor: '#5E8B71', borderColor: '#5E8B71' },
+  taskTitle:   { flex: 1, fontSize: 15, fontWeight: '600', paddingVertical: 18, paddingRight: 4 },
+  removeWrap:  { padding: 16 },
+  removeIcon:  { fontSize: 13 },
+
+  /* Empty slot */
+  taskEmpty:   { paddingVertical: 18, paddingHorizontal: 16, justifyContent: 'flex-start', gap: 12 },
+  addDot:      { width: 28, height: 28, borderRadius: 14, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', borderStyle: 'dashed' },
+  emptyLabel:  { fontSize: 14, fontWeight: '500' },
+
+  /* Editing slot */
+  taskInput:   { flex: 1, fontSize: 15, paddingVertical: 16, paddingHorizontal: 16 },
+  editActions: { flexDirection: 'row', gap: 8, alignItems: 'center', paddingRight: 12 },
+  cancelText:  { fontSize: 13, fontWeight: '600' },
+
+  /* Focus CTA */
+  ctaWrap:     { marginTop: 8, marginBottom: 24 },
+
+  /* Quick links */
+  quickRow:    { flexDirection: 'row', gap: 10 },
+  quickCard:   { flex: 1, borderRadius: 20, borderWidth: 1, padding: 16, alignItems: 'center', gap: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 6, elevation: 1 },
+  quickIcon:   { fontSize: 22, marginBottom: 2 },
+  quickLabel:  { fontSize: 12, fontWeight: '700' },
+  quickSub:    { fontSize: 10, fontWeight: '500', textAlign: 'center' },
+
+  /* Account modal */
+  overlay:           { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center' },
+  sheet:             { width: 300, borderRadius: 28, borderWidth: 1, padding: 28, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.15, shadowRadius: 28, elevation: 12 },
+  sheetAvatar:       { width: 68, height: 68, borderRadius: 34, alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
+  sheetAvatarLetter: { fontSize: 28, fontWeight: '900', color: '#fff' },
+  sheetName:         { fontSize: 17, fontWeight: '800', marginBottom: 3 },
+  sheetEmail:        { fontSize: 13, marginBottom: 8 },
+  sheetDivider:      { height: 1, width: '100%', marginVertical: 14 },
+  sheetSignOut:      { paddingVertical: 8 },
 })

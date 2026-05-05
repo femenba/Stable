@@ -1,18 +1,14 @@
 import { Suspense } from 'react'
-import { Shell } from '../../src/components/shell'
+import { AppShell } from '../../src/components/app-shell'
 import { UserSync } from '../../src/components/user-sync'
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <Shell>
+    <AppShell>
       <Suspense fallback={null}>
         <UserSync />
       </Suspense>
       {children}
-    </Shell>
+    </AppShell>
   )
 }
