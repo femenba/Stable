@@ -4,10 +4,10 @@ export default function SignInPage() {
   return (
     <div className="flex flex-col items-center gap-6">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900">stable.</h1>
-        <p className="text-gray-500 mt-1">Your focus companion</p>
+        <p className="text-4xl font-black" style={{ color: 'var(--cat-work)' }}>stable.</p>
+        <p className="text-sm mt-1" style={{ color: 'var(--stable-t2)' }}>Your focus companion</p>
       </div>
-      <SignIn />
+      <SignIn fallbackRedirectUrl="/dashboard" />
     </div>
   )
 }

@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { ThemeToggle } from './theme-toggle'
+import { useUser, useClerk } from '@clerk/nextjs'
 
 const TABS = [
   { href: '/dashboard', label: 'Today',     icon: '🏠' },
@@ -13,7 +14,13 @@ const TABS = [
 ] as const
 
 export function Shell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
+  const pathname  = usePathname()
+  const { user }  = useUser()
+  const { signOut } = useClerk()
+
+  const initial   = (user?.firstName?.[0] ?? user?.emailAddresses?.[0]?.emailAddress?.[0] ?? '?').toUpperCase()
+  const name      = user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress ?? 'Account'
+  const email     = user?.emailAddresses?.[0]?.emailAddress ?? ''
 
   return (
     <div className="min-h-svh bg-stable-bg">
@@ -59,6 +66,33 @@ export function Shell({ children }: { children: React.ReactNode }) {
             )
           })}
         </nav>
+
+        {/* User section */}
+        {user && (
+          <div className="px-4 py-4" style={{ borderTop: '1px solid var(--stable-nav-border)' }}>
+            <div className="flex items-center gap-3 mb-3">
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
+                style={{ background: 'var(--stable-cta)' }}
+              >
+                {initial}
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold truncate" style={{ color: 'var(--stable-t1)' }}>{name}</p>
+                {email && (
+                  <p className="text-[11px] truncate" style={{ color: 'var(--stable-t3)' }}>{email}</p>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={() => signOut()}
+              className="w-full text-xs font-semibold py-2 rounded-lg transition-opacity hover:opacity-70"
+              style={{ color: 'var(--stable-t2)', background: 'var(--stable-card-border)' }}
+            >
+              Sign out
+            </button>
+          </div>
+        )}
 
         {/* Theme toggle */}
         <div className="px-6 py-5" style={{ borderTop: '1px solid var(--stable-nav-border)' }}>
@@ -111,6 +145,21 @@ export function Shell({ children }: { children: React.ReactNode }) {
               </Link>
             )
           })}
+          {/* Mobile sign-out */}
+          <button
+            onClick={() => signOut()}
+            className="flex flex-col items-center gap-0.5 py-1 px-3"
+          >
+            <span
+              className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[11px] font-bold leading-none"
+              style={{ background: 'var(--cat-work)' }}
+            >
+              {initial}
+            </span>
+            <span className="text-[9px] font-semibold uppercase tracking-wide" style={{ color: 'var(--stable-t3)' }}>
+              Sign out
+            </span>
+          </button>
         </div>
       </nav>
 

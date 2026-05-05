@@ -14,7 +14,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider afterSignOutUrl="/sign-in">
+    <ClerkProvider
+      afterSignOutUrl="/sign-in"
+      signInUrl="/sign-in"
+      signUpUrl="/sign-up"
+    >
       <html lang="en">
         <body>
           {/* Apply saved theme before first paint — eliminates flash */}
