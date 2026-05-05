@@ -198,7 +198,7 @@ function MoodFormCard({
                     className="flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 transition-all"
                     style={{
                       borderColor:     active ? 'var(--cat-work)' : 'var(--stable-card-border)',
-                      background:      active ? 'rgba(79,58,255,0.08)' : 'transparent',
+                      background:      active ? 'rgba(99,102,241,0.08)' : 'transparent',
                     }}
                   >
                     <span className="text-2xl">{emoji}</span>
@@ -225,7 +225,7 @@ function MoodFormCard({
                     className="flex-1 flex flex-col items-center gap-1 py-2 rounded-xl border-2"
                     style={{
                       borderColor: active ? 'var(--cat-work)' : 'var(--stable-card-border)',
-                      background:  active ? 'rgba(79,58,255,0.08)' : 'transparent',
+                      background:  active ? 'rgba(99,102,241,0.08)' : 'transparent',
                     }}
                   >
                     <span className="text-xl">{e}</span>
@@ -260,7 +260,7 @@ function MoodFormCard({
                     className="px-3 py-1.5 rounded-full border-2 text-xs font-bold capitalize transition-all"
                     style={{
                       borderColor: active ? 'var(--cat-work)' : 'var(--stable-card-border)',
-                      background:  active ? 'rgba(79,58,255,0.1)' : 'transparent',
+                      background:  active ? 'rgba(99,102,241,0.1)' : 'transparent',
                       color:       active ? 'var(--cat-work)' : 'var(--stable-t2)',
                     }}
                   >

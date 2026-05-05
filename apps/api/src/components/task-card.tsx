@@ -33,12 +33,13 @@ export function TaskCard({ task, onUpdate }: TaskCardProps) {
 
   return (
     <div
-      className="rounded-xl px-4 py-3 flex items-start gap-3"
+      className="rounded-2xl px-4 py-3.5 flex items-start gap-3"
       style={{
         background:      'var(--stable-card)',
         border:          '1px solid var(--stable-card-border)',
-        borderLeftWidth: '3px',
+        borderLeftWidth: '4px',
         borderLeftColor: color,
+        boxShadow:       '0 2px 12px rgba(99,102,241,0.05)',
       }}
     >
       <div className="flex-1 min-w-0">

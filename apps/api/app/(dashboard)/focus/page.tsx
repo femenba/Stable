@@ -51,14 +51,18 @@ export default function FocusPage() {
 
       {/* Timer card */}
       <div
-        className="mx-4 mt-4 rounded-xl px-5 py-10 text-center md:mx-10 lg:mx-12 md:mt-6 md:py-14"
-        style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)' }}
+        className="mx-4 mt-4 rounded-2xl px-5 py-12 text-center md:mx-10 lg:mx-12 md:mt-6 md:py-16"
+        style={{
+          background: 'var(--stable-card)',
+          border:     '1px solid var(--stable-card-border)',
+          boxShadow:  '0 4px 24px rgba(99,102,241,0.08)',
+        }}
       >
         {activeSession ? (
           <>
             <div
-              className="text-5xl font-mono font-bold tabular-nums mb-2"
-              style={{ color: 'var(--cat-work)' }}
+              className="text-6xl md:text-7xl font-mono font-bold tabular-nums mb-2"
+              style={{ color: 'var(--cat-work)', letterSpacing: '-2px' }}
             >
               <ElapsedTimer startedAt={activeSession.startedAt} />
             </div>
@@ -87,8 +91,8 @@ export default function FocusPage() {
         ) : (
           <>
             <div
-              className="text-5xl font-mono font-bold tabular-nums mb-2"
-              style={{ color: 'var(--stable-t3)' }}
+              className="text-6xl md:text-7xl font-mono font-bold tabular-nums mb-2"
+              style={{ color: 'var(--stable-t3)', letterSpacing: '-2px' }}
             >
               00:00
             </div>

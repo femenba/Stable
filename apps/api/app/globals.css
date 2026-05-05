@@ -4,40 +4,40 @@
 
 /* ── Light mode (default) ─────────────────── */
 :root {
-  --stable-bg:          #fafafe;
-  --stable-card:        #ffffff;
-  --stable-card-border: #f0eeff;
-  --stable-nav:         #ffffff;
-  --stable-nav-border:  #f0eeff;
-  --stable-t1:          #111111;
-  --stable-t2:          #888888;
-  --stable-t3:          #cccccc;
-  --stable-header:      linear-gradient(160deg, #4f3aff 0%, #7c3aed 50%, #c026d3 100%);
-  --stable-cta:         linear-gradient(135deg, #4f3aff, #7c3aed);
-  --cat-work:     #4f3aff;
-  --cat-personal: #7c3aed;
-  --cat-family:   #be185d;
-  --cat-health:   #0891b2;
-  --cat-other:    #6b7280;
+  --stable-bg:          #F6F5FF;
+  --stable-card:        #FFFFFF;
+  --stable-card-border: #ECEAFF;
+  --stable-nav:         #FFFFFF;
+  --stable-nav-border:  #ECEAFF;
+  --stable-t1:          #1C1A3A;
+  --stable-t2:          #6B688A;
+  --stable-t3:          #C0BDDA;
+  --stable-header:      linear-gradient(160deg, #5B4FCE 0%, #7260D8 50%, #8E74DA 100%);
+  --stable-cta:         linear-gradient(135deg, #6366F1, #818CF8);
+  --cat-work:     #6366F1;
+  --cat-personal: #8B5CF6;
+  --cat-family:   #EC4899;
+  --cat-health:   #0EA5E9;
+  --cat-other:    #6B7280;
 }
 
 /* ── Dark mode ────────────────────────────── */
 [data-theme="dark"] {
-  --stable-bg:          #120e24;
-  --stable-card:        #1a1535;
-  --stable-card-border: #2a1f60;
-  --stable-nav:         #120e24;
-  --stable-nav-border:  #1e1a38;
-  --stable-t1:          #e2d9f3;
-  --stable-t2:          #8b7ab8;
-  --stable-t3:          #3a2f5a;
-  --stable-header:      linear-gradient(160deg, #1e1260 0%, #120e24 70%);
-  --stable-cta:         linear-gradient(135deg, #6366f1, #a855f7);
-  --cat-work:     #6366f1;
-  --cat-personal: #a855f7;
-  --cat-family:   #ec4899;
-  --cat-health:   #22d3ee;
-  --cat-other:    #9ca3af;
+  --stable-bg:          #0F0D20;
+  --stable-card:        #1A1733;
+  --stable-card-border: #2D2855;
+  --stable-nav:         #0F0D20;
+  --stable-nav-border:  #1E1B38;
+  --stable-t1:          #E8E4F7;
+  --stable-t2:          #9490B8;
+  --stable-t3:          #3D3868;
+  --stable-header:      linear-gradient(160deg, #1E1260 0%, #130F28 70%);
+  --stable-cta:         linear-gradient(135deg, #6366F1, #A78BFA);
+  --cat-work:     #818CF8;
+  --cat-personal: #A78BFA;
+  --cat-family:   #F472B6;
+  --cat-health:   #38BDF8;
+  --cat-other:    #9CA3AF;
 }
 
 @layer base {
