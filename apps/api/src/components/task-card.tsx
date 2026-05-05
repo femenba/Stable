@@ -85,7 +85,7 @@ export function TaskCard({ task, onUpdate }: TaskCardProps) {
           disabled={isDone || complete.isPending}
           className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold transition-all disabled:opacity-30"
           style={{
-            background:  isDone ? 'rgba(99,102,241,0.12)' : 'var(--stable-bg)',
+            background:  isDone ? 'rgba(94,139,113,0.12)' : 'var(--stable-bg)',
             color:       isDone ? 'var(--cat-work)' : 'var(--stable-t2)',
             border:      '1px solid var(--stable-card-border)',
           }}

@@ -60,7 +60,7 @@ export default function DashboardPage() {
       <Link
         href="/tasks"
         className="text-xs font-bold inline-block px-4 py-2 rounded-xl"
-        style={{ background: 'rgba(99,102,241,0.1)', color: 'var(--cat-work)' }}
+        style={{ background: 'rgba(94,139,113,0.1)', color: 'var(--cat-work)' }}
       >
         Add your first task →
       </Link>
@@ -115,7 +115,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2 mb-2.5">
               <span
                 className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
-                style={{ background: 'rgba(99,102,241,0.12)', color: 'var(--cat-work)', border: '1px solid rgba(99,102,241,0.2)' }}
+                style={{ background: 'rgba(94,139,113,0.12)', color: 'var(--cat-work)', border: '1px solid rgba(94,139,113,0.2)' }}
               >
                 ⬡ Stable AI
               </span>
@@ -227,7 +227,7 @@ export default function DashboardPage() {
                 <div className="flex items-start gap-4">
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                    style={{ background: 'rgba(99,102,241,0.1)' }}
+                    style={{ background: 'rgba(94,139,113,0.1)' }}
                   >
                     <span className="text-[17px]">⬡</span>
                   </div>
@@ -256,7 +256,7 @@ export default function DashboardPage() {
                     {pendingCount !== null && pendingCount > 0 && (
                       <span
                         className="text-[10px] font-black px-2 py-0.5 rounded-full"
-                        style={{ background: 'rgba(99,102,241,0.1)', color: 'var(--cat-work)' }}
+                        style={{ background: 'rgba(94,139,113,0.1)', color: 'var(--cat-work)' }}
                       >
                         {pendingCount}
                       </span>

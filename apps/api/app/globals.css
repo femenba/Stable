@@ -2,50 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Light mode ───────────────────────────── */
+/* ── Light mode — warm sage ──────────────────── */
 :root {
-  --stable-bg:          #F4F3FF;
+  --stable-bg:          #F8F7F2;
   --stable-card:        #FFFFFF;
-  --stable-card-border: #EAE8FF;
+  --stable-card-border: rgba(94,139,113,0.14);
   --stable-nav:         #FFFFFF;
-  --stable-nav-border:  #EAE8FF;
-  --stable-t1:          #1A1740;
-  --stable-t2:          #6B688A;
-  --stable-t3:          #B8B5D4;
-  --stable-header:      linear-gradient(135deg, #5148C8 0%, #7260D8 45%, #8B74E0 100%);
-  --stable-cta:         linear-gradient(135deg, #6366F1 0%, #818CF8 100%);
-  --cat-work:     #6366F1;
-  --cat-personal: #8B5CF6;
-  --cat-family:   #EC4899;
-  --cat-health:   #0EA5E9;
-  --cat-other:    #6B7280;
-  --shadow-card:  0 2px 16px rgba(99,102,241,0.08), 0 0 0 1px rgba(99,102,241,0.06);
-  --shadow-float: 0 8px 32px rgba(99,102,241,0.16), 0 2px 8px rgba(0,0,0,0.04);
-  --shadow-hero:  0 24px 64px rgba(99,102,241,0.22);
-  --shadow-cta:   0 8px 32px rgba(99,102,241,0.4);
+  --stable-nav-border:  rgba(94,139,113,0.12);
+  --stable-t1:          #1E1D2E;
+  --stable-t2:          #6B6880;
+  --stable-t3:          #B0ADC5;
+  --stable-header:      linear-gradient(135deg, #3D6B54 0%, #5E8B71 55%, #7BA68A 100%);
+  --stable-cta:         linear-gradient(135deg, #5E8B71 0%, #7BA68A 100%);
+  --cat-work:     #5E8B71;
+  --cat-personal: #8B7EC8;
+  --cat-family:   #D9607A;
+  --cat-health:   #5BA4C8;
+  --cat-other:    #8B9BA8;
+  --sage:         #5E8B71;
+  --sage-light:   #7BA68A;
+  --sage-dark:    #3D6B54;
+  --sage-soft:    rgba(94,139,113,0.12);
+  --shadow-card:  0 2px 20px rgba(0,0,0,0.06), 0 0 0 1px rgba(94,139,113,0.08);
+  --shadow-float: 0 8px 32px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-cta:   0 8px 28px rgba(94,139,113,0.38);
+  --shadow-hero:  0 24px 64px rgba(0,0,0,0.1);
 }
 
-/* ── Dark mode ────────────────────────────── */
+/* ── Dark mode — deep warm charcoal ─────────────── */
 [data-theme="dark"] {
-  --stable-bg:          #0D0B1E;
-  --stable-card:        #16132E;
-  --stable-card-border: #252050;
-  --stable-nav:         #0D0B1E;
-  --stable-nav-border:  #1E1B38;
-  --stable-t1:          #EAE6FF;
-  --stable-t2:          #9490B8;
-  --stable-t3:          #3D3868;
-  --stable-header:      linear-gradient(135deg, #1E1260 0%, #100D26 70%);
-  --stable-cta:         linear-gradient(135deg, #6366F1 0%, #A78BFA 100%);
-  --cat-work:     #818CF8;
-  --cat-personal: #A78BFA;
-  --cat-family:   #F472B6;
-  --cat-health:   #38BDF8;
-  --cat-other:    #9CA3AF;
-  --shadow-card:  0 2px 16px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.04);
-  --shadow-float: 0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.3);
+  --stable-bg:          #13120E;
+  --stable-card:        #1E1C17;
+  --stable-card-border: rgba(94,139,113,0.15);
+  --stable-nav:         #13120E;
+  --stable-nav-border:  #26241A;
+  --stable-t1:          #F2EEE4;
+  --stable-t2:          #9B9A8E;
+  --stable-t3:          #454035;
+  --stable-header:      linear-gradient(135deg, #1A2E22 0%, #131E18 70%);
+  --stable-cta:         linear-gradient(135deg, #5E8B71 0%, #7BA68A 100%);
+  --cat-work:     #7BA68A;
+  --cat-personal: #A095D4;
+  --cat-family:   #E89EAD;
+  --cat-health:   #70B5D5;
+  --cat-other:    #9BA8B4;
+  --sage:         #7BA68A;
+  --sage-light:   #9BC0AC;
+  --sage-dark:    #5E8B71;
+  --sage-soft:    rgba(94,139,113,0.15);
+  --shadow-card:  0 2px 16px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
+  --shadow-float: 0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-cta:   0 8px 28px rgba(94,139,113,0.28);
   --shadow-hero:  0 24px 64px rgba(0,0,0,0.5);
-  --shadow-cta:   0 8px 32px rgba(99,102,241,0.35);
 }
 
 @layer base {

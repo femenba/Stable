@@ -34,7 +34,7 @@ function TaskRow({ task, onToggle, onDelete, getCatColor }: {
   return (
     <View style={[row.card, { backgroundColor: t.card, borderColor: t.cardBorder, borderLeftColor: color }]}>
       <TouchableOpacity onPress={onToggle} style={row.check} hitSlop={8}>
-        <View style={[row.checkbox, { borderColor: '#6366F1' }, task.done && { backgroundColor: '#6366F1', borderColor: '#6366F1' }]} />
+        <View style={[row.checkbox, { borderColor: '#5E8B71' }, task.done && { backgroundColor: '#5E8B71', borderColor: '#5E8B71' }]} />
       </TouchableOpacity>
       <View style={row.body}>
         <Text
@@ -61,7 +61,7 @@ function TaskRow({ task, onToggle, onDelete, getCatColor }: {
 }
 
 const row = StyleSheet.create({
-  card:     { marginHorizontal: 16, marginBottom: 10, borderRadius: 18, borderWidth: 1, borderLeftWidth: 4, paddingHorizontal: 14, paddingVertical: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 12, shadowColor: '#6366F1', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
+  card:     { marginHorizontal: 16, marginBottom: 10, borderRadius: 18, borderWidth: 1, borderLeftWidth: 4, paddingHorizontal: 14, paddingVertical: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 12, shadowColor: '#5E8B71', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
   check:    { paddingTop: 2 },
   checkbox: { width: 22, height: 22, borderRadius: 11, borderWidth: 2 },
   body:     { flex: 1, minWidth: 0 },
@@ -212,11 +212,11 @@ export default function TasksScreen() {
                     key={p.value}
                     onPress={() => setPriority(p.value)}
                     style={[styles.pill, {
-                      backgroundColor: active ? 'rgba(99,102,241,0.1)' : t.bg,
-                      borderColor:     active ? '#6366F1' : t.cardBorder,
+                      backgroundColor: active ? 'rgba(94,139,113,0.1)' : t.bg,
+                      borderColor:     active ? '#5E8B71' : t.cardBorder,
                     }]}
                   >
-                    <Text style={[styles.pillText, { color: active ? '#6366F1' : t.t2 }]}>
+                    <Text style={[styles.pillText, { color: active ? '#5E8B71' : t.t2 }]}>
                       {p.label}
                     </Text>
                   </TouchableOpacity>

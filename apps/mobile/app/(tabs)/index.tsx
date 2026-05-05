@@ -102,7 +102,7 @@ export default function TodayScreen() {
 
           if (isEditing) {
             return (
-              <View key={`slot-${i}`} style={[styles.slot, { backgroundColor: t.card, borderColor: '#6366F1' }]}>
+              <View key={`slot-${i}`} style={[styles.slot, { backgroundColor: t.card, borderColor: '#5E8B71' }]}>
                 <TextInput
                   ref={inputRef}
                   style={[styles.slotInput, { color: t.t1 }]}
@@ -231,18 +231,18 @@ const styles = StyleSheet.create({
   scroll:              { flex: 1 },
   content:             { paddingTop: 4, paddingBottom: 36 },
 
-  slot:                { marginHorizontal: 16, marginTop: 10, borderRadius: 18, borderWidth: 1, borderColor: '#ECEAFF', paddingHorizontal: 16, paddingVertical: 16, flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#fff', shadowColor: '#6366F1', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.06, shadowRadius: 10, elevation: 2 },
+  slot:                { marginHorizontal: 16, marginTop: 10, borderRadius: 18, borderWidth: 1, borderColor: 'rgba(94,139,113,0.15)', paddingHorizontal: 16, paddingVertical: 16, flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#fff', shadowColor: '#5E8B71', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.06, shadowRadius: 10, elevation: 2 },
   slotEmpty:           { justifyContent: 'center', paddingVertical: 20, borderStyle: 'dashed' },
   slotEmptyText:       { fontSize: 14, fontWeight: '500' },
   slotInput:           { flex: 1, fontSize: 15, paddingVertical: 0 },
   slotActions:         { flexDirection: 'row', gap: 10, alignItems: 'center' },
   slotActionCancel:    { fontSize: 13 },
-  slotActionAdd:       { backgroundColor: '#6366F1', borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 },
+  slotActionAdd:       { backgroundColor: '#5E8B71', borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 },
   slotActionAddText:   { color: '#fff', fontSize: 13, fontWeight: '700' },
   slotTitle:           { fontSize: 15, fontWeight: '600' },
   checkBtn:            { padding: 2 },
-  checkbox:            { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: '#6366F1' },
-  checkboxDone:        { backgroundColor: '#6366F1' },
+  checkbox:            { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: '#5E8B71' },
+  checkboxDone:        { backgroundColor: '#5E8B71' },
   removeBtn:           { fontSize: 14, paddingHorizontal: 4 },
 
   ctaWrap:             { marginHorizontal: 16, marginTop: 20 },
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
 
   overlay:             { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'center', alignItems: 'center' },
   sheet:               { width: 300, borderRadius: 24, borderWidth: 1, padding: 28, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 10 },
-  accountAvatar:       { width: 72, height: 72, borderRadius: 36, backgroundColor: '#6366F1', alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
+  accountAvatar:       { width: 72, height: 72, borderRadius: 36, backgroundColor: '#5E8B71', alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
   accountAvatarLetter: { fontSize: 30, fontWeight: '900', color: '#fff' },
   accountName:         { fontSize: 17, fontWeight: '700', marginBottom: 4 },
   accountEmail:        { fontSize: 13, marginBottom: 4 },

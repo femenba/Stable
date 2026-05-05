@@ -101,7 +101,7 @@ function Chips({ options, selected, onSelect }: { options: string[]; selected: s
             className="px-4 py-2 rounded-full border-2 text-sm font-bold transition-all"
             style={{
               borderColor: active ? 'var(--cat-work)' : 'var(--stable-card-border)',
-              background:  active ? 'rgba(99,102,241,0.1)' : 'transparent',
+              background:  active ? 'rgba(94,139,113,0.1)' : 'transparent',
               color:       active ? 'var(--cat-work)' : 'var(--stable-t2)',
             }}
           >
@@ -220,7 +220,7 @@ function BreatheFlow({ onBack }: { onBack: () => void }) {
         style={{
           width: 200, height: 200,
           borderColor:  'var(--cat-work)',
-          background:   'rgba(99,102,241,0.1)',
+          background:   'rgba(94,139,113,0.1)',
           transform:    `scale(${circleScale})`,
           transition:   `transform ${phaseDur}s ease-in-out`,
         }}
@@ -333,7 +333,7 @@ function GroundingFlow({ onBack }: { onBack: () => void }) {
             className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border-2 transition-all text-left"
             style={{
               borderColor: checked[i] ? 'var(--cat-work)' : 'var(--stable-card-border)',
-              background:  checked[i] ? 'rgba(99,102,241,0.08)' : 'var(--stable-card)',
+              background:  checked[i] ? 'rgba(94,139,113,0.08)' : 'var(--stable-card)',
             }}
           >
             <span
@@ -421,7 +421,7 @@ function WaveFlow({ onBack }: { onBack: () => void }) {
       {step === 2 && <>
         <Q text="Ride it out." sub="Don't fight it. Don't give in. Just watch it like a wave rising." />
         <div className="space-y-2">
-          <div className="rounded-full overflow-hidden h-3" style={{ background: 'rgba(99,102,241,0.15)' }}>
+          <div className="rounded-full overflow-hidden h-3" style={{ background: 'rgba(94,139,113,0.15)' }}>
             <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${pct}%`, background: 'var(--cat-work)' }} />
           </div>
           <p className="text-center text-3xl font-black" style={{ color: 'var(--cat-work)' }}>{secsLeft}s</p>
@@ -440,7 +440,7 @@ function WaveFlow({ onBack }: { onBack: () => void }) {
                 className="flex-1 py-3 rounded-xl border-2 font-bold transition-all"
                 style={{
                   borderColor: active ? 'var(--cat-work)' : 'var(--stable-card-border)',
-                  background:  active ? 'rgba(99,102,241,0.1)' : 'transparent',
+                  background:  active ? 'rgba(94,139,113,0.1)' : 'transparent',
                   color:       active ? 'var(--cat-work)' : 'var(--stable-t2)',
                 }}
               >
@@ -596,7 +596,7 @@ function SupportPageInner() {
                         className="px-4 py-2 rounded-full border-2 text-sm font-bold transition-all"
                         style={{
                           borderColor: active ? 'var(--cat-work)' : 'var(--stable-card-border)',
-                          background:  active ? 'rgba(99,102,241,0.1)' : 'transparent',
+                          background:  active ? 'rgba(94,139,113,0.1)' : 'transparent',
                           color:       active ? 'var(--cat-work)' : 'var(--stable-t2)',
                         }}
                       >
@@ -606,7 +606,7 @@ function SupportPageInner() {
                   })}
                 </div>
                 {selectedFeeling && (
-                  <div className="rounded-xl px-4 py-3 text-sm font-semibold text-center" style={{ background: 'rgba(99,102,241,0.1)', color: 'var(--cat-work)', border: '1px solid rgba(99,102,241,0.3)' }}>
+                  <div className="rounded-xl px-4 py-3 text-sm font-semibold text-center" style={{ background: 'rgba(94,139,113,0.1)', color: 'var(--cat-work)', border: '1px solid rgba(94,139,113,0.3)' }}>
                     {selectedFeeling.message}
                   </div>
                 )}
@@ -682,7 +682,7 @@ function SupportPageInner() {
                     className="px-3 py-1.5 rounded-full border-2 text-xs font-bold transition-all"
                     style={{
                       borderColor: active ? 'var(--cat-work)' : 'var(--stable-card-border)',
-                      background:  active ? 'rgba(99,102,241,0.1)' : 'transparent',
+                      background:  active ? 'rgba(94,139,113,0.1)' : 'transparent',
                       color:       active ? 'var(--cat-work)' : 'var(--stable-t2)',
                     }}
                   >
@@ -709,7 +709,7 @@ function SupportPageInner() {
                   onClick={() => setActiveTool(isActive ? null : tool.id)}
                   className="w-full flex items-start gap-3 px-4 py-3.5 text-left transition-all"
                   style={{
-                    background: isActive ? 'rgba(99,102,241,0.08)' : 'transparent',
+                    background: isActive ? 'rgba(94,139,113,0.08)' : 'transparent',
                     borderLeft: isActive ? '3px solid var(--cat-work)' : '3px solid transparent',
                   }}
                 >

@@ -212,7 +212,7 @@ export default function MindPage() {
                 >
                   <span
                     className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0"
-                    style={{ background: 'rgba(99,102,241,0.08)' }}
+                    style={{ background: 'rgba(94,139,113,0.08)' }}
                   >
                     {tool.icon}
                   </span>

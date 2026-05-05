@@ -10,8 +10,8 @@ export function AiInsight() {
       <div
         className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 mb-2 text-[9px] font-bold uppercase tracking-wide"
         style={{
-          background: 'rgba(99,102,241,0.12)',
-          border:     '1px solid rgba(99,102,241,0.3)',
+          background: 'rgba(94,139,113,0.12)',
+          border:     '1px solid rgba(94,139,113,0.3)',
           color:      'var(--cat-work)',
         }}
       >

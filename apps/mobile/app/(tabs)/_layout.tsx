@@ -5,11 +5,11 @@ import { useTheme } from '@/lib/use-theme'
 
 function TabIcon({ icon, label, focused }: { icon: string; label: string; focused: boolean }) {
   const { t } = useTheme()
-  const activeColor = '#6366F1'
+  const activeColor = '#5E8B71'
   return (
     <View style={styles.iconWrap}>
       {focused && <View style={[styles.indicator, { backgroundColor: activeColor }]} />}
-      <View style={[styles.iconPill, focused && { backgroundColor: 'rgba(99,102,241,0.1)' }]}>
+      <View style={[styles.iconPill, focused && { backgroundColor: 'rgba(94,139,113,0.1)' }]}>
         <Text style={[styles.iconEmoji, { opacity: focused ? 1 : 0.55 }]}>{icon}</Text>
       </View>
       <Text style={[styles.iconLabel, { color: focused ? activeColor : t.t3 }]}>{label}</Text>

@@ -159,7 +159,7 @@ export default function FocusScreen() {
   const timerColor =
     status === 'done'  ? '#22c55e' :
     status === 'idle'  ? t.t3      :
-    '#6366F1'
+    '#5E8B71'
 
   const progress = totalSeconds > 0 ? secondsLeft / totalSeconds : 1
 
@@ -209,7 +209,7 @@ export default function FocusScreen() {
                   styles.progressFill,
                   {
                     width:           `${progress * 100}%`,
-                    backgroundColor: status === 'done' ? '#22c55e' : '#6366F1',
+                    backgroundColor: status === 'done' ? '#22c55e' : '#5E8B71',
                   },
                 ]}
               />
@@ -237,12 +237,12 @@ export default function FocusScreen() {
                         style={[
                           styles.pill,
                           {
-                            backgroundColor: active ? 'rgba(99,102,241,0.1)' : t.bg,
-                            borderColor:     active ? '#6366F1' : t.cardBorder,
+                            backgroundColor: active ? 'rgba(94,139,113,0.1)' : t.bg,
+                            borderColor:     active ? '#5E8B71' : t.cardBorder,
                           },
                         ]}
                       >
-                        <Text style={[styles.pillText, { color: active ? '#6366F1' : t.t2 }]}>
+                        <Text style={[styles.pillText, { color: active ? '#5E8B71' : t.t2 }]}>
                           {m}m
                         </Text>
                       </TouchableOpacity>
@@ -253,12 +253,12 @@ export default function FocusScreen() {
                     style={[
                       styles.pill,
                       {
-                        backgroundColor: isCustom ? 'rgba(99,102,241,0.1)' : t.bg,
-                        borderColor:     isCustom ? '#6366F1' : t.cardBorder,
+                        backgroundColor: isCustom ? 'rgba(94,139,113,0.1)' : t.bg,
+                        borderColor:     isCustom ? '#5E8B71' : t.cardBorder,
                       },
                     ]}
                   >
-                    <Text style={[styles.pillText, { color: isCustom ? '#6366F1' : t.t2 }]}>
+                    <Text style={[styles.pillText, { color: isCustom ? '#5E8B71' : t.t2 }]}>
                       Custom
                     </Text>
                   </TouchableOpacity>
@@ -268,7 +268,7 @@ export default function FocusScreen() {
                 {isCustom && (
                   <View style={styles.customRow}>
                     <TextInput
-                      style={[styles.customInput, { backgroundColor: t.bg, borderColor: '#6366F1', color: t.t1 }]}
+                      style={[styles.customInput, { backgroundColor: t.bg, borderColor: '#5E8B71', color: t.t1 }]}
                       value={customInput}
                       onChangeText={setCustomInput}
                       onBlur={applyCustomInput}
@@ -282,7 +282,7 @@ export default function FocusScreen() {
                     <Text style={[styles.customUnit, { color: t.t2 }]}>min</Text>
                     <TouchableOpacity
                       onPress={applyCustomInput}
-                      style={[styles.customApply, { backgroundColor: '#6366F1', opacity: customInput ? 1 : 0.4 }]}
+                      style={[styles.customApply, { backgroundColor: '#5E8B71', opacity: customInput ? 1 : 0.4 }]}
                       disabled={!customInput}
                     >
                       <Text style={styles.customApplyText}>Set</Text>
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
   title:            { fontSize: 28, fontWeight: '900', color: '#fff' },
   scroll:           { flex: 1 },
   content:          { paddingTop: 24, paddingHorizontal: 16, paddingBottom: 36 },
-  timerCard:        { borderRadius: 24, borderWidth: 1, padding: 28, alignItems: 'center', gap: 16, shadowColor: '#6366F1', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.08, shadowRadius: 16, elevation: 4 },
+  timerCard:        { borderRadius: 24, borderWidth: 1, padding: 28, alignItems: 'center', gap: 16, shadowColor: '#5E8B71', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.08, shadowRadius: 16, elevation: 4 },
   taskName:         { fontSize: 14, fontWeight: '600', textAlign: 'center', marginBottom: -8 },
   timer:            { fontSize: 72, fontWeight: '900', fontVariant: ['tabular-nums'], letterSpacing: -3 },
   progressTrack:    { width: '100%', height: 6, borderRadius: 3, overflow: 'hidden' },

@@ -31,7 +31,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         style={{
           background:  'var(--stable-nav)',
           borderRight: '1px solid var(--stable-nav-border)',
-          boxShadow:   '4px 0 24px rgba(99,102,241,0.06)',
+          boxShadow:   '4px 0 24px rgba(94,139,113,0.06)',
           zIndex:      40,
         }}
       >
@@ -40,7 +40,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-2.5">
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-xs font-black shrink-0"
-              style={{ background: 'var(--stable-cta)', boxShadow: '0 4px 12px rgba(99,102,241,0.4)' }}
+              style={{ background: 'var(--stable-cta)', boxShadow: '0 4px 12px rgba(94,139,113,0.4)' }}
             >
               S
             </div>
@@ -65,14 +65,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 href={tab.href}
                 className="flex items-center gap-3 py-2.5 px-3 rounded-xl text-sm font-semibold transition-all"
                 style={{
-                  background: isActive ? 'rgba(99,102,241,0.1)' : 'transparent',
+                  background: isActive ? 'rgba(94,139,113,0.1)' : 'transparent',
                   color:      isActive ? 'var(--cat-work)' : 'var(--stable-t2)',
                 }}
               >
                 <span
                   className="w-7 h-7 rounded-lg flex items-center justify-center text-sm shrink-0 transition-all"
                   style={{
-                    background: isActive ? 'rgba(99,102,241,0.15)' : 'rgba(0,0,0,0.03)',
+                    background: isActive ? 'rgba(94,139,113,0.15)' : 'rgba(0,0,0,0.03)',
                     fontSize:   '15px',
                   }}
                 >
@@ -96,7 +96,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <div className="flex items-center gap-3 mb-3">
               <div
                 className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-black shrink-0"
-                style={{ background: 'var(--stable-cta)', boxShadow: '0 2px 8px rgba(99,102,241,0.35)' }}
+                style={{ background: 'var(--stable-cta)', boxShadow: '0 2px 8px rgba(94,139,113,0.35)' }}
               >
                 {initial}
               </div>
@@ -137,7 +137,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         style={{
           background: 'var(--stable-nav)',
           borderTop:  '1px solid var(--stable-nav-border)',
-          boxShadow:  '0 -4px 24px rgba(99,102,241,0.08)',
+          boxShadow:  '0 -4px 24px rgba(94,139,113,0.08)',
           zIndex:     50,
         }}
       >
@@ -162,7 +162,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 <span
                   className="mt-2 w-8 h-8 rounded-xl flex items-center justify-center text-[17px] transition-all"
                   style={{
-                    background: isActive ? 'rgba(99,102,241,0.1)' : 'transparent',
+                    background: isActive ? 'rgba(94,139,113,0.1)' : 'transparent',
                   }}
                 >
                   {tab.icon}

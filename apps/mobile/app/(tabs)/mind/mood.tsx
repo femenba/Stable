@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   headerTitle:    { flex: 1, textAlign: 'center', fontSize: 17, fontWeight: '800' },
   headerRight:    { width: 70 },
   body:           { padding: 20, gap: 22 },
-  card:           { borderRadius: 22, borderWidth: 1, padding: 22, shadowColor: '#6366F1', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.07, shadowRadius: 14, elevation: 3 },
+  card:           { borderRadius: 22, borderWidth: 1, padding: 22, shadowColor: '#5E8B71', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.07, shadowRadius: 14, elevation: 3 },
   alreadyChecked: { alignItems: 'center', gap: 12, paddingVertical: 20 },
   checkedEmoji:   { fontSize: 48 },
   checkedText:    { fontSize: 17, fontWeight: '700' },

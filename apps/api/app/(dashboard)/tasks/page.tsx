@@ -150,7 +150,7 @@ export default function TasksPage() {
                         className="flex-1 text-xs font-bold py-2 rounded-xl border-2 transition-all"
                         style={{
                           borderColor: active ? 'var(--cat-work)' : 'var(--stable-card-border)',
-                          background:  active ? 'rgba(99,102,241,0.1)' : 'transparent',
+                          background:  active ? 'rgba(94,139,113,0.1)' : 'transparent',
                           color:       active ? 'var(--cat-work)' : 'var(--stable-t2)',
                         }}
                       >
@@ -208,7 +208,7 @@ export default function TasksPage() {
                 <button
                   onClick={() => setShowForm(true)}
                   className="text-xs font-bold px-4 py-2 rounded-xl transition-opacity hover:opacity-70"
-                  style={{ background: 'rgba(99,102,241,0.1)', color: 'var(--cat-work)' }}
+                  style={{ background: 'rgba(94,139,113,0.1)', color: 'var(--cat-work)' }}
                 >
                   + Add your first task
                 </button>
