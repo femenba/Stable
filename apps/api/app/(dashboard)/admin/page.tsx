@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useUser } from '@clerk/nextjs'
 import Link from 'next/link'
 import {
@@ -10,12 +11,12 @@ import { isAdminUser, getUserPlan } from '../../../src/lib/user-roles'
 import { Card } from '../../../src/components/ui'
 
 const STATS = [
-  { icon: Users,      label: 'Total Users',    value: '—', sub: 'awaiting data',    color: '#4A7A5F', bg: 'rgba(74,122,95,0.08)'   },
-  { icon: UserCheck,  label: 'Free Users',     value: '—', sub: 'on free plan',     color: '#4A8FAF', bg: 'rgba(74,143,175,0.08)' },
-  { icon: Crown,      label: 'Pro Users',      value: '—', sub: 'on pro plan',      color: '#8B7EC8', bg: 'rgba(139,126,200,0.08)' },
+  { icon: Users,      label: 'Total Users',    value: '—', sub: 'awaiting data',      color: '#4A7A5F', bg: 'rgba(74,122,95,0.08)'   },
+  { icon: UserCheck,  label: 'Free Users',     value: '—', sub: 'on free plan',       color: '#4A8FAF', bg: 'rgba(74,143,175,0.08)'  },
+  { icon: Crown,      label: 'Pro Users',      value: '—', sub: 'on pro plan',        color: '#8B7EC8', bg: 'rgba(139,126,200,0.08)' },
   { icon: TrendingUp, label: 'MRR',            value: '£—', sub: 'monthly recurring', color: '#5E8B71', bg: 'rgba(94,139,113,0.08)'  },
-  { icon: UserPlus,   label: 'New this week',  value: '—', sub: 'recent signups',   color: '#C05570', bg: 'rgba(192,85,112,0.08)'  },
-  { icon: CreditCard, label: 'Churn rate',     value: '—', sub: 'this month',       color: '#7A8F82', bg: 'rgba(122,143,130,0.08)' },
+  { icon: UserPlus,   label: 'New this week',  value: '—', sub: 'recent signups',     color: '#C05570', bg: 'rgba(192,85,112,0.08)'  },
+  { icon: CreditCard, label: 'Churn rate',     value: '—', sub: 'this month',         color: '#7A8F82', bg: 'rgba(122,143,130,0.08)' },
 ]
 
 const SECTIONS = [
@@ -26,14 +27,6 @@ const SECTIONS = [
     color: '#4A8FAF',
     bg:    'rgba(74,143,175,0.08)',
     rows:  ['No messages yet', 'Connect backend to display', 'Supabase table: contact_messages'],
-  },
-  {
-    icon:  Users,
-    label: 'User Management',
-    desc:  'Registered accounts, roles, and activity overview.',
-    color: '#4A7A5F',
-    bg:    'rgba(74,122,95,0.08)',
-    rows:  ['No users loaded', 'Connect to Clerk user API', 'Requires server-side query'],
   },
   {
     icon:  CreditCard,
@@ -53,15 +46,107 @@ const SECTIONS = [
   },
 ]
 
-// ── Access denied for non-admins ──────────────────────────────────────────────
+// ── User management ────────────────────────────────────────────────────────────
+
+type UserRow = {
+  id:    string
+  name:  string
+  email: string
+  plan:  'pro' | 'free'
+  role:  'admin' | 'user'
+}
+
+function UserManagementCard({ adminEmail }: { adminEmail: string }) {
+  const [users, setUsers] = useState<UserRow[]>([
+    { id: 'admin-1', name: 'Felipe Barros', email: adminEmail, plan: 'pro', role: 'admin' },
+  ])
+
+  function setPlan(id: string, plan: 'pro' | 'free') {
+    setUsers((prev) => prev.map((u) => u.id === id ? { ...u, plan } : u))
+    // TODO: supabase.from('user_plans').upsert({ email, plan })
+  }
+
+  return (
+    <Card className="p-6">
+      <div className="flex items-start gap-4 mb-5">
+        <div className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0" style={{ background: 'rgba(74,122,95,0.08)' }}>
+          <Users size={18} style={{ color: '#4A7A5F' }} strokeWidth={1.7} />
+        </div>
+        <div>
+          <p className="font-bold text-sm mb-1" style={{ color: 'var(--stable-t1)' }}>User Management</p>
+          <p className="text-xs leading-relaxed" style={{ color: 'var(--stable-t2)' }}>Manage plans and roles. Full list requires Supabase + Clerk integration.</p>
+        </div>
+      </div>
+
+      {/* Table header */}
+      <div className="grid grid-cols-[1fr_1fr_auto_auto] gap-3 px-3 mb-2">
+        {['User', 'Email', 'Plan', 'Actions'].map((h) => (
+          <p key={h} className="text-[9px] font-black uppercase tracking-widest" style={{ color: 'var(--stable-t3)' }}>{h}</p>
+        ))}
+      </div>
+
+      {/* Rows */}
+      <div className="space-y-2 mb-4">
+        {users.map((u) => (
+          <div key={u.id} className="grid grid-cols-[1fr_1fr_auto_auto] gap-3 items-center px-3 py-3 rounded-xl" style={{ background: 'var(--stable-bg)' }}>
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-black shrink-0" style={{ background: 'var(--stable-cta)' }}>
+                {u.name[0]}
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold truncate" style={{ color: 'var(--stable-t1)' }}>{u.name}</p>
+                {u.role === 'admin' && (
+                  <span className="inline-flex items-center gap-1 text-[8px] font-black uppercase tracking-wider" style={{ color: 'var(--cat-work)' }}>
+                    <ShieldCheck size={8} /> Admin
+                  </span>
+                )}
+              </div>
+            </div>
+            <p className="text-[10px] truncate" style={{ color: 'var(--stable-t3)' }}>{u.email}</p>
+            <span
+              className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full"
+              style={u.plan === 'pro'
+                ? { background: 'rgba(139,126,200,0.12)', color: '#8B7EC8' }
+                : { background: 'var(--sage-soft)', color: 'var(--cat-work)' }}
+            >
+              {u.plan === 'pro' && <Crown size={8} />}
+              {u.plan}
+            </span>
+            <div className="flex gap-1">
+              <button
+                onClick={() => setPlan(u.id, 'pro')}
+                disabled={u.plan === 'pro'}
+                className="text-[9px] font-black uppercase px-2 py-1 rounded-lg transition-all hover:opacity-80 disabled:opacity-30 disabled:cursor-not-allowed"
+                style={{ background: 'rgba(139,126,200,0.12)', color: '#8B7EC8' }}
+              >
+                Pro
+              </button>
+              <button
+                onClick={() => setPlan(u.id, 'free')}
+                disabled={u.plan === 'free'}
+                className="text-[9px] font-black uppercase px-2 py-1 rounded-lg transition-all hover:opacity-80 disabled:opacity-30 disabled:cursor-not-allowed"
+                style={{ background: 'var(--sage-soft)', color: 'var(--cat-work)' }}
+              >
+                Free
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-[10px]" style={{ color: 'var(--stable-t3)' }}>
+        To load all users: add Supabase table <code className="px-1 py-0.5 rounded" style={{ background: 'var(--stable-bg)' }}>user_plans (email, plan, role)</code> and query via server action.
+      </p>
+    </Card>
+  )
+}
+
+// ── Access denied ──────────────────────────────────────────────────────────────
 
 function AccessDenied({ plan }: { plan: 'pro' | 'free' }) {
   return (
     <div>
-      <section
-        className="relative overflow-hidden"
-        style={{ background: 'var(--stable-hero-bg)' }}
-      >
+      <section className="relative overflow-hidden" style={{ background: 'var(--stable-hero-bg)' }}>
         <div style={{ position: 'absolute', top: -60, right: -40, width: 280, height: 280, borderRadius: '50%', background: 'rgba(192,85,112,0.07)', filter: 'blur(60px)', pointerEvents: 'none' }} />
         <div className="relative px-7 md:px-10 pt-10 pb-8">
           <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--stable-t3)' }}>ADMIN</p>
@@ -83,9 +168,9 @@ function AccessDenied({ plan }: { plan: 'pro' | 'free' }) {
           <p className="text-sm font-semibold" style={{ color: 'var(--stable-t1)' }}>Looking for something?</p>
           <div className="space-y-2">
             {[
-              { href: '/pricing', icon: Crown,        label: 'View plans & pricing' },
-              { href: '/dashboard', icon: TrendingUp, label: 'Go to your dashboard'  },
-              { href: 'mailto:support@stableadhd.com', icon: Mail, label: 'Contact support' },
+              { href: '/pricing',                       icon: Crown,        label: 'View plans & pricing' },
+              { href: '/dashboard',                     icon: TrendingUp,   label: 'Go to your dashboard'  },
+              { href: 'mailto:support@stableadhd.com',  icon: Mail,         label: 'Contact support'       },
             ].map((item) => (
               <Link
                 key={item.label}
@@ -105,16 +190,12 @@ function AccessDenied({ plan }: { plan: 'pro' | 'free' }) {
   )
 }
 
-// ── Admin dashboard ───────────────────────────────────────────────────────────
+// ── Admin dashboard ────────────────────────────────────────────────────────────
 
 function AdminDashboard({ email }: { email: string }) {
   return (
     <div>
-      {/* Hero */}
-      <section
-        className="relative overflow-hidden"
-        style={{ background: 'var(--stable-hero-bg)' }}
-      >
+      <section className="relative overflow-hidden" style={{ background: 'var(--stable-hero-bg)' }}>
         <div style={{ position: 'absolute', top: -60, right: -40, width: 280, height: 280, borderRadius: '50%', background: 'rgba(74,122,95,0.07)', filter: 'blur(60px)', pointerEvents: 'none' }} />
         <div className="relative px-7 md:px-10 pt-10 pb-8">
           <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--stable-t3)' }}>ADMIN</p>
@@ -138,8 +219,8 @@ function AdminDashboard({ email }: { email: string }) {
         </div>
       </section>
 
-      {/* Stats grid */}
       <div className="px-7 md:px-10 py-8">
+        {/* Stats */}
         <p className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: 'var(--stable-t3)' }}>Overview</p>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
           {STATS.map((s) => (
@@ -156,8 +237,15 @@ function AdminDashboard({ email }: { email: string }) {
           ))}
         </div>
 
-        {/* Sections */}
-        <div className="grid md:grid-cols-2 gap-5 max-w-4xl">
+        {/* User management */}
+        <p className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: 'var(--stable-t3)' }}>User Management</p>
+        <div className="mb-8 max-w-4xl">
+          <UserManagementCard adminEmail={email} />
+        </div>
+
+        {/* Other sections */}
+        <p className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: 'var(--stable-t3)' }}>System</p>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-4xl">
           {SECTIONS.map((s) => (
             <Card key={s.label} className="p-6">
               <div className="flex items-start gap-4 mb-5">
@@ -169,30 +257,20 @@ function AdminDashboard({ email }: { email: string }) {
                   <p className="text-xs leading-relaxed" style={{ color: 'var(--stable-t2)' }}>{s.desc}</p>
                 </div>
               </div>
-
-              <div className="space-y-2 mb-5">
+              <div className="space-y-2 mb-4">
                 {s.rows.map((row) => (
-                  <div
-                    key={row}
-                    className="flex items-center justify-between px-3 py-2 rounded-xl"
-                    style={{ background: 'var(--stable-bg)' }}
-                  >
+                  <div key={row} className="flex items-center px-3 py-2 rounded-xl" style={{ background: 'var(--stable-bg)' }}>
                     <span className="text-xs" style={{ color: 'var(--stable-t2)' }}>{row}</span>
                   </div>
                 ))}
               </div>
-
-              <button
-                className="flex items-center gap-1.5 text-xs font-bold transition-opacity hover:opacity-70"
-                style={{ color: s.color }}
-              >
+              <button className="flex items-center gap-1.5 text-xs font-bold transition-opacity hover:opacity-70" style={{ color: s.color }}>
                 View details <ArrowRight size={12} />
               </button>
             </Card>
           ))}
         </div>
 
-        {/* Note */}
         <p className="mt-8 text-xs" style={{ color: 'var(--stable-t3)' }}>
           Placeholder data — connect Supabase queries and Clerk API to populate live stats.
         </p>

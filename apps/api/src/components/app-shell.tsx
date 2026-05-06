@@ -59,10 +59,10 @@ function ProfilePanel({
   if (!open) return null
 
   const links = [
-    { href: '/pricing', icon: Crown,        label: 'Pricing & Plans'  },
+    { href: '/pricing',  icon: Crown,       label: 'Pricing & Plans'  },
     ...(admin ? [{ href: '/admin', icon: ShieldCheck, label: 'Admin Dashboard' }] : []),
-    { href: '/admin',   icon: Settings,     label: 'Account Settings' },
-    { href: '/admin',   icon: Mail,         label: 'Contact Support'  },
+    { href: '/account',  icon: Settings,    label: 'Account Settings' },
+    { href: '/contact',  icon: Mail,        label: 'Contact Support'  },
   ]
 
   return (
