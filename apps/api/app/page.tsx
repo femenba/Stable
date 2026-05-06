@@ -155,7 +155,7 @@ function PhoneMockup() {
 // ── Hero ──────────────────────────────────────────────────────────────────
 function Hero() {
   return (
-    <section id="top" style={{ background: `linear-gradient(170deg, #E8F1E9 0%, #F7F5F1 60%)`, paddingTop: 120, paddingBottom: 96, fontFamily: FONT, overflow: 'hidden' }}>
+    <section id="top" style={{ background: `linear-gradient(170deg, #E8F1E9 0%, #F7F5F1 60%)`, paddingTop: 'clamp(96px,10vw,136px)', paddingBottom: 'clamp(64px,8vw,96px)', fontFamily: FONT, overflow: 'hidden' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
           {/* Text */}
@@ -182,6 +182,15 @@ function Hero() {
               </a>
             </div>
             <p style={{ marginTop: 20, fontSize: 13, color: C.t3 }}>Free forever · No credit card needed</p>
+
+            {/* Mobile-only stat pills */}
+            <div className="flex lg:hidden flex-wrap gap-2 mt-7 justify-center">
+              {[['🎯', 'Focus timer'], ['🌿', 'Mood tracking'], ['🧘', 'Calm tools'], ['✓', 'Daily tasks']].map(([e, l]) => (
+                <span key={l} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.75)', border: `1px solid ${C.border}`, borderRadius: 100, padding: '7px 14px', fontSize: 13, fontWeight: 600, color: C.t1, backdropFilter: 'blur(8px)' }}>
+                  {e} {l}
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* Mockup */}
@@ -229,7 +238,7 @@ const FEATURES = [
 
 function Features() {
   return (
-    <section id="features" style={{ background: C.bg, padding: '96px 24px', fontFamily: FONT }}>
+    <section id="features" style={{ background: C.bg, padding: 'clamp(64px,8vw,96px) 24px', fontFamily: FONT }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div data-mkt-animate style={{ textAlign: 'center', marginBottom: 60 }}>
           <p style={{ fontSize: 12, fontWeight: 700, color: C.sage, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>EVERYTHING YOU NEED</p>
@@ -271,7 +280,7 @@ const BENEFITS = [
 
 function Benefits() {
   return (
-    <section style={{ background: C.bgAlt, padding: '96px 24px', fontFamily: FONT }}>
+    <section style={{ background: C.bgAlt, padding: 'clamp(64px,8vw,96px) 24px', fontFamily: FONT }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div className="flex flex-col lg:flex-row items-center gap-16">
           <div data-mkt-animate style={{ flex: 1 }}>
@@ -312,7 +321,7 @@ const STEPS = [
 
 function HowItWorks() {
   return (
-    <section style={{ background: `linear-gradient(160deg, #E8F1E9 0%, #F7F5F1 100%)`, padding: '96px 24px', fontFamily: FONT }}>
+    <section style={{ background: `linear-gradient(160deg, #E8F1E9 0%, #F7F5F1 100%)`, padding: 'clamp(64px,8vw,96px) 24px', fontFamily: FONT }}>
       <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center' }}>
         <div data-mkt-animate style={{ marginBottom: 60 }}>
           <p style={{ fontSize: 12, fontWeight: 700, color: C.sage, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>HOW IT WORKS</p>
@@ -345,7 +354,7 @@ const PRO_FEATURES   = ['Everything in Free', 'Advanced AI suggestions', 'Full s
 
 function Pricing() {
   return (
-    <section id="pricing" style={{ background: C.bg, padding: '96px 24px', fontFamily: FONT }}>
+    <section id="pricing" style={{ background: C.bg, padding: 'clamp(64px,8vw,96px) 24px', fontFamily: FONT }}>
       <div style={{ maxWidth: 860, margin: '0 auto' }}>
         <div data-mkt-animate style={{ textAlign: 'center', marginBottom: 52 }}>
           <p style={{ fontSize: 12, fontWeight: 700, color: C.sage, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>PRICING</p>
@@ -422,7 +431,7 @@ const TESTIMONIALS = [
 
 function Testimonials() {
   return (
-    <section style={{ background: C.bgAlt, padding: '96px 24px', fontFamily: FONT }}>
+    <section style={{ background: C.bgAlt, padding: 'clamp(64px,8vw,96px) 24px', fontFamily: FONT }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div data-mkt-animate style={{ textAlign: 'center', marginBottom: 52 }}>
           <p style={{ fontSize: 12, fontWeight: 700, color: C.sage, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>WHAT PEOPLE SAY</p>
@@ -464,7 +473,7 @@ const FAQS = [
 function FAQ() {
   const [open, setOpen] = useState<number | null>(null)
   return (
-    <section style={{ background: C.bg, padding: '96px 24px', fontFamily: FONT }}>
+    <section style={{ background: C.bg, padding: 'clamp(64px,8vw,96px) 24px', fontFamily: FONT }}>
       <div style={{ maxWidth: 720, margin: '0 auto' }}>
         <div data-mkt-animate style={{ textAlign: 'center', marginBottom: 52 }}>
           <p style={{ fontSize: 12, fontWeight: 700, color: C.sage, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>FAQ</p>
@@ -534,7 +543,7 @@ function Footer() {
           <div className="flex flex-wrap gap-x-12 gap-y-6">
             {[
               { heading: 'Product', links: [['Features', '#features'], ['Pricing', '#pricing'], ['Sign in', '/sign-in'], ['Get started', '/sign-up']] },
-              { heading: 'Company', links: [['Privacy', '#'], ['Terms', '#'], ['Contact', '#']] },
+              { heading: 'Company', links: [['Privacy Policy', '/privacy'], ['Terms of Service', '/terms'], ['Contact', '/contact']] },
             ].map(({ heading, links }) => (
               <div key={heading}>
                 <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>{heading}</p>
