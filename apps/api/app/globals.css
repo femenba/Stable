@@ -2,58 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Light mode — warm sage ──────────────────── */
+/* ── Light mode ───────────────────────────────────── */
 :root {
-  --stable-bg:          #F8F7F2;
+  --stable-bg:          #F3F6F3;
   --stable-card:        #FFFFFF;
-  --stable-card-border: rgba(94,139,113,0.14);
+  --stable-card-border: rgba(94,139,113,0.12);
   --stable-nav:         #FFFFFF;
-  --stable-nav-border:  rgba(94,139,113,0.12);
-  --stable-t1:          #1E1D2E;
-  --stable-t2:          #6B6880;
-  --stable-t3:          #B0ADC5;
+  --stable-nav-border:  rgba(94,139,113,0.10);
+  --stable-t1:          #1A2B1E;
+  --stable-t2:          #5A6B5E;
+  --stable-t3:          #9EADA1;
+  --stable-hero-bg:     linear-gradient(160deg, #E8F1E9 0%, #F3F6F3 65%);
   --stable-header:      linear-gradient(135deg, #3D6B54 0%, #5E8B71 55%, #7BA68A 100%);
-  --stable-cta:         linear-gradient(135deg, #5E8B71 0%, #7BA68A 100%);
-  --cat-work:     #5E8B71;
-  --cat-personal: #8B7EC8;
-  --cat-family:   #D9607A;
-  --cat-health:   #5BA4C8;
-  --cat-other:    #8B9BA8;
-  --sage:         #5E8B71;
-  --sage-light:   #7BA68A;
-  --sage-dark:    #3D6B54;
-  --sage-soft:    rgba(94,139,113,0.12);
-  --shadow-card:  0 2px 20px rgba(0,0,0,0.06), 0 0 0 1px rgba(94,139,113,0.08);
-  --shadow-float: 0 8px 32px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.04);
-  --shadow-cta:   0 8px 28px rgba(94,139,113,0.38);
-  --shadow-hero:  0 24px 64px rgba(0,0,0,0.1);
+  --stable-cta:         linear-gradient(135deg, #4A7A5F 0%, #5E8B71 100%);
+  --cat-work:     #4A7A5F;
+  --cat-personal: #7B6DB8;
+  --cat-family:   #C05570;
+  --cat-health:   #4A8FAF;
+  --cat-other:    #7A8F82;
+  --sage:         #4A7A5F;
+  --sage-light:   #6A9A7F;
+  --sage-dark:    #325845;
+  --sage-soft:    rgba(74,122,95,0.10);
+  --shadow-card:  0 1px 4px rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.05);
+  --shadow-float: 0 8px 32px rgba(0,0,0,0.09), 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-cta:   0 6px 24px rgba(74,122,95,0.35);
+  --shadow-hero:  0 20px 60px rgba(0,0,0,0.08);
+  --shadow-panel: 0 16px 48px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06);
 }
 
-/* ── Dark mode — deep warm charcoal ─────────────── */
+/* ── Dark mode ────────────────────────────────────── */
 [data-theme="dark"] {
-  --stable-bg:          #13120E;
-  --stable-card:        #1E1C17;
-  --stable-card-border: rgba(94,139,113,0.15);
-  --stable-nav:         #13120E;
-  --stable-nav-border:  #26241A;
-  --stable-t1:          #F2EEE4;
-  --stable-t2:          #9B9A8E;
-  --stable-t3:          #454035;
-  --stable-header:      linear-gradient(135deg, #1A2E22 0%, #131E18 70%);
-  --stable-cta:         linear-gradient(135deg, #5E8B71 0%, #7BA68A 100%);
-  --cat-work:     #7BA68A;
-  --cat-personal: #A095D4;
-  --cat-family:   #E89EAD;
-  --cat-health:   #70B5D5;
-  --cat-other:    #9BA8B4;
-  --sage:         #7BA68A;
-  --sage-light:   #9BC0AC;
-  --sage-dark:    #5E8B71;
-  --sage-soft:    rgba(94,139,113,0.15);
-  --shadow-card:  0 2px 16px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
+  --stable-bg:          #111810;
+  --stable-card:        #1A2018;
+  --stable-card-border: rgba(94,139,113,0.14);
+  --stable-nav:         #111810;
+  --stable-nav-border:  rgba(94,139,113,0.1);
+  --stable-t1:          #EDF2EC;
+  --stable-t2:          #8A9A8D;
+  --stable-t3:          #4A5A4D;
+  --stable-hero-bg:     linear-gradient(160deg, #152018 0%, #111810 65%);
+  --stable-header:      linear-gradient(135deg, #192E20 0%, #121E15 70%);
+  --stable-cta:         linear-gradient(135deg, #4A7A5F 0%, #5E8B71 100%);
+  --cat-work:     #6A9A7F;
+  --cat-personal: #9B8FD4;
+  --cat-family:   #D87090;
+  --cat-health:   #60AFD0;
+  --cat-other:    #8AA090;
+  --sage:         #6A9A7F;
+  --sage-light:   #8AB8A0;
+  --sage-dark:    #4A7A5F;
+  --sage-soft:    rgba(74,122,95,0.14);
+  --shadow-card:  0 2px 16px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);
   --shadow-float: 0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
-  --shadow-cta:   0 8px 28px rgba(94,139,113,0.28);
-  --shadow-hero:  0 24px 64px rgba(0,0,0,0.5);
+  --shadow-cta:   0 6px 24px rgba(74,122,95,0.28);
+  --shadow-hero:  0 20px 60px rgba(0,0,0,0.5);
+  --shadow-panel: 0 16px 48px rgba(0,0,0,0.6), 0 4px 16px rgba(0,0,0,0.4);
 }
 
 @layer base {
@@ -62,5 +66,40 @@
     background: var(--stable-bg);
     color: var(--stable-t1);
     @apply antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   }
 }
+
+/* ── Sidebar nav animations ───────────────────────── */
+@keyframes navIndicator {
+  from { transform: scaleY(0); opacity: 0; }
+  to   { transform: scaleY(1); opacity: 1; }
+}
+
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.nav-indicator {
+  transform-origin: center;
+  animation: navIndicator 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.panel-in {
+  animation: panelIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.fade-in {
+  animation: fadeIn 0.15s ease both;
+}
+
+/* ── Scrollbar ────────────────────────────────────── */
+::-webkit-scrollbar          { width: 4px; height: 4px; }
+::-webkit-scrollbar-track    { background: transparent; }
+::-webkit-scrollbar-thumb    { background: var(--stable-card-border); border-radius: 4px; }

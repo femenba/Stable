@@ -1,8 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { Sun, Moon } from 'lucide-react'
 
-export function ThemeToggle() {
+type Props = { compact?: boolean }
+
+export function ThemeToggle({ compact = false }: Props) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
 
   useEffect(() => {
@@ -13,42 +16,53 @@ export function ThemeToggle() {
   function apply(next: 'light' | 'dark') {
     setTheme(next)
     localStorage.setItem('stable-theme', next)
-    if (next === 'dark') {
-      document.documentElement.setAttribute('data-theme', 'dark')
-    } else {
-      document.documentElement.removeAttribute('data-theme')
-    }
+    if (next === 'dark') document.documentElement.setAttribute('data-theme', 'dark')
+    else document.documentElement.removeAttribute('data-theme')
+  }
+
+  function toggle() { apply(theme === 'light' ? 'dark' : 'light') }
+
+  if (compact) {
+    return (
+      <button
+        onClick={toggle}
+        title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+        className="w-9 h-9 rounded-2xl flex items-center justify-center transition-all hover:opacity-70"
+        style={{ background: 'var(--sage-soft)', color: 'var(--cat-work)' }}
+      >
+        {theme === 'light'
+          ? <Moon size={15} strokeWidth={2} />
+          : <Sun size={15} strokeWidth={2} />}
+      </button>
+    )
   }
 
   return (
     <div
-      className="flex items-center rounded-full p-1 shrink-0"
-      style={{
-        background: 'rgba(255,255,255,0.15)',
-        border: '1px solid rgba(255,255,255,0.2)',
-      }}
+      className="inline-flex items-center rounded-full p-0.5 gap-0.5"
+      style={{ background: 'rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.06)' }}
     >
       <button
         onClick={() => apply('light')}
-        className="flex items-center gap-1 rounded-full px-3 py-1 text-[11px] font-semibold transition-all"
+        className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold transition-all"
         style={{
-          background:  theme === 'light' ? '#fff' : 'transparent',
-          color:       theme === 'light' ? '#111' : 'rgba(255,255,255,0.5)',
-          boxShadow:   theme === 'light' ? '0 1px 4px rgba(0,0,0,0.2)' : 'none',
+          background: theme === 'light' ? 'var(--stable-card)' : 'transparent',
+          color:      theme === 'light' ? 'var(--stable-t1)' : 'var(--stable-t3)',
+          boxShadow:  theme === 'light' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
         }}
       >
-        ☀️ Light
+        <Sun size={11} /> Light
       </button>
       <button
         onClick={() => apply('dark')}
-        className="flex items-center gap-1 rounded-full px-3 py-1 text-[11px] font-semibold transition-all"
+        className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold transition-all"
         style={{
-          background: theme === 'dark' ? '#1a1535' : 'transparent',
-          color:      theme === 'dark' ? '#a78bfa' : 'rgba(255,255,255,0.5)',
-          boxShadow:  theme === 'dark' ? '0 1px 4px rgba(0,0,0,0.3)' : 'none',
+          background: theme === 'dark' ? 'var(--stable-card)' : 'transparent',
+          color:      theme === 'dark' ? 'var(--stable-t1)' : 'var(--stable-t3)',
+          boxShadow:  theme === 'dark' ? '0 1px 3px rgba(0,0,0,0.12)' : 'none',
         }}
       >
-        🌙 Dark
+        <Moon size={11} /> Dark
       </button>
     </div>
   )
