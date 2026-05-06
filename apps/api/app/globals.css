@@ -119,6 +119,11 @@
   }
 }
 
+/* ── Clerk auth containment ───────────────────────── */
+.cl-rootBox,
+.cl-cardBox,
+.cl-card { max-width: 100% !important; min-width: unset !important; }
+
 /* ── Scrollbar ────────────────────────────────────── */
 ::-webkit-scrollbar          { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track    { background: transparent; }
