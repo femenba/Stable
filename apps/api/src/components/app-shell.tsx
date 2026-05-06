@@ -1,14 +1,15 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import {
   LayoutDashboard, CheckSquare, Timer, Bell, Leaf,
-  Sun, Moon, Crown, Settings, Mail, LogOut, X, ChevronRight,
+  Crown, Settings, Mail, LogOut, X, ChevronRight, ShieldCheck,
 } from 'lucide-react'
 import { useUser, useClerk } from '@clerk/nextjs'
 import { ThemeToggle } from './theme-toggle'
+import { getUserPlan, isAdminUser } from '../lib/user-roles'
 
 const NAV = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Today'     },
@@ -31,6 +32,8 @@ function ProfilePanel({
   initial,
   name,
   email,
+  plan,
+  admin,
   onSignOut,
 }: {
   open: boolean
@@ -38,6 +41,8 @@ function ProfilePanel({
   initial: string
   name: string
   email: string
+  plan: 'pro' | 'free'
+  admin: boolean
   onSignOut: () => void
 }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -53,6 +58,13 @@ function ProfilePanel({
 
   if (!open) return null
 
+  const links = [
+    { href: '/pricing', icon: Crown,        label: 'Pricing & Plans'  },
+    ...(admin ? [{ href: '/admin', icon: ShieldCheck, label: 'Admin Dashboard' }] : []),
+    { href: '/admin',   icon: Settings,     label: 'Account Settings' },
+    { href: '/admin',   icon: Mail,         label: 'Contact Support'  },
+  ]
+
   return (
     <>
       {/* Mobile backdrop */}
@@ -62,16 +74,12 @@ function ProfilePanel({
       />
       <div
         ref={ref}
-        className="panel-in fixed z-[49] rounded-2xl overflow-hidden"
+        className="profile-panel panel-in fixed z-[49] rounded-2xl"
         style={{
-          background:  'var(--stable-card)',
-          border:      '1px solid var(--stable-card-border)',
-          boxShadow:   'var(--shadow-panel)',
-          // desktop: anchored to sidebar right edge, bottom
-          left: 'clamp(80px, 80px, 80px)',
-          bottom: 16,
-          width: 280,
-          // mobile: full-width above bottom nav
+          background: 'var(--stable-card)',
+          border:     '1px solid var(--stable-card-border)',
+          boxShadow:  'var(--shadow-panel)',
+          overflow:   'hidden',
         }}
       >
         {/* Header */}
@@ -93,32 +101,37 @@ function ProfilePanel({
 
         {/* Plan */}
         <div className="px-5 py-3 flex items-center justify-between" style={{ borderBottom: '1px solid var(--stable-card-border)' }}>
-          <div className="flex items-center gap-2">
+          {plan === 'pro' ? (
+            <span
+              className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
+              style={{ background: 'linear-gradient(135deg,rgba(74,122,95,0.15),rgba(139,126,200,0.15))', color: 'var(--cat-work)' }}
+            >
+              <Crown size={10} /> Pro plan
+            </span>
+          ) : (
             <span
               className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
               style={{ background: 'var(--sage-soft)', color: 'var(--cat-work)' }}
             >
               Free plan
             </span>
-          </div>
-          <Link
-            href="/pricing"
-            onClick={onClose}
-            className="flex items-center gap-1 text-xs font-bold transition-opacity hover:opacity-70"
-            style={{ color: 'var(--cat-work)' }}
-          >
-            <Crown size={11} />
-            Upgrade
-          </Link>
+          )}
+          {plan === 'free' && (
+            <Link
+              href="/pricing"
+              onClick={onClose}
+              className="flex items-center gap-1 text-xs font-bold transition-opacity hover:opacity-70"
+              style={{ color: 'var(--cat-work)' }}
+            >
+              <Crown size={11} />
+              Upgrade
+            </Link>
+          )}
         </div>
 
         {/* Links */}
         <div className="py-1.5">
-          {[
-            { href: '/pricing',  icon: Crown,    label: 'Pricing & Plans'   },
-            { href: '/admin',    icon: Settings, label: 'Account Settings'  },
-            { href: '/admin',    icon: Mail,     label: 'Contact Support'   },
-          ].map((item) => (
+          {links.map((item) => (
             <Link
               key={item.label}
               href={item.href}
@@ -134,7 +147,7 @@ function ProfilePanel({
         </div>
 
         {/* Sign out */}
-        <div style={{ borderTop: '1px solid var(--stable-card-border)' }} className="p-2">
+        <div style={{ borderTop: '1px solid var(--stable-card-border)', paddingBottom: 'env(safe-area-inset-bottom)' }} className="p-2">
           <button
             onClick={onSignOut}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-70"
@@ -152,19 +165,21 @@ function ProfilePanel({
 // ── AppShell ──────────────────────────────────────────────────────────────────
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const pathname            = usePathname()
-  const { user }            = useUser()
-  const { signOut }         = useClerk()
+  const pathname                      = usePathname()
+  const { user }                      = useUser()
+  const { signOut }                   = useClerk()
   const [profileOpen, setProfileOpen] = useState(false)
 
   const name    = user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress?.split('@')[0] ?? 'Account'
   const email   = user?.emailAddresses?.[0]?.emailAddress ?? ''
   const initial = (user?.firstName?.[0] ?? email[0] ?? '?').toUpperCase()
+  const plan    = getUserPlan(email)
+  const admin   = isAdminUser(email)
 
   return (
     <div className="min-h-svh" style={{ background: 'var(--stable-bg)' }}>
 
-      {/* ── Desktop sidebar ─────────────────────────────── */}
+      {/* ── Desktop sidebar ─────────────────────────── */}
       <aside
         className="hidden md:flex md:flex-col md:fixed md:inset-y-0 md:left-0"
         style={{
@@ -175,7 +190,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           zIndex:      40,
         }}
       >
-        {/* Brand — clickable → /dashboard */}
+        {/* Brand */}
         <Link
           href="/dashboard"
           className="flex items-center justify-center transition-opacity hover:opacity-80"
@@ -230,8 +245,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             title={name}
             className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[12px] font-black transition-all hover:opacity-80 hover:scale-105"
             style={{
-              background: 'var(--stable-cta)',
-              outline: profileOpen ? `2px solid var(--cat-work)` : 'none',
+              background:    'var(--stable-cta)',
+              outline:       profileOpen ? `2px solid var(--cat-work)` : 'none',
               outlineOffset: 2,
             }}
           >
@@ -240,30 +255,32 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      {/* ── Profile panel ─────────────────────────────── */}
+      {/* ── Profile panel ─────────────────────────── */}
       <ProfilePanel
         open={profileOpen}
         onClose={() => setProfileOpen(false)}
         initial={initial}
         name={name}
         email={email}
+        plan={plan}
+        admin={admin}
         onSignOut={() => { setProfileOpen(false); signOut() }}
       />
 
-      {/* ── Main content ──────────────────────────────── */}
+      {/* ── Main content ──────────────────────────── */}
       <main className="md:ml-[72px] pb-[72px] md:pb-0 min-h-svh">
         {children}
       </main>
 
-      {/* ── Mobile bottom nav ─────────────────────────── */}
+      {/* ── Mobile bottom nav ─────────────────────── */}
       <nav
         className="md:hidden fixed bottom-0 left-0 right-0"
         style={{
-          height:      68,
-          background:  'var(--stable-nav)',
-          borderTop:   '1px solid var(--stable-nav-border)',
-          boxShadow:   '0 -4px 20px rgba(0,0,0,0.06)',
-          zIndex:      50,
+          height:     68,
+          background: 'var(--stable-nav)',
+          borderTop:  '1px solid var(--stable-nav-border)',
+          boxShadow:  '0 -4px 20px rgba(0,0,0,0.06)',
+          zIndex:     50,
         }}
       >
         <div className="flex items-stretch justify-around h-full px-1">

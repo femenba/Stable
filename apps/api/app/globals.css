@@ -99,6 +99,26 @@
   animation: fadeIn 0.15s ease both;
 }
 
+/* ── Profile panel — responsive positioning ──────── */
+.profile-panel {
+  left: 8px;
+  right: 8px;
+  bottom: calc(76px + env(safe-area-inset-bottom));
+  width: auto;
+  max-height: calc(100dvh - 160px);
+  overflow-y: auto;
+}
+@media (min-width: 768px) {
+  .profile-panel {
+    left: 80px;
+    right: auto;
+    bottom: 16px;
+    width: 280px;
+    max-height: calc(100dvh - 80px);
+    overflow-y: visible;
+  }
+}
+
 /* ── Scrollbar ────────────────────────────────────── */
 ::-webkit-scrollbar          { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track    { background: transparent; }
