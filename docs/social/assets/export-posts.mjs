@@ -61,7 +61,7 @@ console.log('\n📸 Feed posts (1080×1080)')
 await (async () => {
   const page = await browser.newPage()
   await page.setViewport({ width: 2000, height: 2000, deviceScaleFactor: 1 })
-  await page.goto(`file://${join(__dirname, 'grid-posts.html')}`, { waitUntil: 'networkidle0' })
+  await page.goto(`file://${join(__dirname, 'feed-posts/grid-posts.html')}`, { waitUntil: 'networkidle0' })
 
   const postMeta = [
     { id: 'p01', file: '01-brand-reveal.png' },
@@ -102,7 +102,7 @@ console.log('\n📋 Carousel slides (1080×1080)')
 await (async () => {
   const page = await browser.newPage()
   await page.setViewport({ width: 4000, height: 2000, deviceScaleFactor: 1 })
-  await page.goto(`file://${join(__dirname, 'carousels.html')}`, { waitUntil: 'networkidle0' })
+  await page.goto(`file://${join(__dirname, 'carousels/carousels.html')}`, { waitUntil: 'networkidle0' })
 
   // Scale all slides to 1:1
   await page.evaluate(() => {
@@ -144,7 +144,7 @@ console.log('\n📱 Stories & Reels (1080×1920)')
 await (async () => {
   const page = await browser.newPage()
   await page.setViewport({ width: 2000, height: 4000, deviceScaleFactor: 1 })
-  await page.goto(`file://${join(__dirname, 'story-templates.html')}`, { waitUntil: 'networkidle0' })
+  await page.goto(`file://${join(__dirname, 'stories/story-templates.html')}`, { waitUntil: 'networkidle0' })
 
   await page.evaluate(() => {
     document.querySelectorAll('.story').forEach(el => {
