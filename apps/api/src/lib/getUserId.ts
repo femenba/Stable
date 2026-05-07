@@ -12,13 +12,17 @@ export async function getUserId(ctx: Context): Promise<string> {
     }
   }
 
+  // Upsert: creates the user row on first call if Clerk webhook hasn't done so
   const { data, error } = await ctx.db
     .from('users')
+    .upsert(
+      { clerk_id: ctx.userId, email: ctx.userEmail || 'unknown@stableadhd.com' },
+      { onConflict: 'clerk_id', ignoreDuplicates: false },
+    )
     .select('id')
-    .eq('clerk_id', ctx.userId)
     .single()
 
-  if (error || !data) throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' })
+  if (error || !data) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to resolve user' })
 
   if (ctx.redis) {
     try {

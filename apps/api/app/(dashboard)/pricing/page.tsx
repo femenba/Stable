@@ -33,19 +33,25 @@ export default function PricingPage() {
   const isPro    = sub?.plan === 'pro' && (sub.status === 'active' || sub.status === 'trialing')
   const isTrial  = sub?.status === 'trialing'
   const pastDue  = sub?.status === 'past_due'
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
   async function handleProAction() {
     setRedirecting(true)
+    setCheckoutError(null)
     try {
       if (isPro || pastDue) {
         const { url } = await portalMutation.mutateAsync()
         if (url) window.location.href = url
+        else setRedirecting(false)
       } else {
         const { url } = await checkoutMutation.mutateAsync()
         if (url) window.location.href = url
+        else setRedirecting(false)
       }
-    } catch {
+    } catch (err: unknown) {
       setRedirecting(false)
+      const msg = err instanceof Error ? err.message : 'Something went wrong. Please try again.'
+      setCheckoutError(msg)
     }
   }
 
@@ -201,6 +207,13 @@ export default function PricingPage() {
               <p className="text-center text-xs mt-3 relative"
                  style={{ color: 'rgba(255,255,255,0.5)' }}>
                 7 days free · then £4.99/mo · cancel anytime
+              </p>
+            )}
+
+            {checkoutError && (
+              <p className="text-center text-xs mt-3 relative font-medium"
+                 style={{ color: 'rgba(255,120,120,0.95)' }}>
+                {checkoutError}
               </p>
             )}
           </div>
