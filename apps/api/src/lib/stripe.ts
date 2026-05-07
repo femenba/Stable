@@ -90,33 +90,77 @@ export async function createCustomerPortalSession({
   })
 }
 
-export async function getOrCreateStripeCustomer({
+// Verifies a Stripe customer ID is real and not deleted.
+// Returns the verified customer or null if it doesn't exist.
+async function verifyCustomer(
+  customerId: string,
+  stripe: Stripe,
+): Promise<Stripe.Customer | null> {
+  try {
+    const c = await stripe.customers.retrieve(customerId)
+    return c.deleted ? null : (c as Stripe.Customer)
+  } catch (err) {
+    if (err instanceof Stripe.errors.StripeInvalidRequestError) return null
+    throw err
+  }
+}
+
+// Resolves a valid Stripe customer for checkout or portal, healing stale/deleted IDs.
+// Three-layer strategy:
+//   1. Verify existingCustomerId if provided (fast path, one retrieve call)
+//   2. Search Stripe by clerkId metadata, verify each result
+//   3. Create a brand-new customer as last resort
+export async function resolveStripeCustomer({
+  existingCustomerId,
   clerkId,
   email,
   name,
 }: {
+  existingCustomerId?: string | null
   clerkId: string
   email: string
   name?: string | null
 }): Promise<string> {
   const stripe = getStripe()
-  const existing = await stripe.customers.search({
-    query: `metadata['clerkId']:'${clerkId}'`,
-    limit: 1,
-  })
-  if (existing.data.length > 0) {
-    const customer = existing.data[0]
-    // Repair placeholder email on the Stripe customer record if we now have a real one
-    if (email && customer.email === 'unknown@stableadhd.com') {
-      await stripe.customers.update(customer.id, { email, name: name ?? undefined })
+
+  // Layer 1: verify the ID we already have (most common path)
+  if (existingCustomerId) {
+    const verified = await verifyCustomer(existingCustomerId, stripe)
+    if (verified) {
+      console.log(`[stripe] Verified existing customer ${existingCustomerId}`)
+      if (email && verified.email === 'unknown@stableadhd.com') {
+        await stripe.customers.update(existingCustomerId, { email, name: name ?? undefined })
+      }
+      return existingCustomerId
     }
-    return customer.id
+    console.warn(`[stripe] Customer ${existingCustomerId} is missing/deleted — searching for replacement`)
   }
 
-  const customer = await stripe.customers.create({
+  // Layer 2: search Stripe by clerkId — search index can be stale, so verify each result
+  const search = await stripe.customers.search({
+    query: `metadata['clerkId']:'${clerkId}'`,
+    limit: 5,
+  })
+
+  for (const c of search.data) {
+    const verified = await verifyCustomer(c.id, stripe)
+    if (!verified) {
+      console.warn(`[stripe] Search result ${c.id} is missing/deleted — skipping`)
+      continue
+    }
+    console.log(`[stripe] Found valid customer ${c.id} via search for clerkId=${clerkId}`)
+    if (email && verified.email === 'unknown@stableadhd.com') {
+      await stripe.customers.update(c.id, { email, name: name ?? undefined })
+    }
+    return c.id
+  }
+
+  // Layer 3: create a fresh customer
+  console.log(`[stripe] Creating new customer for clerkId=${clerkId}`)
+  const fresh = await stripe.customers.create({
     email,
     name: name ?? undefined,
     metadata: { clerkId },
   })
-  return customer.id
+  return fresh.id
 }

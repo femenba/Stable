@@ -7,7 +7,7 @@ import {
   getStripe,
   createCheckoutSession,
   createCustomerPortalSession,
-  getOrCreateStripeCustomer,
+  resolveStripeCustomer,
   STRIPE_PLANS,
 } from '@/lib/stripe'
 
@@ -55,9 +55,12 @@ export const subscriptionsRouter = router({
       await ctx.db.from('users').update({ email: ctx.userEmail }).eq('id', userId)
     }
 
+    // Resolve Stripe customer: verify existing ID first, then search by clerkId,
+    // then create fresh — handles deleted/stale IDs automatically.
     let stripeCustomerId: string
     try {
-      stripeCustomerId = await getOrCreateStripeCustomer({
+      stripeCustomerId = await resolveStripeCustomer({
+        existingCustomerId: sub?.stripeCustomerId ?? null,
         clerkId: ctx.userId,
         email: effectiveEmail,
         name: userRow.name as string | null,
@@ -66,7 +69,7 @@ export const subscriptionsRouter = router({
       const detail = err instanceof Stripe.errors.StripeError
         ? `[${err.type}] ${err.message} (status=${err.statusCode})`
         : String(err)
-      console.error('[createCheckout] getOrCreateStripeCustomer failed:', detail)
+      console.error('[createCheckout] resolveStripeCustomer failed:', detail)
       throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Stripe customer error: ${detail}` })
     }
 
@@ -81,23 +84,52 @@ export const subscriptionsRouter = router({
 
     console.log(`[createCheckout] userId=${userId} clerkId=${ctx.userId} email=${effectiveEmail} hadTrial=${hadTrial}`)
 
+    const sessionParams = {
+      customerId:    stripeCustomerId,
+      customerEmail: effectiveEmail,
+      priceId:       plan.priceId,
+      trialDays:     hadTrial ? undefined : plan.trialDays,
+      successUrl:    `${APP_URL}/account?checkout=success`,
+      cancelUrl:     `${APP_URL}/pricing?checkout=cancelled`,
+      metadata:      { userId, clerkId: ctx.userId },
+    }
+
     let session: Awaited<ReturnType<typeof createCheckoutSession>>
     try {
-      session = await createCheckoutSession({
-        customerId:    stripeCustomerId,
-        customerEmail: effectiveEmail, // Stripe falls back to this if customer lookup fails
-        priceId:       plan.priceId,
-        trialDays:     hadTrial ? undefined : plan.trialDays,
-        successUrl:    `${APP_URL}/account?checkout=success`,
-        cancelUrl:     `${APP_URL}/pricing?checkout=cancelled`,
-        metadata:      { userId, clerkId: ctx.userId },
-      })
+      session = await createCheckoutSession(sessionParams)
     } catch (err) {
-      const detail = err instanceof Stripe.errors.StripeError
-        ? `[${err.type}] ${err.message} (status=${err.statusCode})`
-        : String(err)
-      console.error('[createCheckout] createCheckoutSession failed:', detail)
-      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Stripe session error: ${detail}` })
+      // Safety net: if the customer was somehow deleted between resolution and session
+      // creation, create a completely fresh customer and retry once.
+      const isCustomerMissing =
+        err instanceof Stripe.errors.StripeInvalidRequestError &&
+        (err.message.toLowerCase().includes('no such customer') ||
+          err.param === 'customer')
+
+      if (isCustomerMissing) {
+        console.warn(`[createCheckout] Customer ${stripeCustomerId} rejected by Stripe — creating fresh customer and retrying`)
+        try {
+          const fresh = await getStripe().customers.create({
+            email: effectiveEmail,
+            name:  (userRow.name as string | null) ?? undefined,
+            metadata: { clerkId: ctx.userId },
+          })
+          stripeCustomerId = fresh.id
+          session = await createCheckoutSession({ ...sessionParams, customerId: fresh.id })
+          console.log(`[createCheckout] Retry with fresh customer ${fresh.id} succeeded`)
+        } catch (retryErr) {
+          const detail = retryErr instanceof Stripe.errors.StripeError
+            ? `[${retryErr.type}] ${retryErr.message}`
+            : String(retryErr)
+          console.error('[createCheckout] Retry failed:', detail)
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Stripe session error: ${detail}` })
+        }
+      } else {
+        const detail = err instanceof Stripe.errors.StripeError
+          ? `[${err.type}] ${err.message} (status=${err.statusCode})`
+          : String(err)
+        console.error('[createCheckout] createCheckoutSession failed:', detail)
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Stripe session error: ${detail}` })
+      }
     }
 
     console.log(`[createCheckout] Session created: ${session.id} url=${session.url}`)
@@ -114,12 +146,29 @@ export const subscriptionsRouter = router({
       throw new TRPCError({ code: 'BAD_REQUEST', message: 'No active subscription found.' })
     }
 
-    const session = await createCustomerPortalSession({
-      customerId: sub.stripeCustomerId,
-      returnUrl:  `${APP_URL}/account`,
-    })
-
-    return { url: session.url }
+    try {
+      const session = await createCustomerPortalSession({
+        customerId: sub.stripeCustomerId,
+        returnUrl:  `${APP_URL}/account`,
+      })
+      return { url: session.url }
+    } catch (err) {
+      if (
+        err instanceof Stripe.errors.StripeInvalidRequestError &&
+        (err.message.toLowerCase().includes('no such customer') || err.param === 'customer')
+      ) {
+        console.error(`[createPortal] Stale customer ID ${sub.stripeCustomerId} — clearing from DB`)
+        await ctx.db.from('subscriptions')
+          .update({ stripe_customer_id: null, stripe_subscription_id: null })
+          .eq('user_id', userId)
+        await invalidatePlanCache(userId, ctx.redis)
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Billing account needs to be re-linked. Please start a new checkout.',
+        })
+      }
+      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Unable to open billing portal.' })
+    }
   }),
 
   // Admin utility: manually set a user's plan (for beta/gifted access)
