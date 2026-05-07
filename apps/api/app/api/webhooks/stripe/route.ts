@@ -5,12 +5,14 @@ import { createDbClient } from '@stable/db'
 import { getRedis, invalidateCachedUserId } from '@/lib/redis'
 import { invalidatePlanCache } from '@/lib/plan'
 import {
-  sendTrialStarted,
+  sendWelcomeTrial,
+  sendWelcomePro,
   sendTrialEnding,
   sendPaymentSucceeded,
   sendPaymentFailed,
   sendCancellation,
 } from '@/lib/email'
+import type { SendOpts } from '@/lib/email'
 
 export const runtime = 'nodejs'
 
@@ -58,7 +60,7 @@ async function getUserEmail(
     const { data } = await db.from('users').select('email').eq('id', userId).single()
     if (data?.email && data.email !== 'unknown@stableadhd.com') return data.email as string
   }
-  // Fallback: read email directly from Stripe customer
+  // Fallback: read email directly from Stripe customer object
   if (customerId) {
     try {
       const customer = await getStripe().customers.retrieve(customerId)
@@ -87,7 +89,7 @@ async function upsertSubscription(
   const plan   = sub.status === 'canceled' ? 'free' : 'pro'
   const status = sub.status
 
-  wlog(eventType, `Upserting subscription`, { userId, customerId, plan, status, subId: sub.id })
+  wlog(eventType, 'Upserting subscription', { userId, customerId, plan, status, subId: sub.id })
 
   const { error } = await db.from('subscriptions').upsert(
     {
@@ -135,7 +137,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Webhook signature failed: ${msg}` }, { status: 400 })
   }
 
-  wlog(event.type, `Received`, { id: event.id })
+  wlog(event.type, 'Received', { id: event.id })
 
   const db    = getDb()
   const redis = getRedis()
@@ -145,37 +147,35 @@ export async function POST(req: NextRequest) {
 
       // ── Checkout completed ─────────────────────────────────────────────────
       case 'checkout.session.completed': {
-        const session = event.data.object as Stripe.Checkout.Session
+        const session        = event.data.object as Stripe.Checkout.Session
         if (session.mode !== 'subscription') break
 
         const customerId     = session.customer as string
         const userId         = session.metadata?.userId
         const subscriptionId = session.subscription as string | null
 
-        wlog(event.type, `Processing`, { customerId, userId, subscriptionId })
+        wlog(event.type, 'Processing', { customerId, userId, subscriptionId })
 
         if (!userId) {
           werr(event.type, 'No userId in session metadata — cannot link subscription')
           break
         }
 
-        // Retrieve the subscription so we set the right plan/status immediately,
-        // avoiding any race with customer.subscription.created.
-        let plan   = 'pro'
-        let status = 'active'
-        let trialEnd: string | null      = null
-        let periodEnd: string | null     = null
-        let resolvedSubId = subscriptionId
+        let plan      = 'pro'
+        let status    = 'active'
+        let trialEnd: string | null  = null
+        let periodEnd: string | null = null
+        let resolvedSubId            = subscriptionId
 
         if (subscriptionId) {
           try {
             const sub = await getStripe().subscriptions.retrieve(subscriptionId)
-            plan        = sub.status === 'canceled' ? 'free' : 'pro'
-            status      = sub.status
-            trialEnd    = sub.trial_end ? new Date(sub.trial_end * 1000).toISOString() : null
-            periodEnd   = new Date((sub as any).current_period_end * 1000).toISOString()
+            plan          = sub.status === 'canceled' ? 'free' : 'pro'
+            status        = sub.status
+            trialEnd      = sub.trial_end ? new Date(sub.trial_end * 1000).toISOString() : null
+            periodEnd     = new Date((sub as any).current_period_end * 1000).toISOString()
             resolvedSubId = sub.id
-            wlog(event.type, `Fetched subscription`, { status, trial_end: trialEnd })
+            wlog(event.type, 'Fetched subscription', { status, trial_end: trialEnd })
           } catch (err) {
             werr(event.type, 'Failed to retrieve subscription from Stripe', err)
           }
@@ -188,23 +188,30 @@ export async function POST(req: NextRequest) {
             stripe_subscription_id: resolvedSubId,
             plan,
             status,
-            trial_ends_at:          trialEnd,
-            current_period_end:     periodEnd,
+            trial_ends_at:      trialEnd,
+            current_period_end: periodEnd,
           },
           { onConflict: 'user_id' },
         )
 
         if (error) {
           werr(event.type, `DB upsert failed for user ${userId}`, error)
-        } else {
-          wlog(event.type, `User ${userId} upgraded to ${plan} (${status})`)
-          await invalidatePlanCache(userId, redis)
+          break
+        }
 
-          // Welcome email — only for trial starts
-          if (status === 'trialing' && trialEnd) {
-            const email = await getUserEmail(userId, customerId, db)
-            await sendTrialStarted(email, new Date(trialEnd))
-          }
+        wlog(event.type, `User ${userId} upgraded to ${plan} (${status})`)
+        await invalidatePlanCache(userId, redis)
+
+        const email = await getUserEmail(userId, customerId, db)
+
+        if (status === 'trialing' && trialEnd) {
+          await sendWelcomeTrial(email, new Date(trialEnd), {
+            db, userId, stripeEventId: event.id, emailType: 'welcome_trial',
+          })
+        } else if (status === 'active') {
+          await sendWelcomePro(email, {
+            db, userId, stripeEventId: event.id, emailType: 'welcome_pro',
+          })
         }
         break
       }
@@ -223,91 +230,100 @@ export async function POST(req: NextRequest) {
         const prev = (event.data.previous_attributes ?? {}) as Record<string, unknown>
         await upsertSubscription(event.type, db, redis, sub)
 
-        // Trial → active conversion: send "first payment successful" email
+        // Trial → active: first charge just succeeded
         if (prev.status === 'trialing' && sub.status === 'active') {
           const customerId = sub.customer as string
           const userId     = await getUserIdByStripeCustomer(customerId, db)
           const email      = await getUserEmail(userId, customerId, db)
-          wlog(event.type, `Trial converted to active — sending payment email`, { userId })
-          await sendPaymentSucceeded(email)
+          wlog(event.type, 'Trial converted to active — sending payment confirmation', { userId })
+          await sendPaymentSucceeded(email, {
+            db, userId, stripeEventId: event.id, emailType: 'payment_succeeded_trial_converted',
+          })
         }
         break
       }
 
       case 'customer.subscription.deleted': {
-        wlog(event.type, 'Subscription deleted/canceled')
+        wlog(event.type, 'Subscription deleted/cancelled')
         const sub        = event.data.object as Stripe.Subscription
         const customerId = sub.customer as string
         const userId     = await getUserIdByStripeCustomer(customerId, db)
         await upsertSubscription(event.type, db, redis, sub)
 
-        // Send cancellation confirmation with access end date
         const accessEndsAt = (sub as any).current_period_end
           ? new Date((sub as any).current_period_end * 1000)
           : new Date()
         const email = await getUserEmail(userId, customerId, db)
-        await sendCancellation(email, accessEndsAt)
+        await sendCancellation(email, accessEndsAt, {
+          db, userId, stripeEventId: event.id, emailType: 'cancellation',
+        })
         break
       }
 
-      // ── Trial ending ───────────────────────────────────────────────────────
+      // ── Trial ending reminder ──────────────────────────────────────────────
       // Stripe fires this 3 days before trial ends by default.
-      // Change the timing in Stripe Dashboard → Settings → Subscriptions → Manage trials.
+      // To send at 24 hours: Stripe Dashboard → Settings → Subscriptions →
+      // Manage trials → set trial_will_end notification to 1 day.
       case 'customer.subscription.trial_will_end': {
         const sub        = event.data.object as Stripe.Subscription
         const customerId = sub.customer as string
         const userId     = await getUserIdByStripeCustomer(customerId, db)
-        wlog(event.type, `Trial ending soon`, { customerId, userId: userId ?? 'unknown' })
+        wlog(event.type, 'Trial ending soon', { customerId, userId: userId ?? 'unknown' })
         if (sub.trial_end) {
           const email = await getUserEmail(userId, customerId, db)
-          await sendTrialEnding(email, new Date(sub.trial_end * 1000))
+          await sendTrialEnding(email, new Date(sub.trial_end * 1000), {
+            db, userId, stripeEventId: event.id, emailType: 'trial_ending',
+          })
         }
         break
       }
 
-      // ── Payments ───────────────────────────────────────────────────────────
+      // ── Invoice paid ───────────────────────────────────────────────────────
       case 'invoice.paid': {
         const invoice    = event.data.object as Stripe.Invoice
         const customerId = invoice.customer as string
         const userId     = await getUserIdByStripeCustomer(customerId, db)
         if (!userId) { wlog(event.type, `No user for customer ${customerId}`); break }
 
-        wlog(event.type, `Invoice paid`, { customerId, userId, amount: invoice.amount_paid })
+        wlog(event.type, 'Invoice paid', { customerId, userId, amount: invoice.amount_paid })
 
-        // Re-activate if previously past_due and send recovery email
-        const { data: prevSub } = await db.from('subscriptions')
+        const { data: prevSub } = await db
+          .from('subscriptions')
           .select('status')
           .eq('user_id', userId)
           .single()
 
-        await db.from('subscriptions')
-          .update({ status: 'active', plan: 'pro' })
-          .eq('user_id', userId)
-          .eq('status', 'past_due')
-
+        // Only update and email if previously past_due (payment recovery)
         if (prevSub?.status === 'past_due') {
+          await db.from('subscriptions')
+            .update({ status: 'active', plan: 'pro' })
+            .eq('user_id', userId)
+          await invalidatePlanCache(userId, redis)
           const email = await getUserEmail(userId, customerId, db)
-          await sendPaymentSucceeded(email)
+          await sendPaymentSucceeded(email, {
+            db, userId, stripeEventId: event.id, emailType: 'payment_succeeded_recovery',
+          })
         }
-
-        await invalidatePlanCache(userId, redis)
         break
       }
 
+      // ── Invoice payment failed ─────────────────────────────────────────────
       case 'invoice.payment_failed': {
         const invoice    = event.data.object as Stripe.Invoice
         const customerId = invoice.customer as string
         const userId     = await getUserIdByStripeCustomer(customerId, db)
         if (!userId) { wlog(event.type, `No user for customer ${customerId}`); break }
 
-        wlog(event.type, `Payment failed`, { customerId, userId })
+        wlog(event.type, 'Payment failed', { customerId, userId })
 
         await db.from('subscriptions')
           .update({ status: 'past_due' })
           .eq('user_id', userId)
 
         const email = await getUserEmail(userId, customerId, db)
-        await sendPaymentFailed(email)
+        await sendPaymentFailed(email, {
+          db, userId, stripeEventId: event.id, emailType: 'payment_failed',
+        })
 
         await invalidatePlanCache(userId, redis)
         break
@@ -319,7 +335,7 @@ export async function POST(req: NextRequest) {
     }
   } catch (err) {
     werr(event.type, 'Unhandled exception in webhook handler', err)
-    // Still return 200 so Stripe doesn't retry — the error is logged
+    // Return 200 so Stripe does not retry — error is logged
   }
 
   return NextResponse.json({ received: true })
