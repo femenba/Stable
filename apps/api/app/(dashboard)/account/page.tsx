@@ -15,9 +15,19 @@ export default function AccountPage() {
   const searchParams       = useSearchParams()
   const router             = useRouter()
 
-  // Poll after Stripe redirects back with ?checkout=success until Pro is confirmed.
-  const checkoutSuccess = searchParams.get('checkout') === 'success'
-  const [activating, setActivating] = useState(checkoutSuccess)
+  // Detect post-checkout redirect via useEffect (searchParams may not be ready at useState init)
+  const [activating, setActivating] = useState(false)
+  const syncMutation = trpc.subscriptions.syncFromStripe.useMutation()
+
+  useEffect(() => {
+    if (searchParams.get('checkout') === 'success') {
+      setActivating(true)
+      // Proactively sync from Stripe so Supabase is updated before the webhook arrives.
+      syncMutation.mutateAsync().catch(() => {/* webhook will cover it */})
+    }
+  // Only run once on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const {
     plan, status, isPro, isTrialing, isPastDue,

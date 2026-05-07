@@ -5,13 +5,8 @@ import { ADMIN_EMAIL } from '@/lib/user-roles'
 import { invalidatePlanCache } from '@/lib/plan'
 import { getStripe } from '@/lib/stripe'
 
-async function assertAdmin(ctx: { db: any; userId: string }) {
-  const { data } = await ctx.db
-    .from('users')
-    .select('email')
-    .eq('clerk_id', ctx.userId)
-    .single()
-  if (data?.email !== ADMIN_EMAIL) {
+async function assertAdmin(ctx: { userEmail: string }) {
+  if (ctx.userEmail !== ADMIN_EMAIL) {
     throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required.' })
   }
 }

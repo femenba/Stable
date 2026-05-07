@@ -157,11 +157,11 @@ function UserRow({ user, onRefetch }: { user: UserData; onRefetch: () => void })
           </button>
           <button
             onClick={() => setPlan.mutate({ userId: user.id, plan: 'free' })}
-            disabled={isPending || !isPro}
+            disabled={isPending || (!sub && !isPro)}
             className="text-[9px] font-black uppercase px-2.5 py-1.5 rounded-lg transition-all hover:opacity-80 disabled:opacity-30 disabled:cursor-not-allowed"
             style={{ background: 'var(--sage-soft)', color: 'var(--cat-work)' }}
           >
-            Free
+            {setPlan.isPending && setPlan.variables?.plan === 'free' ? '…' : 'Free'}
           </button>
           <button
             onClick={() => {

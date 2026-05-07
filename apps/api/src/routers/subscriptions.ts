@@ -82,13 +82,26 @@ export const subscriptionsRouter = router({
       throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Stripe price not configured.' })
     }
 
-    console.log(`[createCheckout] userId=${userId} clerkId=${ctx.userId} email=${effectiveEmail} hadTrial=${hadTrial}`)
+    const stripeMode = process.env.STRIPE_SECRET_KEY?.startsWith('sk_live') ? 'LIVE' : 'TEST'
+    const trialDays  = hadTrial ? undefined : plan.trialDays
+
+    console.log('[createCheckout] params', JSON.stringify({
+      stripeMode,
+      userId,
+      clerkId:        ctx.userId,
+      email:          effectiveEmail,
+      stripeCustomer: stripeCustomerId,
+      priceId:        plan.priceId,
+      hadTrial,
+      trialDays,
+      successUrl:     `${APP_URL}/account?checkout=success`,
+    }))
 
     const sessionParams = {
       customerId:    stripeCustomerId,
       customerEmail: effectiveEmail,
       priceId:       plan.priceId,
-      trialDays:     hadTrial ? undefined : plan.trialDays,
+      trialDays,
       successUrl:    `${APP_URL}/account?checkout=success`,
       cancelUrl:     `${APP_URL}/pricing?checkout=cancelled`,
       metadata:      { userId, clerkId: ctx.userId },
@@ -132,7 +145,14 @@ export const subscriptionsRouter = router({
       }
     }
 
-    console.log(`[createCheckout] Session created: ${session.id} url=${session.url}`)
+    console.log('[createCheckout] session created', JSON.stringify({
+      id:           session.id,
+      mode:         session.mode,
+      status:       session.status,
+      subscription: session.subscription,
+      customer:     session.customer,
+      url:          session.url?.slice(0, 80),
+    }))
 
     return { url: session.url }
   }),
@@ -169,6 +189,69 @@ export const subscriptionsRouter = router({
       }
       throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Unable to open billing portal.' })
     }
+  }),
+
+  // Direct Stripe sync — called on /account?checkout=success to avoid webhook race.
+  // Finds the caller's active Stripe subscription and writes it to Supabase.
+  syncFromStripe: protectedProcedure.mutation(async ({ ctx }) => {
+    const userId = await getUserId(ctx)
+    const sub    = await getSubscription(userId, ctx.db)
+
+    // Need a customer ID to query Stripe — try Supabase first, then search
+    let customerId = sub?.stripeCustomerId ?? null
+    if (!customerId) {
+      customerId = await resolveStripeCustomer({
+        clerkId: ctx.userId,
+        email:   ctx.userEmail,
+      })
+    }
+
+    // Find the latest active/trialing subscription for this customer
+    const stripe = getStripe()
+    const subs   = await stripe.subscriptions.list({
+      customer: customerId,
+      status:   'all',
+      limit:    5,
+      expand:   ['data.default_payment_method'],
+    })
+
+    const active = subs.data.find(s =>
+      s.status === 'trialing' || s.status === 'active'
+    ) ?? subs.data[0] ?? null
+
+    console.log(`[syncFromStripe] userId=${userId} customer=${customerId} found=${active?.id ?? 'none'} status=${active?.status ?? '-'}`)
+
+    if (!active) {
+      return { synced: false, plan: 'free', status: 'none', subscriptionId: null }
+    }
+
+    const plan   = active.status === 'canceled' ? 'free' : 'pro'
+    const status = active.status
+
+    const { error } = await ctx.db.from('subscriptions').upsert(
+      {
+        user_id:                userId,
+        stripe_customer_id:     customerId,
+        stripe_subscription_id: active.id,
+        plan,
+        status,
+        trial_ends_at:      active.trial_end
+          ? new Date(active.trial_end * 1000).toISOString()
+          : null,
+        current_period_end: new Date((active as any).current_period_end * 1000).toISOString(),
+        cancel_at_period_end: active.cancel_at_period_end,
+      },
+      { onConflict: 'user_id' },
+    )
+
+    if (error) {
+      console.error('[syncFromStripe] upsert failed', error)
+      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
+    }
+
+    await invalidatePlanCache(userId, ctx.redis)
+    console.log(`[syncFromStripe] synced → plan=${plan} status=${status}`)
+    return { synced: true, plan, status, subscriptionId: active.id }
   }),
 
   // Admin utility: manually set a user's plan (for beta/gifted access)
