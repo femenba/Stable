@@ -26,8 +26,8 @@ const TOOLS = [
   { id: 'wise',      icon: '🧘', title: 'Find Your Calm Self',        summary: 'Balance your emotional mind and rational mind to find clarity.'          },
 ]
 
-// Tools accessible on the Free plan
-const FREE_TOOL_IDS = new Set(['breathe', 'grounding'])
+// All support tools require Pro — Free users see locked cards
+const FREE_TOOL_IDS = new Set<string>()
 
 const PAUSE_FEELINGS = ['Angry', 'Anxious', 'Hurt', 'Overwhelmed', 'Impulsive']
 const PAUSE_ACTIONS  = ['Step away', 'Wait 10 minutes', 'Write it down', 'Ask for help']

@@ -11,7 +11,7 @@ import {
   STRIPE_PLANS,
 } from '@/lib/stripe'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://stableadhd.com'
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://stableadhd.com').trim()
 
 export const subscriptionsRouter = router({
   // Returns the caller's current subscription state
@@ -67,7 +67,7 @@ export const subscriptionsRouter = router({
         customerId: stripeCustomerId,
         priceId: plan.priceId,
         trialDays: hadTrial ? undefined : plan.trialDays,
-        successUrl: `${APP_URL}/dashboard?checkout=success`,
+        successUrl: `${APP_URL}/account?checkout=success`,
         cancelUrl:  `${APP_URL}/pricing?checkout=cancelled`,
         metadata:   { userId, clerkId: ctx.userId },
       })
