@@ -128,16 +128,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 })
   }
 
+  // Log that we received a webhook hit so we can confirm delivery in Vercel logs
+  console.log(`[stripe-webhook] Hit received sig=${sig.slice(0, 30)} secret_prefix=${webhookSecret.slice(0, 12)} body_len=${body.length}`)
+
   let event: Stripe.Event
   try {
     event = getStripe().webhooks.constructEvent(body, sig, webhookSecret)
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Unknown error'
-    console.error(`[stripe-webhook] Signature verification failed: ${msg}`)
+    console.error(`[stripe-webhook] Signature verification FAILED: ${msg} — check STRIPE_WEBHOOK_SECRET matches the LIVE endpoint signing secret in Stripe Dashboard → Developers → Webhooks`)
     return NextResponse.json({ error: `Webhook signature failed: ${msg}` }, { status: 400 })
   }
 
-  wlog(event.type, 'Received', { id: event.id })
+  wlog(event.type, 'Received', { id: event.id, livemode: event.livemode })
 
   const db    = getDb()
   const redis = getRedis()

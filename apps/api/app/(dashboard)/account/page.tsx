@@ -34,14 +34,20 @@ function AccountContent() {
   const router             = useRouter()
 
   // Detect post-checkout redirect via useEffect (searchParams not ready at useState init)
-  const [activating, setActivating] = useState(false)
+  const [activating, setActivating]   = useState(false)
+  const [syncRetries, setSyncRetries] = useState(0)
   const syncMutation = trpc.subscriptions.syncFromStripe.useMutation()
+
+  const runSync = () => {
+    setSyncRetries(r => r + 1)
+    return syncMutation.mutateAsync().catch(() => {/* webhook will cover it */})
+  }
 
   useEffect(() => {
     if (searchParams.get('checkout') === 'success') {
       setActivating(true)
       // Proactively sync from Stripe so Supabase is updated before the webhook arrives.
-      syncMutation.mutateAsync().catch(() => {/* webhook will cover it */})
+      runSync()
     }
   // Only run once on mount
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -138,16 +144,26 @@ function AccountContent() {
       {/* Post-checkout activation banner */}
       {activating && !isPro && (
         <div className="px-7 md:px-10 pt-6">
-          <div className="flex items-center gap-3 px-5 py-4 rounded-2xl"
+          <div className="flex items-start gap-3 px-5 py-4 rounded-2xl"
                style={{ background: 'rgba(74,122,95,0.08)', border: '1px solid rgba(74,122,95,0.2)' }}>
-            <Loader2 size={16} className="animate-spin shrink-0" style={{ color: 'var(--cat-work)' }} />
-            <div>
+            <Loader2 size={16} className="animate-spin shrink-0 mt-0.5" style={{ color: 'var(--cat-work)' }} />
+            <div className="flex-1 min-w-0">
               <p className="text-sm font-bold" style={{ color: 'var(--stable-t1)' }}>
                 Activating your Pro subscription…
               </p>
               <p className="text-xs mt-0.5" style={{ color: 'var(--stable-t2)' }}>
                 This usually takes a few seconds. The page will update automatically.
               </p>
+              {syncRetries > 1 && (
+                <button
+                  onClick={runSync}
+                  disabled={syncMutation.isPending}
+                  className="mt-2 text-xs font-semibold underline underline-offset-2"
+                  style={{ color: 'var(--cat-work)' }}
+                >
+                  {syncMutation.isPending ? 'Checking…' : 'Check again'}
+                </button>
+              )}
             </div>
           </div>
         </div>

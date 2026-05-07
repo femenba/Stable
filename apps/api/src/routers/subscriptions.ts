@@ -192,46 +192,64 @@ export const subscriptionsRouter = router({
   }),
 
   // Direct Stripe sync — called on /account?checkout=success to avoid webhook race.
-  // Finds the caller's active Stripe subscription and writes it to Supabase.
+  // Searches ALL Stripe customers matching this user (by known ID, email, and clerkId
+  // metadata) and writes the first active/trialing subscription found to Supabase.
+  // Never creates a new Stripe customer — pure read + write.
   syncFromStripe: protectedProcedure.mutation(async ({ ctx }) => {
     const userId = await getUserId(ctx)
     const sub    = await getSubscription(userId, ctx.db)
+    const stripe = getStripe()
 
-    // Need a customer ID to query Stripe — try Supabase first, then search
-    let customerId = sub?.stripeCustomerId ?? null
-    if (!customerId) {
-      customerId = await resolveStripeCustomer({
-        clerkId: ctx.userId,
-        email:   ctx.userEmail,
-      })
+    let foundSub: Stripe.Subscription | null = null
+    let foundCustomerId: string | null = null
+
+    async function checkCustomer(customerId: string): Promise<boolean> {
+      const list = await stripe.subscriptions.list({ customer: customerId, status: 'all', limit: 5 })
+      const active = list.data.find(s => s.status === 'trialing' || s.status === 'active') ?? null
+      if (active) { foundSub = active; foundCustomerId = customerId; return true }
+      return false
     }
 
-    // Find the latest active/trialing subscription for this customer
-    const stripe = getStripe()
-    const subs   = await stripe.subscriptions.list({
-      customer: customerId,
-      status:   'all',
-      limit:    5,
-      expand:   ['data.default_payment_method'],
-    })
+    // Layer 1: known customer ID from Supabase (fastest)
+    if (sub?.stripeCustomerId && !foundSub) {
+      await checkCustomer(sub.stripeCustomerId)
+    }
 
-    const active = subs.data.find(s =>
-      s.status === 'trialing' || s.status === 'active'
-    ) ?? subs.data[0] ?? null
+    // Layer 2: search by email — stripe.customers.list is immediate (no search-index lag)
+    if (!foundSub && ctx.userEmail) {
+      const byEmail = await stripe.customers.list({ email: ctx.userEmail, limit: 10 })
+      for (const c of byEmail.data) {
+        if (await checkCustomer(c.id)) break
+      }
+    }
 
-    console.log(`[syncFromStripe] userId=${userId} customer=${customerId} found=${active?.id ?? 'none'} status=${active?.status ?? '-'}`)
+    // Layer 3: search by clerkId metadata (search index, may be stale for ~60 s post-checkout)
+    if (!foundSub) {
+      const byClerk = await stripe.customers.search({
+        query: `metadata['clerkId']:'${ctx.userId}'`,
+        limit: 5,
+      })
+      for (const c of byClerk.data) {
+        if (await checkCustomer(c.id)) break
+      }
+    }
 
-    if (!active) {
+    const foundSubId = (foundSub as Stripe.Subscription | null)?.id ?? 'none'
+    const foundSubStatus = (foundSub as Stripe.Subscription | null)?.status ?? '-'
+    console.log(`[syncFromStripe] userId=${userId} email=${ctx.userEmail} customer=${foundCustomerId ?? 'none'} found=${foundSubId} status=${foundSubStatus}`)
+
+    if (!foundSub || !foundCustomerId) {
       return { synced: false, plan: 'free', status: 'none', subscriptionId: null }
     }
 
+    const active = foundSub as Stripe.Subscription
     const plan   = active.status === 'canceled' ? 'free' : 'pro'
     const status = active.status
 
     const { error } = await ctx.db.from('subscriptions').upsert(
       {
         user_id:                userId,
-        stripe_customer_id:     customerId,
+        stripe_customer_id:     foundCustomerId,
         stripe_subscription_id: active.id,
         plan,
         status,
@@ -250,7 +268,7 @@ export const subscriptionsRouter = router({
     }
 
     await invalidatePlanCache(userId, ctx.redis)
-    console.log(`[syncFromStripe] synced → plan=${plan} status=${status}`)
+    console.log(`[syncFromStripe] synced → plan=${plan} status=${status} customer=${foundCustomerId}`)
     return { synced: true, plan, status, subscriptionId: active.id }
   }),
 
