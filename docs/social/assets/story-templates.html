@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>stable. — Stories & Highlights | @stableadhd</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@200;300;400&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest:#0F1F0F; --deep:#1E3A1E; --sage:#4A7C4A;
+  --muted:#7AAE7A; --cream:#F4EFE6; --warm:#FAF8F4;
+  --charcoal:#1A1A1A; --rose:#C9A8A0; --lavender:#C8C3D8;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#080808; font-family:'Inter',sans-serif; padding:48px; }
+h1 { font-family:'Playfair Display',serif; font-weight:400; font-size:24px;
+     color:var(--cream); letter-spacing:.02em; margin-bottom:6px; }
+.meta { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);
+        letter-spacing:.12em; text-transform:uppercase; margin-bottom:56px; }
+.section-title { font-family:'Playfair Display',serif; font-weight:400; font-size:20px;
+                 color:var(--cream); margin-bottom:6px; }
+.section-sub { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);
+               letter-spacing:.1em; text-transform:uppercase; margin-bottom:20px; }
+.section { margin-bottom:72px; }
+.row { display:flex; gap:16px; flex-wrap:wrap; }
+
+/* ─── Highlight Covers (400×400 circle) ─── */
+.hc-wrap { display:flex; flex-direction:column; align-items:center; gap:12px; }
+.hc { width:160px; height:160px; border-radius:50%; overflow:hidden;
+      position:relative; flex-shrink:0; }
+.hc-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);
+            letter-spacing:.1em; text-transform:uppercase; opacity:.6; }
+
+.hc-inner { width:1000px; height:1000px; transform:scale(.16); transform-origin:top left;
+            position:absolute; top:0; left:0;
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            gap:32px; }
+.hc-icon { font-family:'Playfair Display',serif; font-weight:400; font-size:200px;
+           color:var(--cream); line-height:1; }
+.hc-text { font-family:'DM Mono',monospace; font-size:52px; color:var(--cream);
+           letter-spacing:.12em; text-transform:uppercase; }
+
+.hc-about   { background:var(--forest); }
+.hc-feat    { background:var(--deep); }
+.hc-tips    { background:#1A2E1A; }
+.hc-real    { background:#3A2A2A; }
+.hc-reviews { background:#1A1A2E; }
+.hc-press   { background:#2A1E0A; }
+
+/* ─── Story Cards (9:16) ─── */
+.sw { width:220px; flex-shrink:0; }
+.sw-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);
+            letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px; opacity:.5; }
+.pw-story { width:220px; height:391px; overflow:hidden; position:relative; }
+.story { position:absolute; top:0; left:0; width:1080px; height:1920px;
+         transform:scale(.2037); transform-origin:top left; overflow:hidden; }
+.story::after { content:''; position:absolute; inset:0; z-index:99;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:.04; mix-blend-mode:overlay; pointer-events:none; }
+
+/* Story progress bar */
+.story-progress { position:absolute; top:60px; left:60px; right:60px; z-index:50;
+                  display:flex; gap:8px; }
+.bar { flex:1; height:3px; background:rgba(255,255,255,.3); border-radius:2px; }
+.bar.done { background:rgba(255,255,255,.9); }
+
+/* Story header (account name) */
+.story-header { position:absolute; top:96px; left:60px; z-index:50;
+                display:flex; align-items:center; gap:16px; }
+.story-avatar { width:60px; height:60px; border-radius:50%;
+                background:var(--sage); border:2px solid var(--cream); }
+.story-name { font-family:'Inter',sans-serif; font-weight:300; font-size:26px; color:white; }
+
+/* ─── Story 1: Brand Reveal ─── */
+.st1 { background:var(--forest); display:flex; flex-direction:column;
+        align-items:center; justify-content:center; padding:80px; gap:0; }
+
+/* ─── Story 2: This or That ─── */
+.st2 { background:var(--deep); display:flex; flex-direction:column;
+        justify-content:center; padding:80px; gap:0; }
+
+/* ─── Story 3: App Walkthrough ─── */
+.st3 { background:var(--forest); display:flex; flex-direction:column;
+        align-items:center; justify-content:center; padding:80px; gap:60px; }
+
+/* ─── Story 4: Relatable Moment ─── */
+.st4 { background:var(--charcoal); display:flex; flex-direction:column;
+        justify-content:center; padding:80px; gap:0; }
+
+/* ─── Story 5: Founder ─── */
+.st5 { background:var(--deep); display:flex; flex-direction:column;
+        justify-content:flex-end; padding:80px; gap:0; }
+
+/* ─── Reel Covers (9:16) ─── */
+.rc1 { background:linear-gradient(180deg, var(--forest) 0%, #061006 100%);
+        display:flex; flex-direction:column; justify-content:flex-end; padding:80px; }
+.rc2 { background:linear-gradient(180deg, var(--deep) 0%, var(--forest) 100%);
+        display:flex; flex-direction:column; justify-content:flex-end; padding:80px; }
+.rc3 { background:linear-gradient(180deg, #1A0A08 0%, var(--charcoal) 100%);
+        display:flex; flex-direction:column; justify-content:flex-end; padding:80px; }
+
+.reel-tag { font-family:'DM Mono',monospace; font-size:22px; color:var(--muted);
+            letter-spacing:.12em; text-transform:uppercase; margin-bottom:24px; }
+.reel-h { font-family:'Playfair Display',serif; font-weight:400; font-size:72px;
+          color:var(--cream); line-height:1.15; letter-spacing:-.025em;
+          margin-bottom:28px; }
+.reel-sub { font-family:'Inter',sans-serif; font-weight:200; font-size:22px;
+            color:var(--muted); margin-bottom:60px; }
+.reel-wm { font-family:'Playfair Display',serif; font-weight:400; font-size:26px;
+           color:var(--cream); opacity:.45; }
+</style>
+</head>
+<body>
+
+<h1>stable. — Stories & Covers</h1>
+<p class="meta">@stableadhd · Highlight covers · Story templates · Reel covers</p>
+
+<!-- ─── HIGHLIGHT COVERS ─── -->
+<div class="section">
+  <div class="section-title">Highlight Covers</div>
+  <div class="section-sub">1000 × 1000px · displayed at 160px · circle crop</div>
+  <div class="row">
+
+    <div class="hc-wrap">
+      <div class="hc">
+        <div class="hc-inner hc-about">
+          <div class="hc-icon" style="font-size:280px">s.</div>
+        </div>
+      </div>
+      <span class="hc-label">About</span>
+    </div>
+
+    <div class="hc-wrap">
+      <div class="hc">
+        <div class="hc-inner hc-feat">
+          <div style="width:160px;height:160px;border:4px solid var(--cream);border-radius:32px;opacity:.8"></div>
+          <div class="hc-text" style="position:absolute;bottom:220px;font-size:48px">App</div>
+        </div>
+      </div>
+      <span class="hc-label">Features</span>
+    </div>
+
+    <div class="hc-wrap">
+      <div class="hc">
+        <div class="hc-inner hc-tips">
+          <div class="hc-icon" style="font-size:240px;color:var(--muted)">✦</div>
+        </div>
+      </div>
+      <span class="hc-label">ADHD Tips</span>
+    </div>
+
+    <div class="hc-wrap">
+      <div class="hc">
+        <div class="hc-inner hc-real" style="background:#3A2222">
+          <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:180px;color:#D4A8A0;opacity:.9">"</div>
+        </div>
+      </div>
+      <span class="hc-label">Real Talk</span>
+    </div>
+
+    <div class="hc-wrap">
+      <div class="hc">
+        <div class="hc-inner hc-reviews" style="background:#1A1A2E">
+          <div style="display:flex;gap:16px;margin-bottom:20px">
+            <span style="font-size:120px">★</span><span style="font-size:120px">★</span><span style="font-size:120px">★</span>
+          </div>
+        </div>
+      </div>
+      <span class="hc-label">Reviews</span>
+    </div>
+
+    <div class="hc-wrap">
+      <div class="hc">
+        <div class="hc-inner hc-press" style="background:#2A1E0A">
+          <div class="hc-text" style="font-size:44px;letter-spacing:.08em;color:#C4A55A">PRESS</div>
+        </div>
+      </div>
+      <span class="hc-label">Press</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── STORY TEMPLATES ─── -->
+<div class="section">
+  <div class="section-title">Story Templates</div>
+  <div class="section-sub">1080 × 1920px · displayed at 220 × 391px</div>
+  <div class="row">
+
+    <!-- Story 1: Announcement -->
+    <div class="sw">
+      <div class="sw-label">Story 1 — Reveal</div>
+      <div class="pw-story">
+        <div class="story st1">
+          <div class="story-progress">
+            <div class="bar done"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          </div>
+          <div class="story-header">
+            <div class="story-avatar"></div>
+            <span class="story-name">stableadhd</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0;text-align:center;margin-top:200px">
+            <span style="font-family:'DM Mono',monospace;font-size:28px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:48px">introducing</span>
+            <span style="font-family:'Playfair Display',serif;font-weight:400;font-size:120px;color:var(--cream);letter-spacing:-.02em">stable.</span>
+            <div style="width:80px;height:1px;background:var(--sage);opacity:.5;margin:56px 0"></div>
+            <p style="font-family:'Inter',sans-serif;font-weight:200;font-size:28px;color:var(--muted);line-height:1.6">An app for adults with ADHD.</p>
+            <p style="font-family:'Inter',sans-serif;font-weight:200;font-size:28px;color:var(--muted);line-height:1.6">Calm focus. Real systems.</p>
+          </div>
+          <!-- Poll UI -->
+          <div style="position:absolute;bottom:200px;left:80px;right:80px;background:rgba(255,255,255,.1);border-radius:32px;padding:40px;border:1px solid rgba(255,255,255,.15)">
+            <p style="font-family:'Inter',sans-serif;font-size:28px;color:white;margin-bottom:28px;opacity:.8">Is this you?</p>
+            <p style="font-family:'Playfair Display',serif;font-style:italic;font-size:26px;color:var(--cream);margin-bottom:36px;line-height:1.5">"I know what to do. I just can't start."</p>
+            <div style="display:flex;gap:16px">
+              <div style="flex:1;background:rgba(74,124,74,.5);border-radius:16px;padding:20px;text-align:center;font-family:'Inter',sans-serif;font-size:22px;color:white">Yes, always</div>
+              <div style="flex:1;background:rgba(255,255,255,.1);border-radius:16px;padding:20px;text-align:center;font-family:'Inter',sans-serif;font-size:22px;color:white;opacity:.6">Not really</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Story 2: This or That -->
+    <div class="sw">
+      <div class="sw-label">Story 2 — Engagement</div>
+      <div class="pw-story">
+        <div class="story st2">
+          <div class="story-progress">
+            <div class="bar done"></div><div class="bar done"></div>
+            <div class="bar"></div><div class="bar"></div>
+          </div>
+          <div class="story-header">
+            <div class="story-avatar"></div>
+            <span class="story-name">stableadhd</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0;margin-top:240px">
+            <span style="font-family:'DM Mono',monospace;font-size:22px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:36px">adhd mornings</span>
+            <h2 style="font-family:'Playfair Display',serif;font-weight:400;font-size:72px;color:var(--cream);line-height:1.15;margin-bottom:48px">Which one<br>are you?</h2>
+          </div>
+          <div style="position:absolute;bottom:180px;left:80px;right:80px;display:flex;flex-direction:column;gap:16px">
+            <div style="background:rgba(74,124,74,.35);border-radius:24px;padding:32px 40px;border:1px solid rgba(74,124,74,.4)">
+              <p style="font-family:'Inter',sans-serif;font-size:22px;color:white;line-height:1.5;opacity:.85">Wake up and immediately worry about everything you need to do</p>
+            </div>
+            <div style="background:rgba(255,255,255,.08);border-radius:24px;padding:32px 40px;border:1px solid rgba(255,255,255,.1)">
+              <p style="font-family:'Inter',sans-serif;font-size:22px;color:white;line-height:1.5;opacity:.85">Wake up and immediately remember everything you forgot to do</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Story 3: App Feature -->
+    <div class="sw">
+      <div class="sw-label">Story 3 — App Demo</div>
+      <div class="pw-story">
+        <div class="story st3">
+          <div class="story-progress">
+            <div class="bar done"></div><div class="bar done"></div>
+            <div class="bar done"></div><div class="bar"></div>
+          </div>
+          <div class="story-header">
+            <div class="story-avatar"></div>
+            <span class="story-name">stableadhd</span>
+          </div>
+          <!-- Simulated screen recording frame -->
+          <div style="width:600px;background:#0A150A;border-radius:44px;border:2px solid rgba(74,124,74,.3);padding:52px 48px;box-shadow:0 48px 80px rgba(0,0,0,.5)">
+            <div style="font-family:'DM Mono',monospace;font-size:22px;color:var(--muted);letter-spacing:.1em;margin-bottom:32px">Today's tasks</div>
+            <div style="display:flex;align-items:center;gap:20px;padding:24px 0;border-bottom:1px solid rgba(74,124,74,.12)">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--sage)"></div>
+              <span style="font-family:'Inter',sans-serif;font-weight:300;font-size:24px;color:var(--cream);opacity:.35;text-decoration:line-through">Morning check-in</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:20px;padding:24px 0;border-bottom:1px solid rgba(74,124,74,.12)">
+              <div style="width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(122,174,122,.4)"></div>
+              <span style="font-family:'Inter',sans-serif;font-weight:300;font-size:24px;color:var(--cream)">Draft proposal</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:20px;padding:24px 0">
+              <div style="width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(122,174,122,.4)"></div>
+              <span style="font-family:'Inter',sans-serif;font-weight:300;font-size:24px;color:var(--cream)">15-min walk</span>
+            </div>
+          </div>
+          <p style="font-family:'Inter',sans-serif;font-weight:200;font-size:28px;color:var(--muted);text-align:center;line-height:1.6;margin-top:80px">
+            Creating a task takes<br>10 seconds.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Story 4: Relatable -->
+    <div class="sw">
+      <div class="sw-label">Story 4 — Relatable</div>
+      <div class="pw-story">
+        <div class="story st4">
+          <div class="story-progress">
+            <div class="bar done"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          </div>
+          <div class="story-header">
+            <div class="story-avatar"></div>
+            <span class="story-name">stableadhd</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0;margin-top:240px">
+            <span style="font-family:'DM Mono',monospace;font-size:22px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:48px">things we say</span>
+            <p style="font-family:'Playfair Display',serif;font-style:italic;font-size:52px;color:var(--cream);line-height:1.4;margin-bottom:60px">
+              "I'll remember it. I don't need to write it down."
+            </p>
+            <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:28px;color:var(--muted)">— 3 minutes later:</p>
+          </div>
+          <div style="position:absolute;bottom:200px;left:80px;right:80px;background:rgba(255,255,255,.06);border-radius:24px;padding:36px 40px;border:1px solid rgba(255,255,255,.08)">
+            <p style="font-family:'DM Mono',monospace;font-size:22px;color:var(--muted);letter-spacing:.08em;margin-bottom:16px">POLL</p>
+            <p style="font-family:'Inter',sans-serif;font-size:26px;color:white;margin-bottom:28px">Which one hits hardest?</p>
+            <div style="display:flex;gap:12px">
+              <div style="flex:1;background:rgba(74,124,74,.4);border-radius:14px;padding:18px;text-align:center;font-family:'Inter',sans-serif;font-size:20px;color:white">This one 😅</div>
+              <div style="flex:1;background:rgba(255,255,255,.08);border-radius:14px;padding:18px;text-align:center;font-family:'Inter',sans-serif;font-size:20px;color:white;opacity:.6">Others worse</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Story 5: Founder -->
+    <div class="sw">
+      <div class="sw-label">Story 5 — Founder</div>
+      <div class="pw-story">
+        <div class="story st5">
+          <div class="story-progress">
+            <div class="bar done"></div><div class="bar done"></div>
+            <div class="bar done"></div><div class="bar done"></div>
+            <div class="bar"></div>
+          </div>
+          <div class="story-header">
+            <div class="story-avatar"></div>
+            <span class="story-name">stableadhd</span>
+          </div>
+          <div style="margin-bottom:240px">
+            <span style="font-family:'DM Mono',monospace;font-size:22px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:48px">build in public</span>
+            <h2 style="font-family:'Playfair Display',serif;font-weight:400;font-size:64px;color:var(--cream);line-height:1.25;margin-bottom:40px">I built stable.<br>because I<br>needed it.</h2>
+            <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:26px;color:var(--muted);line-height:1.6">Tried every app. None of them felt right for an ADHD brain.</p>
+          </div>
+          <!-- Question box UI -->
+          <div style="position:absolute;bottom:100px;left:80px;right:80px;background:rgba(255,255,255,.1);border-radius:24px;padding:36px 40px;border:1px solid rgba(255,255,255,.15)">
+            <p style="font-family:'DM Mono',monospace;font-size:18px;color:var(--muted);letter-spacing:.08em;margin-bottom:16px">ASK ME ANYTHING</p>
+            <div style="background:rgba(255,255,255,.08);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.15)">
+              <p style="font-family:'Inter',sans-serif;font-size:24px;color:rgba(255,255,255,.4)">Type your question…</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── REEL COVERS ─── -->
+<div class="section">
+  <div class="section-title">Reel Cover Templates</div>
+  <div class="section-sub">1080 × 1920px · displayed at 220 × 391px</div>
+  <div class="row">
+
+    <div class="sw">
+      <div class="sw-label">Reel 1 — Task Paralysis</div>
+      <div class="pw-story">
+        <div class="story rc1">
+          <div class="reel-tag">reel</div>
+          <h2 class="reel-h">Why you<br>can't just<br>start.</h2>
+          <p class="reel-sub">The task paralysis moment explained.</p>
+          <span class="reel-wm">stable.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sw">
+      <div class="sw-label">Reel 2 — Calm Productivity</div>
+      <div class="pw-story">
+        <div class="story rc2">
+          <div class="reel-tag">reel</div>
+          <h2 class="reel-h">What calm<br>productivity<br>actually<br>looks like.</h2>
+          <p class="reel-sub">Not 5am. Not a cold shower.</p>
+          <span class="reel-wm">stable.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sw">
+      <div class="sw-label">Reel 3 — ADHD Tax</div>
+      <div class="pw-story">
+        <div class="story rc3">
+          <div class="reel-tag" style="color:#D4A8A0">reel</div>
+          <h2 class="reel-h">The ADHD<br>tax nobody<br>talks about.</h2>
+          <p class="reel-sub" style="color:#D4A8A0;opacity:.7">It costs real money, time, and energy.</p>
+          <span class="reel-wm">stable.</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

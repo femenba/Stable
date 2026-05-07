@@ -6,9 +6,10 @@ import { getRedis } from './lib/redis'
 import type { Redis } from '@upstash/redis'
 
 export interface Context {
-  userId: string
-  db: DbClient
-  redis: Redis | null
+  userId:    string
+  userEmail: string
+  db:        DbClient
+  redis:     Redis | null
 }
 
 // Used in tests — pass a pre-built context directly
@@ -29,7 +30,12 @@ function getDb(): DbClient {
 }
 
 export async function createContext({ req }: RawContext): Promise<Context> {
-  const { userId } = getAuth(req)
-  if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-  return { userId, db: getDb(), redis: getRedis() }
+  const auth = getAuth(req)
+  if (!auth.userId) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
+  // sessionClaims carries the email Clerk embeds in the JWT
+  const userEmail =
+    (auth.sessionClaims?.email as string | undefined) ??
+    (auth.sessionClaims?.['emailAddress'] as string | undefined) ??
+    ''
+  return { userId: auth.userId, userEmail, db: getDb(), redis: getRedis() }
 }

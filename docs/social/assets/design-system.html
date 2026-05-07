@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>stable. — Design System | @stableadhd</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@200;300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest:#0F1F0F; --deep:#1E3A1E; --sage:#4A7C4A;
+  --muted:#7AAE7A; --cream:#F4EFE6; --warm:#FAF8F4;
+  --charcoal:#1A1A1A; --gold:#C4A55A;
+  --rose:#D4A8A0; --lavender:#C8C3D8;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#080808; font-family:'Inter',sans-serif; color:var(--cream); padding:48px; }
+h1 { font-family:'Playfair Display',serif; font-weight:400; font-size:24px;
+     letter-spacing:.02em; margin-bottom:6px; }
+.meta { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);
+        letter-spacing:.12em; text-transform:uppercase; margin-bottom:56px; }
+.section { margin-bottom:72px; }
+.section-title { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);
+                 letter-spacing:.12em; text-transform:uppercase; margin-bottom:24px;
+                 padding-bottom:16px; border-bottom:1px solid rgba(74,124,74,.2); }
+.row { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start; }
+
+/* ── Colors ── */
+.swatch { border-radius:8px; overflow:hidden; width:120px; }
+.swatch-color { height:80px; }
+.swatch-label { padding:10px 12px; background:rgba(255,255,255,.04); }
+.swatch-name { font-family:'DM Mono',monospace; font-size:11px; color:var(--cream);
+               display:block; margin-bottom:2px; }
+.swatch-hex { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); }
+
+/* ── Typography ── */
+.type-sample { padding:32px; background:rgba(255,255,255,.03); border-radius:12px;
+               border:1px solid rgba(255,255,255,.06); margin-bottom:16px; }
+.type-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);
+              letter-spacing:.1em; text-transform:uppercase; margin-bottom:16px; }
+
+/* ── Spacing ── */
+.space-row { display:flex; gap:8px; align-items:flex-end; }
+.space-box { background:rgba(74,124,74,.3); border:1px solid rgba(74,124,74,.4); flex-shrink:0; }
+.space-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);
+               margin-top:6px; }
+
+/* ── Component Samples ── */
+.comp { padding:32px; background:rgba(255,255,255,.03); border-radius:12px;
+        border:1px solid rgba(255,255,255,.06); }
+
+/* ── Post Templates (mini) ── */
+.mini-pw { width:160px; height:160px; overflow:hidden; position:relative; border-radius:4px; }
+.mini-post { position:absolute; top:0; left:0; width:1080px; height:1080px;
+             transform:scale(.1481); transform-origin:top left; }
+.mini-post::after { content:''; position:absolute; inset:0; z-index:99;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:.04; mix-blend-mode:overlay; pointer-events:none; }
+
+.grid-thumb { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; max-width:492px;
+              border-radius:4px; overflow:hidden; }
+</style>
+</head>
+<body>
+<h1>stable. — Design System</h1>
+<p class="meta">@stableadhd · Visual reference · Brand tokens</p>
+
+<!-- ─── COLORS ─── -->
+<div class="section">
+  <div class="section-title">Color System</div>
+  <div class="row">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#0F1F0F"></div>
+      <div class="swatch-label"><span class="swatch-name">Forest Night</span><span class="swatch-hex">#0F1F0F</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#1E3A1E"></div>
+      <div class="swatch-label"><span class="swatch-name">Deep Sage</span><span class="swatch-hex">#1E3A1E</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#4A7C4A"></div>
+      <div class="swatch-label"><span class="swatch-name">Sage</span><span class="swatch-hex">#4A7C4A</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#7AAE7A"></div>
+      <div class="swatch-label"><span class="swatch-name">Muted Sage</span><span class="swatch-hex">#7AAE7A</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#F4EFE6"></div>
+      <div class="swatch-label"><span class="swatch-name">Cream</span><span class="swatch-hex">#F4EFE6</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#FAF8F4"></div>
+      <div class="swatch-label"><span class="swatch-name">Warm White</span><span class="swatch-hex">#FAF8F4</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#1A1A1A"></div>
+      <div class="swatch-label"><span class="swatch-name">Charcoal</span><span class="swatch-hex">#1A1A1A</span></div>
+    </div>
+  </div>
+  <div class="row" style="margin-top:12px">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#C4A55A"></div>
+      <div class="swatch-label"><span class="swatch-name">Soft Gold</span><span class="swatch-hex">#C4A55A · accent</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#D4A8A0"></div>
+      <div class="swatch-label"><span class="swatch-name">Dusty Rose</span><span class="swatch-hex">#D4A8A0 · compassion</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#C8C3D8"></div>
+      <div class="swatch-label"><span class="swatch-name">Pale Lavender</span><span class="swatch-hex">#C8C3D8 · calm</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TYPOGRAPHY ─── -->
+<div class="section">
+  <div class="section-title">Typography</div>
+
+  <div class="type-sample">
+    <div class="type-label">Display — Playfair Display Regular / Italic · 400</div>
+    <div style="font-family:'Playfair Display',serif;font-weight:400;font-size:56px;color:var(--cream);line-height:1.15;letter-spacing:-.02em;margin-bottom:12px">
+      stable.
+    </div>
+    <div style="font-family:'Playfair Display',serif;font-style:italic;font-weight:400;font-size:40px;color:var(--cream);line-height:1.4">
+      "Your brain isn't broken."
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:16px;letter-spacing:.08em">
+      Canela substitute · Google Fonts · use for headlines and quotes
+    </div>
+  </div>
+
+  <div class="type-sample">
+    <div class="type-label">Body — Inter Light / Regular · 300 / 400</div>
+    <div style="font-family:'Inter',sans-serif;font-weight:300;font-size:20px;color:var(--cream);line-height:1.7;margin-bottom:12px;max-width:600px">
+      Calm focus. Real systems. Built for the ADHD brain that's tired of everything feeling harder than it should.
+    </div>
+    <div style="font-family:'Inter',sans-serif;font-weight:200;font-size:16px;color:var(--muted);line-height:1.7;max-width:600px">
+      Extralight / 200 for secondary text and URLs.
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:16px;letter-spacing:.08em">
+      Google Fonts · use for body copy and captions
+    </div>
+  </div>
+
+  <div class="type-sample">
+    <div class="type-label">Accent — DM Mono Regular · 400</div>
+    <div style="font-family:'DM Mono',monospace;font-size:14px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px">
+      CAROUSEL · SWIPE →
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:14px;color:var(--muted);letter-spacing:.1em;margin-bottom:8px">
+      01 / 07 &nbsp;&nbsp; #stableadhd &nbsp;&nbsp; stableadhd.com
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:16px;letter-spacing:.08em">
+      Google Fonts · use for labels, numbers, URLs, hashtags, metadata
+    </div>
+  </div>
+</div>
+
+<!-- ─── SPACING ─── -->
+<div class="section">
+  <div class="section-title">8pt Spacing Scale</div>
+  <div class="space-row">
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="space-box" style="width:8px;height:8px"></div>
+      <div class="space-label">8</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="space-box" style="width:16px;height:16px"></div>
+      <div class="space-label">16</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="space-box" style="width:24px;height:24px"></div>
+      <div class="space-label">24</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="space-box" style="width:32px;height:32px"></div>
+      <div class="space-label">32</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="space-box" style="width:40px;height:40px"></div>
+      <div class="space-label">40</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="space-box" style="width:48px;height:48px"></div>
+      <div class="space-label">48</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="space-box" style="width:56px;height:56px"></div>
+      <div class="space-label">56</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="space-box" style="width:64px;height:64px"></div>
+      <div class="space-label">64</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="space-box" style="width:80px;height:80px"></div>
+      <div class="space-label">80</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="space-box" style="width:96px;height:96px"></div>
+      <div class="space-label">96</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="space-box" style="width:120px;height:120px"></div>
+      <div class="space-label">120</div>
+    </div>
+  </div>
+  <p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:20px;letter-spacing:.08em">Post safe zone: 80px · Post margin: 96–100px · Section gap: 48px+</p>
+</div>
+
+<!-- ─── COMPONENT LIBRARY ─── -->
+<div class="section">
+  <div class="section-title">Component Library</div>
+  <div class="row">
+
+    <div class="comp" style="flex:1;min-width:240px">
+      <div class="type-label">CTA Pills</div>
+      <div style="display:flex;flex-direction:column;gap:16px;margin-top:8px">
+        <div style="background:var(--sage);color:var(--cream);font-family:'Inter',sans-serif;font-weight:400;font-size:16px;padding:14px 40px;border-radius:100px;display:inline-block;width:fit-content">
+          Start free
+        </div>
+        <div style="background:transparent;color:var(--cream);font-family:'Inter',sans-serif;font-weight:300;font-size:16px;padding:13px 40px;border-radius:100px;border:1px solid rgba(244,239,230,.3);display:inline-block;width:fit-content">
+          Learn more
+        </div>
+        <div style="background:var(--cream);color:var(--charcoal);font-family:'Inter',sans-serif;font-weight:400;font-size:16px;padding:14px 40px;border-radius:100px;display:inline-block;width:fit-content">
+          Try stable. free
+        </div>
+      </div>
+    </div>
+
+    <div class="comp" style="flex:1;min-width:240px">
+      <div class="type-label">Dividers & Rules</div>
+      <div style="display:flex;flex-direction:column;gap:24px;margin-top:16px">
+        <div style="height:1px;background:var(--sage);opacity:.55;width:120px"></div>
+        <div style="height:1px;background:var(--cream);opacity:.15;width:100%"></div>
+        <div style="height:1px;background:var(--sage);opacity:.2;width:100%"></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div style="flex:1;height:1px;background:var(--sage);opacity:.2"></div>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);opacity:.5">stable.</span>
+          <div style="flex:1;height:1px;background:var(--sage);opacity:.2"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comp" style="flex:1;min-width:240px">
+      <div class="type-label">Slide Number Format</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px">
+        <span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);letter-spacing:.1em;opacity:.5">01 / 07</span>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <div style="width:20px;height:5px;border-radius:3px;background:var(--cream)"></div>
+          <div style="width:8px;height:5px;border-radius:50%;background:var(--muted);opacity:.25"></div>
+          <div style="width:8px;height:5px;border-radius:50%;background:var(--muted);opacity:.25"></div>
+          <div style="width:8px;height:5px;border-radius:50%;background:var(--muted);opacity:.25"></div>
+          <div style="width:8px;height:5px;border-radius:50%;background:var(--muted);opacity:.25"></div>
+          <div style="width:8px;height:5px;border-radius:50%;background:var(--muted);opacity:.25"></div>
+          <div style="width:8px;height:5px;border-radius:50%;background:var(--muted);opacity:.25"></div>
+        </div>
+        <p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;margin-top:4px">Active dot: 20×5px rounded rect</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── GRID RHYTHM ─── -->
+<div class="section">
+  <div class="section-title">Grid Color Rhythm — First 9 Posts</div>
+  <div class="grid-thumb">
+    <div style="background:#0F1F0F;height:100px;display:flex;align-items:center;justify-content:center"><span style="font-family:'DM Mono',monospace;font-size:9px;color:#7AAE7A;letter-spacing:.06em">01 DARK</span></div>
+    <div style="background:#1E3A1E;height:100px;display:flex;align-items:center;justify-content:center"><span style="font-family:'DM Mono',monospace;font-size:9px;color:#7AAE7A;letter-spacing:.06em">02 MID</span></div>
+    <div style="background:#0F1F0F;height:100px;display:flex;align-items:center;justify-content:center"><span style="font-family:'DM Mono',monospace;font-size:9px;color:#7AAE7A;letter-spacing:.06em">03 DARK</span></div>
+    <div style="background:#0F1F0F;height:100px;display:flex;align-items:center;justify-content:center"><span style="font-family:'DM Mono',monospace;font-size:9px;color:#7AAE7A;letter-spacing:.06em">04 DARK</span></div>
+    <div style="background:#FAF8F4;height:100px;display:flex;align-items:center;justify-content:center"><span style="font-family:'DM Mono',monospace;font-size:9px;color:#1A1A1A;letter-spacing:.06em">05 LIGHT</span></div>
+    <div style="background:#C9A8A0;height:100px;display:flex;align-items:center;justify-content:center"><span style="font-family:'DM Mono',monospace;font-size:9px;color:#2A1A18;letter-spacing:.06em">06 ROSE</span></div>
+    <div style="background:#1E3A1E;height:100px;display:flex;align-items:center;justify-content:center"><span style="font-family:'DM Mono',monospace;font-size:9px;color:#7AAE7A;letter-spacing:.06em">07 MID</span></div>
+    <div style="background:#0F1F0F;height:100px;display:flex;align-items:center;justify-content:center"><span style="font-family:'DM Mono',monospace;font-size:9px;color:#7AAE7A;letter-spacing:.06em">08 DARK</span></div>
+    <div style="background:#0F1F0F;height:100px;display:flex;align-items:center;justify-content:center"><span style="font-family:'DM Mono',monospace;font-size:9px;color:#7AAE7A;letter-spacing:.06em">09 DARK</span></div>
+  </div>
+  <p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:16px;letter-spacing:.08em;opacity:.7">
+    Row 1: Dark / Mid / Dark &nbsp;·&nbsp; Row 2: Dark / Light / Rose &nbsp;·&nbsp; Row 3: Mid / Dark / Dark
+  </p>
+</div>
+
+<!-- ─── CANVA SETUP ─── -->
+<div class="section">
+  <div class="section-title">Canva Brand Kit Setup</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:900px">
+    <div class="comp">
+      <div class="type-label">Brand Colors to Add</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:20px;height:20px;border-radius:4px;background:#0F1F0F;border:1px solid rgba(255,255,255,.1)"></div>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--cream)">#0F1F0F Forest Night</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:20px;height:20px;border-radius:4px;background:#1E3A1E"></div>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--cream)">#1E3A1E Deep Sage</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:20px;height:20px;border-radius:4px;background:#4A7C4A"></div>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--cream)">#4A7C4A Sage</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:20px;height:20px;border-radius:4px;background:#7AAE7A"></div>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--cream)">#7AAE7A Muted Sage</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:20px;height:20px;border-radius:4px;background:#F4EFE6;border:1px solid rgba(255,255,255,.1)"></div>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--cream)">#F4EFE6 Cream</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:20px;height:20px;border-radius:4px;background:#FAF8F4;border:1px solid rgba(255,255,255,.1)"></div>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--cream)">#FAF8F4 Warm White</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:20px;height:20px;border-radius:4px;background:#D4A8A0"></div>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--cream)">#D4A8A0 Dusty Rose</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:20px;height:20px;border-radius:4px;background:#C4A55A"></div>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--cream)">#C4A55A Soft Gold</span>
+        </div>
+      </div>
+    </div>
+    <div class="comp">
+      <div class="type-label">Brand Fonts to Set</div>
+      <div style="display:flex;flex-direction:column;gap:16px;margin-top:12px">
+        <div>
+          <p style="font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);margin-bottom:4px">Playfair Display</p>
+          <p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">Heading → Use for all headlines & quotes</p>
+        </div>
+        <div>
+          <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:16px;color:var(--cream);margin-bottom:4px">Inter Light</p>
+          <p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">Body → Use for all body copy & captions</p>
+        </div>
+        <div>
+          <p style="font-family:'DM Mono',monospace;font-size:14px;color:var(--cream);margin-bottom:4px">DM Mono</p>
+          <p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">Accent → Use for labels, slide numbers, URLs</p>
+        </div>
+        <div style="margin-top:8px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)">
+          <p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);line-height:1.6">
+            Canva: Brand Kit → Fonts → Upload or select from Canva fonts library. All three are available free in Canva Pro.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TEXTURE NOTE ─── -->
+<div class="section">
+  <div class="section-title">Grain Texture Rule</div>
+  <div class="comp" style="max-width:600px">
+    <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:15px;color:var(--cream);line-height:1.7;opacity:.8;margin-bottom:16px">
+      Every post on a dark background gets a grain overlay at 3–5% opacity. In Canva: add a "Static" noise texture element → set blend mode to Overlay → set opacity to 4%.
+    </p>
+    <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:15px;color:var(--cream);line-height:1.7;opacity:.8;margin-bottom:16px">
+      This single treatment is what separates premium visual work from flat digital graphics. It adds depth and a tactile, film-quality feel.
+    </p>
+    <p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.08em">
+      Light posts (Warm White bg): use 6% grain · Rose posts: 4% grain
+    </p>
+  </div>
+</div>
+
+</body>
+</html>

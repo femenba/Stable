@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>stable. — Carousels | @stableadhd</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@200;300;400&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest:#0F1F0F; --deep:#1E3A1E; --sage:#4A7C4A;
+  --muted:#7AAE7A; --cream:#F4EFE6; --warm:#FAF8F4;
+  --charcoal:#1A1A1A;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#080808; font-family:'Inter',sans-serif; padding:48px; }
+h1 { font-family:'Playfair Display',serif; font-weight:400; font-size:24px;
+     color:var(--cream); letter-spacing:.02em; margin-bottom:6px; }
+.meta { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);
+        letter-spacing:.12em; text-transform:uppercase; margin-bottom:56px; }
+
+.carousel-set { margin-bottom:72px; }
+.set-title { font-family:'Playfair Display',serif; font-weight:400; font-size:20px;
+             color:var(--cream); margin-bottom:6px; }
+.set-sub { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);
+           letter-spacing:.1em; text-transform:uppercase; margin-bottom:20px; }
+
+.slides { display:flex; gap:4px; overflow-x:auto; padding-bottom:16px; }
+.slides::-webkit-scrollbar { height:3px; }
+.slides::-webkit-scrollbar-track { background:rgba(255,255,255,.05); }
+.slides::-webkit-scrollbar-thumb { background:var(--sage); border-radius:2px; }
+
+.pw { width:320px; height:320px; flex-shrink:0; overflow:hidden; position:relative; }
+.slide { position:absolute; top:0; left:0; width:1080px; height:1080px;
+         transform-origin:top left; transform:scale(.2963); overflow:hidden; }
+.slide::after { content:''; position:absolute; inset:0; z-index:99;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:.04; mix-blend-mode:overlay; pointer-events:none; }
+
+/* ── shared ── */
+.eyebrow { font-family:'DM Mono',monospace; font-size:13px; color:var(--muted);
+           letter-spacing:.14em; text-transform:uppercase; }
+.slide-num { font-family:'DM Mono',monospace; font-size:13px; color:var(--muted);
+             letter-spacing:.1em; opacity:.5; }
+.h-xl { font-family:'Playfair Display',serif; font-weight:400; font-size:72px;
+        color:var(--cream); line-height:1.1; letter-spacing:-.025em; }
+.h-lg { font-family:'Playfair Display',serif; font-weight:400; font-size:58px;
+        color:var(--cream); line-height:1.15; letter-spacing:-.02em; }
+.body { font-family:'Inter',sans-serif; font-weight:300; font-size:20px;
+        color:var(--cream); line-height:1.65; opacity:.85; }
+.body-muted { font-family:'Inter',sans-serif; font-weight:300; font-size:20px;
+              color:var(--muted); line-height:1.65; }
+.rule-h { height:1px; background:var(--sage); opacity:.3; margin:56px 0; }
+.step-num { font-family:'Playfair Display',serif; font-weight:400;
+            font-size:120px; color:var(--forest); line-height:1;
+            letter-spacing:-.04em; }
+.cta-pill { display:inline-block; background:var(--sage); color:var(--cream);
+            font-family:'Inter',sans-serif; font-weight:400; font-size:20px;
+            padding:22px 72px; border-radius:100px; }
+.dots { display:flex; gap:10px; }
+.dot  { width:8px;height:8px;border-radius:50%;background:var(--muted);opacity:.2; }
+.dot.on { opacity:1;background:var(--cream);width:24px;border-radius:4px; }
+
+/* ──────────────────────────────────────── */
+/* CAROUSEL 1 — Task Paralysis Science     */
+/* ──────────────────────────────────────── */
+.c1s1,.c1s7 { background:var(--forest); display:flex; flex-direction:column;
+              justify-content:center; padding:100px; }
+.c1s2,.c1s3,.c1s4,.c1s5,.c1s6 { background:var(--deep);
+  display:flex; flex-direction:column; justify-content:center; padding:100px; }
+
+/* ──────────────────────────────────────── */
+/* CAROUSEL 2 — 5-Minute Focus Protocol    */
+/* ──────────────────────────────────────── */
+.c2s1,.c2s7 { background:var(--deep); display:flex; flex-direction:column;
+              justify-content:flex-end; padding:96px; }
+.c2s2,.c2s3,.c2s4,.c2s5,.c2s6 { background:var(--forest);
+  display:flex; flex-direction:column; justify-content:center; padding:100px; }
+
+/* ──────────────────────────────────────── */
+/* CAROUSEL 3 — Morning Routine            */
+/* ──────────────────────────────────────── */
+.c3s1 { background:var(--forest); display:flex; flex-direction:column;
+        align-items:center; justify-content:center; padding:96px; text-align:center; }
+.c3s2,.c3s3,.c3s4,.c3s5 { background:var(--warm); display:flex;
+  flex-direction:column; justify-content:center; padding:100px; }
+.c3s6 { background:#E8E0D5; display:flex; flex-direction:column;
+         justify-content:center; padding:100px; }
+.c3s7 { background:var(--forest); display:flex; flex-direction:column;
+         align-items:center; justify-content:center; padding:96px; text-align:center; }
+</style>
+</head>
+<body>
+<h1>stable. — Carousel Posts</h1>
+<p class="meta">@stableadhd · 3 carousels · 7 slides each · 1080 × 1080px</p>
+
+<!-- ─── CAROUSEL 1 ─── -->
+<div class="carousel-set">
+  <div class="set-title">Carousel 01 — Why you can't just start.</div>
+  <div class="set-sub">Pillar: ADHD Education · 7 slides</div>
+  <div class="slides">
+
+    <div class="pw"><div class="slide c1s1">
+      <div style="display:flex;flex-direction:column;gap:28px">
+        <span class="eyebrow">carousel · swipe →</span>
+        <h2 class="h-xl">Why you<br>can't just<br>start.</h2>
+        <p class="body-muted">The neuroscience of task paralysis in ADHD.</p>
+        <div style="margin-top:40px" class="dots">
+          <div class="dot on"></div><div class="dot"></div><div class="dot"></div>
+          <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        </div>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c1s2">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <span class="slide-num" style="margin-bottom:56px">02 / 07</span>
+        <h2 class="h-lg" style="margin-bottom:40px">It's not<br>laziness.</h2>
+        <div class="rule-h" style="margin:0 0 40px"></div>
+        <p class="body">Task paralysis happens when the prefrontal cortex doesn't get enough dopamine signal to initiate.</p>
+        <p class="body" style="margin-top:24px;opacity:.55">Without that signal, your brain literally cannot engage the start sequence.</p>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c1s3">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <span class="slide-num" style="margin-bottom:48px">03 / 07</span>
+        <h2 class="h-lg" style="margin-bottom:48px">The loop.</h2>
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;gap:24px;align-items:flex-start">
+            <span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--sage);margin-top:4px;flex-shrink:0">01</span>
+            <p class="body" style="opacity:.85">Task appears in your field of awareness</p>
+          </div>
+          <div style="display:flex;gap:24px;align-items:flex-start">
+            <span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--sage);margin-top:4px;flex-shrink:0">02</span>
+            <p class="body" style="opacity:.85">Brain searches for dopamine signal to start</p>
+          </div>
+          <div style="display:flex;gap:24px;align-items:flex-start">
+            <span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--sage);margin-top:4px;flex-shrink:0">03</span>
+            <p class="body" style="opacity:.85">Signal absent — task isn't novel, urgent, or rewarding</p>
+          </div>
+          <div style="display:flex;gap:24px;align-items:flex-start">
+            <span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--sage);margin-top:4px;flex-shrink:0">04</span>
+            <p class="body" style="opacity:.85">Brain freezes. Anxiety builds. Task feels larger.</p>
+          </div>
+        </div>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c1s4">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <span class="slide-num" style="margin-bottom:48px">04 / 07</span>
+        <h2 class="h-lg" style="margin-bottom:36px">Why deadlines<br>help (and<br>don't).</h2>
+        <p class="body" style="opacity:.85;margin-bottom:24px">Urgency creates an artificial dopamine spike. That's why ADHD brains work best at the last minute.</p>
+        <p class="body" style="opacity:.45">It works. But it's not sustainable. And it's not living.</p>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c1s5">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <span class="slide-num" style="margin-bottom:48px">05 / 07</span>
+        <h2 class="h-lg" style="margin-bottom:40px">What actually<br>helps.</h2>
+        <div style="display:flex;flex-direction:column;gap:28px">
+          <p class="body" style="opacity:.85">→ Reduce the task to its smallest possible first step</p>
+          <p class="body" style="opacity:.85">→ Set a 5-minute timer — not a "session", a window</p>
+          <p class="body" style="opacity:.85">→ Add a sensory cue: specific music, location, or scent</p>
+          <p class="body" style="opacity:.85">→ Remove every decision before you start</p>
+        </div>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c1s6">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <span class="slide-num" style="margin-bottom:48px">06 / 07</span>
+        <h2 class="h-lg" style="margin-bottom:36px">The stable.<br>approach.</h2>
+        <div class="rule-h" style="margin:0 0 36px"></div>
+        <p class="body" style="opacity:.85;margin-bottom:20px">Break any task into micro-steps your brain can actually initiate.</p>
+        <p class="body" style="opacity:.85;margin-bottom:20px">Use focus sessions with built-in start rituals.</p>
+        <p class="body" style="opacity:.55">Let the app hold the structure. So your brain doesn't have to.</p>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c1s7">
+      <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:44px;height:100%;justify-content:center">
+        <h2 style="font-family:'Playfair Display',serif;font-style:italic;font-weight:400;font-size:52px;color:var(--cream);line-height:1.35">
+          "Your brain isn't broken.<br>It just needs<br>a better signal."
+        </h2>
+        <div class="rule-h" style="width:80px;margin:0"></div>
+        <div class="cta-pill">Try stable. free</div>
+        <span style="font-family:'Inter',sans-serif;font-weight:200;font-size:16px;color:var(--muted);opacity:.6">stableadhd.com</span>
+      </div>
+    </div></div>
+
+  </div>
+</div>
+
+<!-- ─── CAROUSEL 2 ─── -->
+<div class="carousel-set">
+  <div class="set-title">Carousel 02 — The 5-Minute Focus Protocol</div>
+  <div class="set-sub">Pillar: Focus Systems · 7 slides</div>
+  <div class="slides">
+
+    <div class="pw"><div class="slide c2s1">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <div class="step-num">5</div>
+        <h2 class="h-xl" style="margin-bottom:28px">The focus<br>protocol.</h2>
+        <p class="body-muted">Do this before every work session.</p>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c2s2">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <span class="slide-num" style="margin-bottom:32px">01 / 05</span>
+        <h2 class="h-lg" style="color:var(--muted);margin-bottom:32px">Clear your<br>space.</h2>
+        <div class="rule-h" style="margin:0 0 36px"></div>
+        <p class="body">One surface. One task visible. Everything else out of sight.</p>
+        <p class="body" style="margin-top:20px;opacity:.5">Your visual field is your mental field.</p>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c2s3">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <span class="slide-num" style="margin-bottom:32px">02 / 05</span>
+        <h2 class="h-lg" style="color:var(--muted);margin-bottom:32px">Write the<br>one thing.</h2>
+        <div class="rule-h" style="margin:0 0 36px"></div>
+        <p class="body">Not your list. Not your goals.</p>
+        <p class="body" style="margin-top:20px;opacity:.85">The one specific thing you will do in the next 25 minutes.</p>
+        <p class="body" style="margin-top:20px;opacity:.5">Write it down. Say it out loud.</p>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c2s4">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <span class="slide-num" style="margin-bottom:32px">03 / 05</span>
+        <h2 class="h-lg" style="color:var(--muted);margin-bottom:32px">Set the<br>container.</h2>
+        <div class="rule-h" style="margin:0 0 36px"></div>
+        <p class="body">25 minutes. Phone face-down. Notifications off.</p>
+        <p class="body" style="margin-top:20px;opacity:.5">stable. handles the timer and tracks your streak.</p>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c2s5">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <span class="slide-num" style="margin-bottom:32px">04 / 05</span>
+        <h2 class="h-lg" style="color:var(--muted);margin-bottom:32px">Start before<br>you're ready.</h2>
+        <div class="rule-h" style="margin:0 0 36px"></div>
+        <p class="body">You will never feel fully ready. That feeling never comes.</p>
+        <p class="body" style="margin-top:20px;opacity:.85">Open the doc. Type the first word. Click the first button.</p>
+        <p class="body" style="margin-top:20px;opacity:.5">Action creates motivation — not the other way around.</p>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c2s6">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <span class="slide-num" style="margin-bottom:32px">05 / 05</span>
+        <h2 class="h-lg" style="color:var(--muted);margin-bottom:32px">End on<br>time.</h2>
+        <div class="rule-h" style="margin:0 0 36px"></div>
+        <p class="body">Stop when the timer ends — even if you're in flow.</p>
+        <p class="body" style="margin-top:20px;opacity:.85">This trains your brain that focus sessions are safe.</p>
+        <p class="body" style="margin-top:20px;opacity:.5">It will trust the process more next time.</p>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c2s7">
+      <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;height:100%;gap:44px">
+        <h2 style="font-family:'Playfair Display',serif;font-weight:400;font-size:52px;color:var(--cream);line-height:1.3">
+          Try your first<br>focus session<br>in stable.
+        </h2>
+        <div class="rule-h" style="width:80px;margin:0"></div>
+        <div class="cta-pill">Start free</div>
+        <span style="font-family:'Inter',sans-serif;font-weight:200;font-size:16px;color:var(--muted);opacity:.6">stableadhd.com</span>
+      </div>
+    </div></div>
+
+  </div>
+</div>
+
+<!-- ─── CAROUSEL 3 ─── -->
+<div class="carousel-set">
+  <div class="set-title">Carousel 03 — A morning routine that actually works with ADHD</div>
+  <div class="set-sub">Pillar: Routines · 7 slides</div>
+  <div class="slides">
+
+    <div class="pw"><div class="slide c3s1">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:0">
+        <div style="width:48px;height:1px;background:var(--sage);opacity:.45;margin-bottom:52px"></div>
+        <h2 class="h-xl" style="text-align:center;margin-bottom:32px">A morning<br>routine that<br>actually works.</h2>
+        <p class="body-muted" style="text-align:center">3 habits. Any order. Forgiving.</p>
+        <div style="width:48px;height:1px;background:var(--sage);opacity:.45;margin-top:52px"></div>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c3s2">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <span class="slide-num" style="margin-bottom:48px;color:var(--charcoal);opacity:.35">02 / 07</span>
+        <h2 class="h-lg" style="color:var(--charcoal);margin-bottom:36px">The problem<br>with most<br>routines.</h2>
+        <div style="height:1px;background:var(--charcoal);opacity:.12;margin-bottom:36px"></div>
+        <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:20px;color:var(--charcoal);line-height:1.65;opacity:.75">
+          They're built for neurotypical brains. They assume consistent sleep, mood, and motivation.
+        </p>
+        <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:20px;color:var(--charcoal);line-height:1.65;margin-top:24px;opacity:.45">
+          ADHD doesn't do consistent.
+        </p>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c3s3">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <span class="eyebrow" style="font-size:12px;margin-bottom:24px;color:var(--charcoal);opacity:.4">Habit 01</span>
+        <h2 class="h-lg" style="color:var(--charcoal);margin-bottom:36px">Light &<br>water.</h2>
+        <div style="height:1px;background:var(--charcoal);opacity:.12;margin-bottom:36px"></div>
+        <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:20px;color:var(--charcoal);line-height:1.65;opacity:.75">
+          Within 5 minutes of waking: open a blind and drink a glass of water.
+        </p>
+        <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:20px;color:var(--charcoal);line-height:1.65;margin-top:24px;opacity:.45">
+          Sets your circadian clock. Gives your brain a non-digital first input.
+        </p>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c3s4">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <span class="eyebrow" style="font-size:12px;margin-bottom:24px;color:var(--charcoal);opacity:.4">Habit 02</span>
+        <h2 class="h-lg" style="color:var(--charcoal);margin-bottom:36px">The one<br>thing.</h2>
+        <div style="height:1px;background:var(--charcoal);opacity:.12;margin-bottom:36px"></div>
+        <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:20px;color:var(--charcoal);line-height:1.65;opacity:.75">
+          Leave a note or open stable. tasks the night before.
+        </p>
+        <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:20px;color:var(--charcoal);line-height:1.65;margin-top:24px;opacity:.45">
+          One task. The one thing that would make tomorrow feel okay if you did it. Morning-you doesn't have to decide.
+        </p>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c3s5">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <span class="eyebrow" style="font-size:12px;margin-bottom:24px;color:var(--charcoal);opacity:.4">Habit 03</span>
+        <h2 class="h-lg" style="color:var(--charcoal);margin-bottom:36px">10-minute<br>no-agenda<br>window.</h2>
+        <div style="height:1px;background:var(--charcoal);opacity:.12;margin-bottom:36px"></div>
+        <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:20px;color:var(--charcoal);line-height:1.65;opacity:.75">
+          Sit. Drink something warm. Don't optimise this time.
+        </p>
+        <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:20px;color:var(--charcoal);line-height:1.65;margin-top:24px;opacity:.45">
+          Your ADHD brain needs transition time. This is the buffer that prevents the crash.
+        </p>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c3s6">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <h2 class="h-lg" style="color:var(--charcoal);margin-bottom:48px">The rule.</h2>
+        <div style="display:flex;flex-direction:column;gap:28px">
+          <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:20px;color:var(--charcoal);opacity:.85">All three → great.</p>
+          <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:20px;color:var(--charcoal);opacity:.65">Two → good.</p>
+          <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:20px;color:var(--charcoal);opacity:.5">One → you still showed up.</p>
+          <p style="font-family:'Inter',sans-serif;font-weight:300;font-size:20px;color:var(--charcoal);opacity:.35">Miss the day → tomorrow is not the enemy.</p>
+        </div>
+      </div>
+    </div></div>
+
+    <div class="pw"><div class="slide c3s7">
+      <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;height:100%;gap:44px">
+        <h2 style="font-family:'Playfair Display',serif;font-weight:400;font-size:52px;color:var(--cream);line-height:1.35">
+          stable. asks one<br>question each morning.
+        </h2>
+        <p class="body-muted" style="font-size:22px;font-style:italic">"What's your one thing today?"</p>
+        <div class="rule-h" style="width:80px;margin:0"></div>
+        <div class="cta-pill">Try it free</div>
+      </div>
+    </div></div>
+
+  </div>
+</div>
+</body>
+</html>

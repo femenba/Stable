@@ -13,7 +13,8 @@ export const testProcedure = t.procedure
 
 export function createTestContext(overrides?: Partial<Context>): Context {
   return {
-    userId: TEST_CLERK_ID,
+    userId:    TEST_CLERK_ID,
+    userEmail: TEST_USER_EMAIL,
     db: createDbClient(
       process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,

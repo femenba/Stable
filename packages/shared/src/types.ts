@@ -51,6 +51,19 @@ export interface FocusSession {
   createdAt: string
 }
 
+export type Plan      = 'free' | 'pro'
+export type SubStatus = 'active' | 'trialing' | 'past_due' | 'canceled'
+
+export interface Subscription {
+  plan:                 Plan
+  status:               SubStatus
+  stripeCustomerId:     string | null
+  stripeSubscriptionId: string | null
+  trialEndsAt:          string | null
+  currentPeriodEnd:     string | null
+  cancelAtPeriodEnd:    boolean
+}
+
 export type MoodTag = 'focused' | 'calm' | 'anxious' | 'overwhelmed' | 'sad' | 'irritable' | 'motivated' | 'tired'
 
 export interface MoodEntry {

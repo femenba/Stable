@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>stable. — 9 Grid Posts | @stableadhd</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@200;300;400&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest:   #0F1F0F;
+  --deep:     #1E3A1E;
+  --sage:     #4A7C4A;
+  --muted:    #7AAE7A;
+  --cream:    #F4EFE6;
+  --warm:     #FAF8F4;
+  --charcoal: #1A1A1A;
+  --rose:     #C9A8A0;
+  --rose-ink: #2A1A18;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#080808; font-family:'Inter',sans-serif; padding:48px; }
+
+h1 { font-family:'Playfair Display',serif; font-weight:400; font-size:24px;
+     color:var(--cream); letter-spacing:.02em; margin-bottom:6px; }
+.meta { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);
+        letter-spacing:.12em; text-transform:uppercase; margin-bottom:48px; }
+
+.grid { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; max-width:1200px; }
+
+.post-block { display:flex; flex-direction:column; }
+.post-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);
+              letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px; opacity:.5; }
+
+/* Wrapper clips the scaled post */
+.pw { width:100%; aspect-ratio:1; overflow:hidden; position:relative; }
+.post { position:absolute; top:0; left:0; width:1080px; height:1080px;
+        transform-origin:top left; overflow:hidden; }
+/* grain */
+.post::after { content:''; position:absolute; inset:0; z-index:99;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:.04; mix-blend-mode:overlay; pointer-events:none; }
+
+/* ── SHARED ── */
+.wm  { font-family:'Playfair Display',serif; font-weight:400; color:var(--cream); }
+.rule { background:var(--sage); opacity:.55; }
+.eyebrow { font-family:'DM Mono',monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+.body-text { font-family:'Inter',sans-serif; font-weight:300; color:var(--cream); }
+
+/* ── POST 01 — Brand Reveal ── */
+.p01 { background:var(--forest); display:flex; flex-direction:column;
+       align-items:center; justify-content:center; }
+.p01 .wm  { font-size:96px; letter-spacing:-.02em; }
+.p01 .rule { width:120px; height:1px; margin:44px 0; }
+.p01 .tag  { font-family:'Inter',sans-serif; font-weight:200; font-size:22px;
+             color:var(--muted); letter-spacing:.1em; text-align:center; }
+
+/* ── POST 02 — Validation Quote ── */
+.p02 { background:var(--deep); display:flex; align-items:center;
+       justify-content:center; padding:96px; }
+.p02 .quote { font-family:'Playfair Display',serif; font-style:italic;
+              font-weight:400; font-size:46px; color:var(--cream);
+              line-height:1.48; text-align:center; }
+
+/* ── POST 03 — Tasks Feature ── */
+.p03 { background:linear-gradient(155deg,var(--forest) 0%,#0A160A 100%);
+       display:flex; flex-direction:column; align-items:center;
+       justify-content:center; padding:80px; gap:52px; }
+.p03 .eyebrow { font-size:14px; }
+.phone { width:400px; background:#0A150A; border-radius:44px;
+         border:1.5px solid rgba(74,124,74,.28);
+         padding:44px 36px;
+         box-shadow:0 48px 96px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.03); }
+.phone-label { font-family:'DM Mono',monospace; font-size:13px;
+               color:var(--muted); letter-spacing:.1em; text-transform:uppercase;
+               margin-bottom:28px; }
+.task { display:flex; align-items:center; gap:18px;
+        padding:18px 0; border-bottom:1px solid rgba(74,124,74,.14); }
+.task:last-child { border:none; }
+.circle { width:22px; height:22px; border-radius:50%;
+          border:1.5px solid rgba(122,174,122,.45); flex-shrink:0; }
+.circle.done { background:var(--sage); border-color:var(--sage); }
+.task-t { font-family:'Inter',sans-serif; font-weight:300;
+          font-size:18px; color:var(--cream); }
+.task-t.done { opacity:.3; text-decoration:line-through; }
+
+/* ── POST 04 — Carousel Cover: Task Paralysis ── */
+.p04 { background:var(--forest); display:flex; flex-direction:column;
+       justify-content:center; padding:100px; }
+.p04 .eyebrow { font-size:13px; margin-bottom:28px; }
+.p04 .h1 { font-family:'Playfair Display',serif; font-weight:400;
+           font-size:82px; color:var(--cream); line-height:1.08;
+           letter-spacing:-.025em; margin-bottom:36px; }
+.p04 .sub { font-family:'Inter',sans-serif; font-weight:300; font-size:20px;
+            color:var(--muted); line-height:1.6; max-width:600px; }
+.dots { display:flex; gap:10px; margin-top:80px; }
+.dot  { width:8px; height:8px; border-radius:50%;
+        background:var(--muted); opacity:.2; }
+.dot.on { opacity:1; background:var(--cream); width:24px; border-radius:4px; }
+
+/* ── POST 05 — Overwhelm Loop (light) ── */
+.p05 { background:var(--warm); display:flex; align-items:center;
+       justify-content:center; padding:96px; }
+.p05 .poem { font-family:'Playfair Display',serif; font-style:italic;
+             font-weight:400; font-size:37px; color:var(--charcoal);
+             line-height:1.65; text-align:center; }
+.p05 .dim { opacity:.35; }
+
+/* ── POST 06 — Self-Compassion (rose) ── */
+.p06 { background:var(--rose); display:flex; align-items:center;
+       justify-content:center; padding:96px; position:relative; }
+.p06 .quote { font-family:'Playfair Display',serif; font-style:italic;
+              font-weight:400; font-size:46px; color:var(--rose-ink);
+              line-height:1.42; text-align:center; }
+.p06 .wm-sm { font-family:'Playfair Display',serif; font-weight:400;
+              font-size:16px; color:var(--rose-ink); opacity:.35;
+              position:absolute; bottom:64px; right:72px; letter-spacing:.04em; }
+
+/* ── POST 07 — Focus Protocol Cover ── */
+.p07 { background:var(--deep); display:flex; flex-direction:column;
+       justify-content:flex-end; padding:96px; }
+.p07 .big-n { font-family:'Playfair Display',serif; font-weight:400;
+              font-size:200px; color:var(--forest); line-height:1;
+              letter-spacing:-.04em; margin-bottom:-12px; }
+.p07 .h1 { font-family:'Playfair Display',serif; font-weight:400;
+           font-size:58px; color:var(--cream); line-height:1.18;
+           letter-spacing:-.02em; margin-bottom:28px; }
+.p07 .sub { font-family:'Inter',sans-serif; font-weight:300;
+            font-size:18px; color:var(--muted); }
+
+/* ── POST 08 — Morning Routine Cover ── */
+.p08 { background:var(--forest); display:flex; flex-direction:column;
+       align-items:center; justify-content:center;
+       padding:96px; text-align:center; }
+.p08 .rule-t { width:48px; height:1px; background:var(--sage);
+               opacity:.45; margin-bottom:52px; }
+.p08 .h1 { font-family:'Playfair Display',serif; font-weight:400;
+           font-size:62px; color:var(--cream); line-height:1.18;
+           letter-spacing:-.02em; margin-bottom:32px; }
+.p08 .sub { font-family:'Inter',sans-serif; font-weight:300;
+            font-size:19px; color:var(--muted); line-height:1.7;
+            max-width:640px; }
+.p08 .rule-b { width:48px; height:1px; background:var(--sage);
+               opacity:.45; margin-top:52px; }
+
+/* ── POST 09 — App CTA ── */
+.p09 { background:var(--forest); display:flex; flex-direction:column;
+       align-items:center; justify-content:center; padding:80px; gap:0; }
+.p09 .wm { font-size:86px; letter-spacing:-.02em; margin-bottom:72px; }
+.p09 .avail { font-family:'DM Mono',monospace; font-size:13px;
+              color:var(--muted); letter-spacing:.13em; text-transform:uppercase;
+              margin-bottom:44px; }
+.pill { background:var(--sage); color:var(--cream);
+        font-family:'Inter',sans-serif; font-weight:400; font-size:19px;
+        padding:20px 64px; border-radius:100px; letter-spacing:.02em; }
+.p09 .url { font-family:'Inter',sans-serif; font-weight:200; font-size:16px;
+            color:var(--muted); opacity:.5; margin-top:32px; }
+
+/* export note */
+.note { max-width:1200px; margin-top:48px; padding:28px 36px;
+        background:rgba(30,58,30,.35); border:1px solid rgba(74,124,74,.25);
+        border-radius:12px; }
+.note h3 { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);
+           letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px; }
+.note p { font-family:'Inter',sans-serif; font-weight:300; font-size:13px;
+          color:var(--cream); opacity:.65; line-height:1.7; }
+code { font-family:'DM Mono',monospace; font-size:12px;
+       background:rgba(74,124,74,.2); padding:2px 6px; border-radius:4px; }
+</style>
+</head>
+<body>
+<h1>stable. — Grid Posts</h1>
+<p class="meta">@stableadhd · First 9 posts · 1080 × 1080px</p>
+
+<div class="grid" id="grid"></div>
+
+<div class="note">
+  <h3>Export to PNG</h3>
+  <p>Run <code>node export-posts.js</code> to generate all 9 posts as 1080×1080 PNG files.<br>
+     Or: open Chrome DevTools → Device toolbar → set width 1080, DPR 1 → screenshot each <code>.post</code> element.</p>
+</div>
+
+<script>
+const PW = document.querySelector('.pw')?.offsetWidth || 390
+
+const posts = [
+  { id:'01', label:'Brand Reveal', cls:'p01', html:`
+    <span class="wm">stable.</span>
+    <div class="rule" style="width:120px;height:1px"></div>
+    <span class="tag">for the ADHD brain that's done with chaos.</span>` },
+
+  { id:'02', label:'Validation Quote', cls:'p02', html:`
+    <p class="quote">"You're not lazy.<br>You're not broken.<br>You're running a different<br>operating system<br>without the manual."</p>` },
+
+  { id:'03', label:'Tasks Feature', cls:'p03', html:`
+    <span class="eyebrow" style="font-size:14px">feature</span>
+    <div class="phone">
+      <div class="phone-label">Today's tasks</div>
+      <div class="task"><div class="circle done"></div><span class="task-t done">Morning check-in</span></div>
+      <div class="task"><div class="circle done"></div><span class="task-t done">Reply to emails</span></div>
+      <div class="task"><div class="circle"></div><span class="task-t">Draft proposal</span></div>
+      <div class="task"><div class="circle"></div><span class="task-t">15-min walk</span></div>
+    </div>
+    <span class="body-text" style="font-size:18px;opacity:.5;letter-spacing:.02em">start small. do the next thing.</span>` },
+
+  { id:'04', label:'Carousel: Task Paralysis', cls:'p04', html:`
+    <span class="eyebrow" style="font-size:13px">carousel · swipe →</span>
+    <h2 class="h1">Why you<br>can't just<br>start.</h2>
+    <p class="sub">The neuroscience of task paralysis — and what actually helps.</p>
+    <div class="dots">
+      <div class="dot on"></div><div class="dot"></div><div class="dot"></div>
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>` },
+
+  { id:'05', label:'Overwhelm Loop', cls:'p05', html:`
+    <p class="poem">
+      Everything matters.<br>
+      <span class="dim">Nothing gets done.</span><br>
+      I don't know where to start.<br>
+      <span class="dim">I can't start until I know where to start.</span><br>
+      So nothing gets done.<br>
+      <span class="dim">Everything still matters.</span>
+    </p>` },
+
+  { id:'06', label:'Self-Compassion', cls:'p06', html:`
+    <p class="quote">"Rest is not a reward<br>for finishing.<br><br>Rest is a requirement<br>for functioning."</p>
+    <span class="wm-sm">stable.</span>` },
+
+  { id:'07', label:'Carousel: Focus Protocol', cls:'p07', html:`
+    <div class="big-n">5</div>
+    <h2 class="h1">The focus<br>protocol.</h2>
+    <p class="sub">Do this before every session.</p>` },
+
+  { id:'08', label:'Carousel: Morning Routine', cls:'p08', html:`
+    <div class="rule-t"></div>
+    <h2 class="h1">A morning routine<br>that actually works<br>with ADHD.</h2>
+    <p class="sub">3 habits. Any order. Forgiving.</p>
+    <div class="rule-b"></div>` },
+
+  { id:'09', label:'App CTA', cls:'p09', html:`
+    <span class="wm">stable.</span>
+    <span class="avail">Available on iOS &amp; Android</span>
+    <div class="pill">Start free</div>
+    <span class="url">stableadhd.com</span>` },
+]
+
+const grid = document.getElementById('grid')
+
+posts.forEach(p => {
+  const scale = grid.offsetWidth / 3 / 1080 || 0.363
+  const block = document.createElement('div')
+  block.className = 'post-block'
+  block.innerHTML = `
+    <div class="post-label">Post ${p.id} — ${p.label}</div>
+    <div class="pw" id="pw-${p.id}">
+      <div class="post ${p.cls}" id="post-${p.id}">${p.html}</div>
+    </div>`
+  grid.appendChild(block)
+})
+
+function setScales() {
+  const colW = grid.offsetWidth / 3
+  document.querySelectorAll('.pw').forEach(pw => {
+    pw.style.height = colW + 'px'
+    const s = colW / 1080
+    pw.querySelector('.post').style.transform = `scale(${s})`
+  })
+}
+setScales()
+window.addEventListener('resize', setScales)
+</script>
+</body>
+</html>
