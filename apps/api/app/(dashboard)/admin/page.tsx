@@ -6,7 +6,7 @@ import Link from 'next/link'
 import {
   Users, UserPlus, Crown, TrendingUp,
   ShieldCheck, CreditCard, UserCheck, ArrowRight, Lock, Mail,
-  RefreshCw, CheckCircle, XCircle, AlertCircle, Wrench,
+  RefreshCw, CheckCircle, XCircle, AlertCircle,
 } from 'lucide-react'
 import { isAdminUser } from '../../../src/lib/user-roles'
 import { Card } from '../../../src/components/ui'
@@ -184,92 +184,6 @@ function UserRow({ user, onRefetch }: { user: UserData; onRefetch: () => void })
   )
 }
 
-// ── Stripe repair panel ────────────────────────────────────────────────────────
-
-type RepairResult = {
-  customerId: string
-  clerkId: string | null
-  oldEmail: string
-  newEmail: string
-  stripeUpdated: boolean
-  supabaseUpdated: boolean
-  error?: string
-}
-
-function StripeRepairPanel() {
-  const [result, setResult] = useState<{
-    stripeCustomersChecked: number
-    stripeCustomersFixed: number
-    stripeCustomersFailed: number
-    supabaseUsersStillBroken: number
-    details: RepairResult[]
-  } | null>(null)
-
-  const repair = trpc.admin.repairStripeEmails.useMutation({
-    onSuccess: (d) => setResult(d),
-    onError:   (e) => alert('Repair failed: ' + e.message),
-  })
-
-  return (
-    <Card className="p-5">
-      <div className="flex items-start gap-3 mb-4">
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(192,85,112,0.08)' }}>
-          <Wrench size={16} style={{ color: '#C05570' }} strokeWidth={1.8} />
-        </div>
-        <div>
-          <p className="text-sm font-bold" style={{ color: 'var(--stable-t1)' }}>Stripe Email Repair</p>
-          <p className="text-xs mt-0.5" style={{ color: 'var(--stable-t2)' }}>
-            Finds Stripe customers created with <code className="px-1 rounded" style={{ background: 'var(--stable-bg)' }}>unknown@stableadhd.com</code> and updates them to the user's real email.
-          </p>
-        </div>
-      </div>
-
-      <button
-        onClick={() => repair.mutate()}
-        disabled={repair.isPending}
-        className="w-full rounded-xl py-2.5 text-xs font-black uppercase tracking-wide transition-all hover:opacity-80 disabled:opacity-40"
-        style={{ background: 'rgba(192,85,112,0.10)', color: '#C05570' }}
-      >
-        {repair.isPending ? 'Repairing…' : 'Run Stripe Email Repair'}
-      </button>
-
-      {result && (
-        <div className="mt-4 space-y-2">
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { label: 'Checked',           value: result.stripeCustomersChecked,    color: 'var(--stable-t2)' },
-              { label: 'Fixed',             value: result.stripeCustomersFixed,      color: '#5E8B71' },
-              { label: 'Failed',            value: result.stripeCustomersFailed,     color: '#C05570' },
-              { label: 'Still broken in DB', value: result.supabaseUsersStillBroken, color: result.supabaseUsersStillBroken > 0 ? '#C05570' : 'var(--stable-t2)' },
-            ].map((s) => (
-              <div key={s.label} className="px-3 py-2 rounded-xl" style={{ background: 'var(--stable-bg)' }}>
-                <p className="text-[9px] uppercase tracking-widest font-bold" style={{ color: 'var(--stable-t3)' }}>{s.label}</p>
-                <p className="text-lg font-black" style={{ color: s.color }}>{s.value}</p>
-              </div>
-            ))}
-          </div>
-
-          {result.details.length > 0 && (
-            <div className="mt-3 space-y-1 max-h-48 overflow-y-auto">
-              {result.details.map((r) => (
-                <div key={r.customerId} className="flex items-center gap-2 px-3 py-2 rounded-xl text-[10px]" style={{ background: 'var(--stable-bg)' }}>
-                  {r.stripeUpdated
-                    ? <CheckCircle size={11} style={{ color: '#5E8B71', flexShrink: 0 }} />
-                    : <XCircle    size={11} style={{ color: '#C05570', flexShrink: 0 }} />}
-                  <span className="truncate" style={{ color: 'var(--stable-t2)' }}>
-                    <code>{r.customerId}</code>
-                    {r.newEmail ? ` → ${r.newEmail}` : r.error ? ` · ${r.error}` : ''}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-    </Card>
-  )
-}
-
 // ── Admin dashboard ────────────────────────────────────────────────────────────
 
 function AdminDashboard({ email }: { email: string }) {
@@ -371,11 +285,6 @@ function AdminDashboard({ email }: { email: string }) {
           ))}
         </div>
 
-        {/* Stripe repair */}
-        <p className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: 'var(--stable-t3)' }}>Maintenance</p>
-        <div className="max-w-lg mb-10">
-          <StripeRepairPanel />
-        </div>
       </div>
     </div>
   )

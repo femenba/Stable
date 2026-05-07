@@ -3,7 +3,14 @@ import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { ADMIN_EMAIL } from '@/lib/user-roles'
 import { invalidatePlanCache } from '@/lib/plan'
-import { getStripe } from '@/lib/stripe'
+import {
+  sendWelcomePro,
+  sendWelcomeTrial,
+  sendTrialEnding,
+  sendPaymentSucceeded,
+  sendPaymentFailed,
+  sendCancellation,
+} from '@/lib/email'
 
 async function assertAdmin(ctx: { userEmail: string }) {
   if (ctx.userEmail !== ADMIN_EMAIL) {
@@ -38,20 +45,28 @@ export const adminRouter = router({
   listUsers: protectedProcedure.query(async ({ ctx }) => {
     await assertAdmin(ctx)
 
-    const { data, error } = await ctx.db
+    const { data: users, error: usersError } = await ctx.db
       .from('users')
-      .select(`
-        id, email, name, clerk_id, created_at, updated_at,
-        subscriptions (
-          plan, status, stripe_customer_id, stripe_subscription_id,
-          trial_ends_at, current_period_end, updated_at
-        )
-      `)
+      .select('id, email, name, clerk_id, created_at, updated_at')
       .order('created_at', { ascending: false })
       .limit(200)
 
-    if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
-    return (data ?? []) as any[]
+    if (usersError) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: usersError.message })
+    if (!users?.length) return []
+
+    // Fetch subscriptions separately — avoids PostgREST FK schema cache issues
+    const userIds = users.map((u: any) => u.id)
+    const { data: subs } = await ctx.db
+      .from('subscriptions')
+      .select('user_id, plan, status, stripe_customer_id, stripe_subscription_id, trial_ends_at, current_period_end, updated_at')
+      .in('user_id', userIds)
+
+    const subsByUserId = Object.fromEntries((subs ?? []).map((s: any) => [s.user_id, s]))
+
+    return users.map((u: any) => ({
+      ...u,
+      subscriptions: subsByUserId[u.id] ? [subsByUserId[u.id]] : [],
+    })) as any[]
   }),
 
   setUserPlan: protectedProcedure
@@ -114,109 +129,58 @@ export const adminRouter = router({
       return { ok: true, userId: input.userId, clerkId: user.clerk_id }
     }),
 
-  // Repairs Stripe customers that were created with the placeholder email.
-  // For each affected customer, finds the real email from Supabase (via clerkId
-  // stored in customer metadata) and updates both Stripe and the users table.
-  repairStripeEmails: protectedProcedure.mutation(async ({ ctx }) => {
-    await assertAdmin(ctx)
+  // Sends a real production lifecycle email to any user without touching subscription state.
+  sendLifecycleEmail: protectedProcedure
+    .input(z.object({
+      userId:    z.string(),
+      emailType: z.enum([
+        'welcome_pro',
+        'welcome_trial',
+        'trial_ending',
+        'payment_succeeded',
+        'payment_failed',
+        'cancellation',
+      ]),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      await assertAdmin(ctx)
 
-    const stripe = getStripe()
+      const { data: user } = await ctx.db
+        .from('users')
+        .select('email')
+        .eq('id', input.userId)
+        .single()
 
-    type RepairResult = {
-      customerId: string
-      clerkId: string | null
-      oldEmail: string
-      newEmail: string
-      stripeUpdated: boolean
-      supabaseUpdated: boolean
-      error?: string
-    }
-
-    const results: RepairResult[] = []
-
-    // 1. Search Stripe for all customers with the placeholder email (paginated)
-    let startingAfter: string | undefined
-    let hasMore = true
-
-    while (hasMore) {
-      const page = await stripe.customers.list({
-        email: 'unknown@stableadhd.com',
-        limit: 100,
-        ...(startingAfter ? { starting_after: startingAfter } : {}),
-      })
-
-      for (const customer of page.data) {
-        const clerkId = customer.metadata?.clerkId ?? null
-        const result: RepairResult = {
-          customerId: customer.id,
-          clerkId,
-          oldEmail: 'unknown@stableadhd.com',
-          newEmail: '',
-          stripeUpdated: false,
-          supabaseUpdated: false,
-        }
-
-        if (!clerkId) {
-          result.error = 'No clerkId in metadata — cannot match to a user'
-          results.push(result)
-          continue
-        }
-
-        // 2. Look up the real email from Supabase by clerk_id
-        const { data: user } = await ctx.db
-          .from('users')
-          .select('id, email')
-          .eq('clerk_id', clerkId)
-          .single()
-
-        if (!user || !user.email || user.email === 'unknown@stableadhd.com') {
-          result.error = 'Supabase user also has placeholder or missing email'
-          results.push(result)
-          continue
-        }
-
-        result.newEmail = user.email
-
-        // 3. Update Stripe customer email
-        try {
-          await stripe.customers.update(customer.id, {
-            email: user.email,
-            name:  customer.name ?? undefined,
-          })
-          result.stripeUpdated = true
-        } catch (err: any) {
-          result.error = `Stripe update failed: ${err.message}`
-          results.push(result)
-          continue
-        }
-
-        // 4. If Supabase user row still has placeholder, repair it too
-        if (user.email && user.email !== 'unknown@stableadhd.com') {
-          // The user already has a real email — nothing to fix in Supabase
-          result.supabaseUpdated = false
-        }
-
-        results.push(result)
+      if (!user?.email) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found or has no email' })
       }
 
-      hasMore = page.has_more
-      if (hasMore && page.data.length > 0) {
-        startingAfter = page.data[page.data.length - 1].id
+      const to   = user.email as string
+      const base = { db: ctx.db, userId: input.userId }
+
+      console.log(`[admin.sendLifecycleEmail] type=${input.emailType} to=${to}`)
+
+      switch (input.emailType) {
+        case 'welcome_pro':
+          await sendWelcomePro(to, { ...base, emailType: 'welcome_pro' })
+          break
+        case 'welcome_trial':
+          await sendWelcomeTrial(to, new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), { ...base, emailType: 'welcome_trial' })
+          break
+        case 'trial_ending':
+          await sendTrialEnding(to, new Date(Date.now() + 24 * 60 * 60 * 1000), { ...base, emailType: 'trial_ending' })
+          break
+        case 'payment_succeeded':
+          await sendPaymentSucceeded(to, { ...base, emailType: 'payment_succeeded' })
+          break
+        case 'payment_failed':
+          await sendPaymentFailed(to, { ...base, emailType: 'payment_failed' })
+          break
+        case 'cancellation':
+          await sendCancellation(to, new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), { ...base, emailType: 'cancellation' })
+          break
       }
-    }
 
-    // 5. Count Supabase users still stuck with placeholder
-    const { count: stillBroken } = await ctx.db
-      .from('users')
-      .select('*', { count: 'exact', head: true })
-      .eq('email', 'unknown@stableadhd.com')
-
-    return {
-      stripeCustomersChecked: results.length,
-      stripeCustomersFixed:   results.filter(r => r.stripeUpdated).length,
-      stripeCustomersFailed:  results.filter(r => r.error).length,
-      supabaseUsersStillBroken: stillBroken ?? 0,
-      details: results,
-    }
-  }),
+      return { ok: true, to, emailType: input.emailType }
+    }),
 })
