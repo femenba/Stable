@@ -19,7 +19,8 @@ export default function AccountPage() {
 
   const portalMutation   = trpc.subscriptions.createPortal.useMutation()
   const checkoutMutation = trpc.subscriptions.createCheckout.useMutation()
-  const [redirecting, setRedirecting] = useState(false)
+  const [redirecting,    setRedirecting]    = useState(false)
+  const [checkoutError,  setCheckoutError]  = useState<string | null>(null)
 
   if (!isLoaded) {
     return (
@@ -49,10 +50,15 @@ export default function AccountPage() {
 
   async function handleUpgrade() {
     setRedirecting(true)
+    setCheckoutError(null)
     try {
       const { url } = await checkoutMutation.mutateAsync()
       if (url) window.location.href = url
-    } catch { setRedirecting(false) }
+      else setRedirecting(false)
+    } catch (err: unknown) {
+      setRedirecting(false)
+      setCheckoutError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+    }
   }
 
   const formatDate = (iso: string | null) =>
@@ -208,15 +214,22 @@ export default function AccountPage() {
               Manage billing & subscription
             </button>
           ) : (
-            <button
-              onClick={handleUpgrade}
-              disabled={redirecting || checkoutMutation.isPending}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-full text-sm font-bold transition-all hover:opacity-80 disabled:opacity-50"
-              style={{ background: 'var(--stable-cta)', color: '#fff', boxShadow: 'var(--shadow-cta)' }}
-            >
-              {redirecting ? <Loader2 size={14} className="animate-spin" /> : <Crown size={14} />}
-              Start 7-day free trial
-            </button>
+            <>
+              <button
+                onClick={handleUpgrade}
+                disabled={redirecting || checkoutMutation.isPending}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-full text-sm font-bold transition-all hover:opacity-80 disabled:opacity-50"
+                style={{ background: 'var(--stable-cta)', color: '#fff', boxShadow: 'var(--shadow-cta)' }}
+              >
+                {redirecting ? <Loader2 size={14} className="animate-spin" /> : <Crown size={14} />}
+                Start 7-day free trial
+              </button>
+              {checkoutError && (
+                <p className="text-center text-xs mt-2 font-medium" style={{ color: '#e05252' }}>
+                  {checkoutError}
+                </p>
+              )}
+            </>
           )}
         </Card>
 

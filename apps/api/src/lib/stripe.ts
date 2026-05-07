@@ -7,9 +7,12 @@ export function getStripe(): Stripe {
   if (!process.env.STRIPE_SECRET_KEY) {
     throw new Error('STRIPE_SECRET_KEY is not set')
   }
+  // Use Stripe's fetch-based HTTP client so this works in any Next.js
+  // runtime (Edge or Node.js) without relying on native http/https modules.
   _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
     apiVersion: '2026-04-22.dahlia',
     typescript: true,
+    httpClient: Stripe.createFetchHttpClient(),
   })
   return _stripe
 }
