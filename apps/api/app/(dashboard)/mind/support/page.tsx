@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useRef, useCallback, Suspense } from 'react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { Lock, Crown } from 'lucide-react'
 import { ThemeToggle } from '../../../../src/components/theme-toggle'
+import { useSubscription } from '@/lib/use-subscription'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -23,6 +25,9 @@ const TOOLS = [
   { id: 'opposite',  icon: '🔄', title: 'Choose a Helpful Next Step', summary: 'Do the opposite of what the difficult emotion is pushing you toward.'    },
   { id: 'wise',      icon: '🧘', title: 'Find Your Calm Self',        summary: 'Balance your emotional mind and rational mind to find clarity.'          },
 ]
+
+// Tools accessible on the Free plan
+const FREE_TOOL_IDS = new Set(['breathe', 'grounding'])
 
 const PAUSE_FEELINGS = ['Angry', 'Anxious', 'Hurt', 'Overwhelmed', 'Impulsive']
 const PAUSE_ACTIONS  = ['Step away', 'Wait 10 minutes', 'Write it down', 'Ask for help']
@@ -551,6 +556,10 @@ function renderSession(id: string | null, onBack: () => void) {
 function SupportPageInner() {
   const searchParams   = useSearchParams()
   const initialTool    = searchParams.get('tool')
+  const router         = useRouter()
+  const { isPro }      = useSubscription()
+
+  const isLocked = (id: string) => !isPro && !FREE_TOOL_IDS.has(id)
 
   const [feeling,     setFeeling]     = useState<string | null>(null)
   const [activeTool,  setActiveTool]  = useState<string | null>(initialTool)
@@ -559,9 +568,12 @@ function SupportPageInner() {
   const selectedFeeling = FEELINGS.find((f) => f.id === feeling)
   const activeMeta      = TOOLS.find((t) => t.id === activeTool)
 
-  function startMobile(id: string) { setActiveTool(id); setMobileView('session') }
-  function backMobile()            { setMobileView('list') }
-  function backDesktop()           { setActiveTool(null) }
+  function startMobile(id: string) {
+    if (isLocked(id)) { router.push('/pricing'); return }
+    setActiveTool(id); setMobileView('session')
+  }
+  function backMobile()  { setMobileView('list') }
+  function backDesktop() { setActiveTool(null) }
 
   return (
     <div>
@@ -614,24 +626,41 @@ function SupportPageInner() {
 
               {/* Tools */}
               <p className="text-[10px] font-bold uppercase tracking-widest pt-2" style={{ color: 'var(--stable-t3)' }}>Support tools</p>
-              {TOOLS.map((tool) => (
-                <div key={tool.id} className="rounded-2xl overflow-hidden" style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)' }}>
-                  <div className="flex items-center gap-3 px-4 py-4">
-                    <span className="text-2xl w-10 text-center shrink-0">{tool.icon}</span>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm" style={{ color: 'var(--stable-t1)' }}>{tool.title}</p>
-                      <p className="text-xs mt-0.5 leading-relaxed" style={{ color: 'var(--stable-t2)' }}>{tool.summary}</p>
+              {TOOLS.map((tool) => {
+                const locked = isLocked(tool.id)
+                return (
+                  <div key={tool.id} className="rounded-2xl overflow-hidden" style={{ background: 'var(--stable-card)', border: '1px solid var(--stable-card-border)', opacity: locked ? 0.75 : 1 }}>
+                    <div className="flex items-center gap-3 px-4 py-4">
+                      <span className="text-2xl w-10 text-center shrink-0">{tool.icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="font-bold text-sm" style={{ color: 'var(--stable-t1)' }}>{tool.title}</p>
+                          {locked && <Lock size={11} style={{ color: 'var(--stable-t3)' }} strokeWidth={2.5} />}
+                        </div>
+                        <p className="text-xs mt-0.5 leading-relaxed" style={{ color: 'var(--stable-t2)' }}>{tool.summary}</p>
+                      </div>
                     </div>
+                    {locked ? (
+                      <Link
+                        href="/pricing"
+                        className="w-full py-3 text-xs font-bold border-t flex items-center justify-center gap-1.5 transition-opacity hover:opacity-70"
+                        style={{ borderColor: 'var(--stable-card-border)', color: 'var(--stable-t3)' }}
+                      >
+                        <Crown size={11} strokeWidth={2.5} />
+                        Unlock the full support tool library with stable. Pro.
+                      </Link>
+                    ) : (
+                      <button
+                        onClick={() => startMobile(tool.id)}
+                        className="w-full py-3 text-sm font-bold border-t transition-opacity hover:opacity-70"
+                        style={{ borderColor: 'var(--stable-card-border)', color: 'var(--cat-work)' }}
+                      >
+                        Start →
+                      </button>
+                    )}
                   </div>
-                  <button
-                    onClick={() => startMobile(tool.id)}
-                    className="w-full py-3 text-sm font-bold border-t transition-opacity hover:opacity-70"
-                    style={{ borderColor: 'var(--stable-card-border)', color: 'var(--cat-work)' }}
-                  >
-                    Start →
-                  </button>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </>
         ) : (
@@ -703,21 +732,26 @@ function SupportPageInner() {
             <p className="text-[10px] font-bold uppercase tracking-widest px-4 pb-2" style={{ color: 'var(--stable-t3)' }}>Support tools</p>
             {TOOLS.map((tool) => {
               const isActive = activeTool === tool.id
+              const locked   = isLocked(tool.id)
               return (
                 <button
                   key={tool.id}
-                  onClick={() => setActiveTool(isActive ? null : tool.id)}
+                  onClick={() => locked ? router.push('/pricing') : setActiveTool(isActive ? null : tool.id)}
                   className="w-full flex items-start gap-3 px-4 py-3.5 text-left transition-all"
                   style={{
-                    background: isActive ? 'rgba(94,139,113,0.08)' : 'transparent',
-                    borderLeft: isActive ? '3px solid var(--cat-work)' : '3px solid transparent',
+                    background: isActive && !locked ? 'rgba(94,139,113,0.08)' : 'transparent',
+                    borderLeft: isActive && !locked ? '3px solid var(--cat-work)' : '3px solid transparent',
+                    opacity: locked ? 0.6 : 1,
                   }}
                 >
                   <span className="text-xl shrink-0 mt-0.5">{tool.icon}</span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold" style={{ color: isActive ? 'var(--cat-work)' : 'var(--stable-t1)' }}>
-                      {tool.title}
-                    </p>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-sm font-bold" style={{ color: isActive && !locked ? 'var(--cat-work)' : 'var(--stable-t1)' }}>
+                        {tool.title}
+                      </p>
+                      {locked && <Lock size={10} style={{ color: 'var(--stable-t3)' }} strokeWidth={2.5} />}
+                    </div>
                     <p className="text-xs mt-0.5 leading-snug" style={{ color: 'var(--stable-t2)' }}>{tool.summary}</p>
                   </div>
                 </button>
@@ -728,7 +762,7 @@ function SupportPageInner() {
 
         {/* Right panel: active session */}
         <div className="flex-1 flex items-center justify-center overflow-y-auto p-8">
-          {activeTool ? (
+          {activeTool && !isLocked(activeTool) ? (
             <div className="w-full max-w-md">
               <div className="mb-6 flex items-center gap-3">
                 <span className="text-3xl">{activeMeta?.icon}</span>
@@ -743,6 +777,22 @@ function SupportPageInner() {
               >
                 {renderSession(activeTool, backDesktop)}
               </div>
+            </div>
+          ) : activeTool && isLocked(activeTool) ? (
+            <div className="text-center space-y-4 max-w-sm">
+              <p className="text-4xl">{activeMeta?.icon}</p>
+              <p className="text-lg font-extrabold" style={{ color: 'var(--stable-t1)' }}>{activeMeta?.title}</p>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--stable-t2)' }}>
+                Unlock the full support tool library with stable. Pro.
+              </p>
+              <Link
+                href="/pricing"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-black text-white transition-opacity hover:opacity-90"
+                style={{ background: 'var(--stable-cta)' }}
+              >
+                <Crown size={14} strokeWidth={2} />
+                Upgrade to Pro
+              </Link>
             </div>
           ) : (
             <div className="text-center space-y-3">
