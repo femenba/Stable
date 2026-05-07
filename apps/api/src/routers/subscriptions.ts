@@ -1,5 +1,6 @@
 import { router, protectedProcedure } from '@/trpc'
 import { TRPCError } from '@trpc/server'
+import Stripe from 'stripe'
 import { getUserId } from '@/lib/getUserId'
 import { getSubscription, invalidatePlanCache } from '@/lib/plan'
 import {
@@ -41,24 +42,42 @@ export const subscriptionsRouter = router({
 
     if (!userRow) throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' })
 
-    const stripeCustomerId = await getOrCreateStripeCustomer({
-      clerkId: ctx.userId,
-      email: userRow.email as string,
-      name: userRow.name as string | null,
-    })
+    let stripeCustomerId: string
+    try {
+      stripeCustomerId = await getOrCreateStripeCustomer({
+        clerkId: ctx.userId,
+        email: userRow.email as string,
+        name: userRow.name as string | null,
+      })
+    } catch (err) {
+      const detail = err instanceof Stripe.errors.StripeError
+        ? `[${err.type}] ${err.message} (status=${err.statusCode})`
+        : String(err)
+      console.error('[createCheckout] getOrCreateStripeCustomer failed:', detail)
+      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Stripe customer error: ${detail}` })
+    }
 
     // Determine if this user has already had a trial
     const hadTrial = sub?.trialEndsAt != null
     const plan = STRIPE_PLANS.pro
 
-    const session = await createCheckoutSession({
-      customerId: stripeCustomerId,
-      priceId: plan.priceId,
-      trialDays: hadTrial ? undefined : plan.trialDays,
-      successUrl: `${APP_URL}/dashboard?checkout=success`,
-      cancelUrl:  `${APP_URL}/pricing?checkout=cancelled`,
-      metadata:   { userId, clerkId: ctx.userId },
-    })
+    let session: Awaited<ReturnType<typeof createCheckoutSession>>
+    try {
+      session = await createCheckoutSession({
+        customerId: stripeCustomerId,
+        priceId: plan.priceId,
+        trialDays: hadTrial ? undefined : plan.trialDays,
+        successUrl: `${APP_URL}/dashboard?checkout=success`,
+        cancelUrl:  `${APP_URL}/pricing?checkout=cancelled`,
+        metadata:   { userId, clerkId: ctx.userId },
+      })
+    } catch (err) {
+      const detail = err instanceof Stripe.errors.StripeError
+        ? `[${err.type}] ${err.message} (status=${err.statusCode})`
+        : String(err)
+      console.error('[createCheckout] createCheckoutSession failed:', detail)
+      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Stripe session error: ${detail}` })
+    }
 
     return { url: session.url }
   }),
