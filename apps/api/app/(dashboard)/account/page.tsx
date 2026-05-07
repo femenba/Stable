@@ -1,21 +1,43 @@
 'use client'
 
 import { useUser, useClerk } from '@clerk/nextjs'
-import Link from 'next/link'
-import { Crown, ShieldCheck, Mail, LogOut, User, CreditCard, Loader2, ExternalLink, AlertCircle } from 'lucide-react'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { Crown, ShieldCheck, Mail, LogOut, User, CreditCard, Loader2, ExternalLink, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { isAdminUser } from '../../../src/lib/user-roles'
 import { useSubscription } from '../../../src/lib/use-subscription'
 import { Card } from '../../../src/components/ui'
 import { trpc } from '../../../src/lib/trpc-client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function AccountPage() {
   const { user, isLoaded } = useUser()
   const { signOut }        = useClerk()
+  const searchParams       = useSearchParams()
+  const router             = useRouter()
+
+  // Poll after Stripe redirects back with ?checkout=success until Pro is confirmed.
+  const checkoutSuccess = searchParams.get('checkout') === 'success'
+  const [activating, setActivating] = useState(checkoutSuccess)
+
   const {
     plan, status, isPro, isTrialing, isPastDue,
     trialEndsAt, currentPeriodEnd, cancelAtPeriodEnd,
-  } = useSubscription()
+  } = useSubscription({ pollUntilPro: activating })
+
+  // Stop polling once Pro status is confirmed; clean the URL param.
+  useEffect(() => {
+    if (activating && isPro) {
+      setActivating(false)
+      router.replace('/account')
+    }
+  }, [activating, isPro, router])
+
+  // Safety timeout — stop polling after 45 s regardless.
+  useEffect(() => {
+    if (!activating) return
+    const t = setTimeout(() => setActivating(false), 45_000)
+    return () => clearTimeout(t)
+  }, [activating])
 
   const portalMutation   = trpc.subscriptions.createPortal.useMutation()
   const checkoutMutation = trpc.subscriptions.createCheckout.useMutation()
@@ -95,6 +117,36 @@ export default function AccountPage() {
           )}
         </div>
       </section>
+
+      {/* Post-checkout activation banner */}
+      {activating && !isPro && (
+        <div className="px-7 md:px-10 pt-6">
+          <div className="flex items-center gap-3 px-5 py-4 rounded-2xl"
+               style={{ background: 'rgba(74,122,95,0.08)', border: '1px solid rgba(74,122,95,0.2)' }}>
+            <Loader2 size={16} className="animate-spin shrink-0" style={{ color: 'var(--cat-work)' }} />
+            <div>
+              <p className="text-sm font-bold" style={{ color: 'var(--stable-t1)' }}>
+                Activating your Pro subscription…
+              </p>
+              <p className="text-xs mt-0.5" style={{ color: 'var(--stable-t2)' }}>
+                This usually takes a few seconds. The page will update automatically.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activating && isPro && (
+        <div className="px-7 md:px-10 pt-6">
+          <div className="flex items-center gap-3 px-5 py-4 rounded-2xl"
+               style={{ background: 'rgba(74,122,95,0.1)', border: '1px solid rgba(74,122,95,0.3)' }}>
+            <CheckCircle2 size={16} className="shrink-0" style={{ color: 'var(--cat-work)' }} />
+            <p className="text-sm font-bold" style={{ color: 'var(--stable-t1)' }}>
+              Welcome to Stable Pro! Your trial is now active.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="px-7 md:px-10 py-8 max-w-2xl space-y-5">
 

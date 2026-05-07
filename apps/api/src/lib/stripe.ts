@@ -61,11 +61,10 @@ export async function createCheckoutSession({
     line_items: [{ price: priceId, quantity: 1 }],
     ...(trialDays
       ? {
-          subscription_data: {
-            trial_period_days: trialDays,
-            trial_settings: { end_behavior: { missing_payment_method: 'cancel' } },
-          },
-          payment_method_collection: 'if_required',
+          subscription_data: { trial_period_days: trialDays },
+          // Always collect a payment method so the user isn't surprised at trial end.
+          // Stripe charges nothing during the trial; the card is only authorised.
+          payment_method_collection: 'always',
         }
       : {}),
     success_url: successUrl,
