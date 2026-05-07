@@ -58,10 +58,9 @@ export default function PersonaliseScreen() {
         data:  { screen: 'mind/mood' },
       },
       trigger: {
-        type:    Notifications.SchedulableTriggerInputTypes.DAILY,
-        hour:    date.getHours(),
-        minute:  date.getMinutes(),
-        repeats: true,
+        type:   Notifications.SchedulableTriggerInputTypes.DAILY,
+        hour:   date.getHours(),
+        minute: date.getMinutes(),
       },
     })
 

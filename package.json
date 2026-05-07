@@ -5,9 +5,13 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "test": "turbo test",
-    "lint": "turbo lint"
+    "lint": "turbo lint",
+    "repair:stripe-emails": "node --env-file=apps/api/.env.local scripts/repair-stripe-emails.mjs",
+    "repair:stripe-emails:dry": "node --env-file=apps/api/.env.local scripts/repair-stripe-emails.mjs --dry-run",
+    "reset:test-users": "node --env-file=apps/api/.env.local scripts/reset-test-users.mjs"
   },
   "devDependencies": {
+    "puppeteer": "^24.43.0",
     "turbo": "^2.0.0",
     "typescript": "^5.4.0"
   },

@@ -18,7 +18,7 @@ export default function SignInScreen() {
       const result = await signIn.create({ identifier: email, password })
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId })
-        router.replace('/(tabs)/')
+        router.replace('/(tabs)')
       }
     } catch (e: any) {
       setError(e.errors?.[0]?.message ?? 'Sign in failed')

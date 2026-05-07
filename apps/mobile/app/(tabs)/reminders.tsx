@@ -6,6 +6,7 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import { trpc } from '@/lib/trpc-client'
 import { useTheme } from '@/lib/use-theme'
 import { scheduleReminderNotification, cancelReminderNotification, requestNotificationPermissions } from '@/lib/notifications'
+import type { Reminder } from '@stable/shared'
 
 export default function RemindersScreen() {
   const { t } = useTheme()
@@ -20,7 +21,7 @@ export default function RemindersScreen() {
 
   const { data: reminders, isLoading } = trpc.reminders.listUpcoming.useQuery()
   const create = trpc.reminders.create.useMutation({
-    onSuccess: async (reminder) => {
+    onSuccess: async (reminder: Reminder) => {
       utils.reminders.listUpcoming.invalidate()
       await scheduleReminderNotification(reminder.id, reminder.remindAt, reminder.type)
       setShowForm(false)
@@ -28,13 +29,13 @@ export default function RemindersScreen() {
     },
   })
   const dismiss = trpc.reminders.dismiss.useMutation({
-    onSuccess: async (_, vars) => {
+    onSuccess: async (_: Reminder, vars: { id: string }) => {
       utils.reminders.listUpcoming.invalidate()
       await cancelReminderNotification(vars.id)
     },
   })
   const snooze = trpc.reminders.snooze.useMutation({
-    onSuccess: async (reminder) => {
+    onSuccess: async (reminder: Reminder) => {
       utils.reminders.listUpcoming.invalidate()
       await cancelReminderNotification(reminder.id)
       await scheduleReminderNotification(reminder.id, reminder.remindAt, reminder.type)
@@ -123,7 +124,7 @@ export default function RemindersScreen() {
             <Text style={[styles.emptyText, { color: t.t3 }]}>No upcoming reminders.</Text>
           </View>
         ) : (
-          reminders.map((r) => (
+          reminders.map((r: Reminder) => (
             <View key={r.id} style={[styles.reminderRow, { backgroundColor: t.card, borderColor: t.cardBorder }]}>
               <View style={[styles.accent, { backgroundColor: '#be185d' }]} />
               <View style={styles.reminderInfo}>

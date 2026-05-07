@@ -31,7 +31,7 @@ export default function SignUpScreen() {
       const result = await signUp.attemptEmailAddressVerification({ code })
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId })
-        router.replace('/(tabs)/')
+        router.replace('/(tabs)')
       }
     } catch (e: any) {
       setError(e.errors?.[0]?.message ?? 'Verification failed')

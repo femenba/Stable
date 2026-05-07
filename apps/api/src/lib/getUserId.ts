@@ -12,15 +12,26 @@ export async function getUserId(ctx: Context): Promise<string> {
     }
   }
 
-  // Upsert: creates the user row on first call if Clerk webhook hasn't done so
-  const { data, error } = await ctx.db
+  // If we have a real email, update on conflict so the email stays current.
+  // If we don't, use ignoreDuplicates:true so we never overwrite a good email
+  // with the placeholder on subsequent calls.
+  const hasRealEmail = !!ctx.userEmail
+  const { data: upserted, error } = await ctx.db
     .from('users')
     .upsert(
-      { clerk_id: ctx.userId, email: ctx.userEmail || 'unknown@stableadhd.com' },
-      { onConflict: 'clerk_id', ignoreDuplicates: false },
+      { clerk_id: ctx.userId, email: hasRealEmail ? ctx.userEmail : 'unknown@stableadhd.com' },
+      { onConflict: 'clerk_id', ignoreDuplicates: !hasRealEmail },
     )
     .select('id')
     .single()
+
+  // When ignoreDuplicates fires (user existed, no real email to write),
+  // the upsert returns no rows — fall back to a plain SELECT.
+  let data: { id: unknown } | null = upserted
+  if (!data && !error) {
+    const sel = await ctx.db.from('users').select('id').eq('clerk_id', ctx.userId).single()
+    if (sel.data) data = sel.data
+  }
 
   if (error || !data) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to resolve user' })
 

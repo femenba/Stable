@@ -42,11 +42,24 @@ export const subscriptionsRouter = router({
 
     if (!userRow) throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' })
 
+    // ctx.userEmail comes from the live Clerk session — prefer it over the DB
+    // value, which may have been corrupted with the placeholder.
+    const dbEmail = userRow.email as string
+    const effectiveEmail = ctx.userEmail || (dbEmail !== 'unknown@stableadhd.com' ? dbEmail : '')
+    if (!effectiveEmail) {
+      throw new TRPCError({ code: 'BAD_REQUEST', message: 'User email not available — please reload and try again.' })
+    }
+
+    // Repair corrupted DB email in-place so future calls use the real address
+    if (ctx.userEmail && dbEmail === 'unknown@stableadhd.com') {
+      await ctx.db.from('users').update({ email: ctx.userEmail }).eq('id', userId)
+    }
+
     let stripeCustomerId: string
     try {
       stripeCustomerId = await getOrCreateStripeCustomer({
         clerkId: ctx.userId,
-        email: userRow.email as string,
+        email: effectiveEmail,
         name: userRow.name as string | null,
       })
     } catch (err) {
@@ -61,15 +74,23 @@ export const subscriptionsRouter = router({
     const hadTrial = sub?.trialEndsAt != null
     const plan = STRIPE_PLANS.pro
 
+    if (!plan.priceId) {
+      console.error('[createCheckout] STRIPE_PRO_MONTHLY_PRICE_ID is not set')
+      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Stripe price not configured.' })
+    }
+
+    console.log(`[createCheckout] userId=${userId} clerkId=${ctx.userId} email=${effectiveEmail} hadTrial=${hadTrial}`)
+
     let session: Awaited<ReturnType<typeof createCheckoutSession>>
     try {
       session = await createCheckoutSession({
-        customerId: stripeCustomerId,
-        priceId: plan.priceId,
-        trialDays: hadTrial ? undefined : plan.trialDays,
-        successUrl: `${APP_URL}/account?checkout=success`,
-        cancelUrl:  `${APP_URL}/pricing?checkout=cancelled`,
-        metadata:   { userId, clerkId: ctx.userId },
+        customerId:    stripeCustomerId,
+        customerEmail: effectiveEmail, // Stripe falls back to this if customer lookup fails
+        priceId:       plan.priceId,
+        trialDays:     hadTrial ? undefined : plan.trialDays,
+        successUrl:    `${APP_URL}/account?checkout=success`,
+        cancelUrl:     `${APP_URL}/pricing?checkout=cancelled`,
+        metadata:      { userId, clerkId: ctx.userId },
       })
     } catch (err) {
       const detail = err instanceof Stripe.errors.StripeError
@@ -78,6 +99,8 @@ export const subscriptionsRouter = router({
       console.error('[createCheckout] createCheckoutSession failed:', detail)
       throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Stripe session error: ${detail}` })
     }
+
+    console.log(`[createCheckout] Session created: ${session.id} url=${session.url}`)
 
     return { url: session.url }
   }),

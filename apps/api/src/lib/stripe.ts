@@ -30,6 +30,7 @@ export type StripePlan = keyof typeof STRIPE_PLANS
 
 export async function createCheckoutSession({
   customerId,
+  customerEmail,
   priceId,
   trialDays,
   successUrl,
@@ -37,19 +38,36 @@ export async function createCheckoutSession({
   metadata,
 }: {
   customerId?: string
+  customerEmail?: string
   priceId: string
   trialDays?: number
   successUrl: string
   cancelUrl: string
   metadata?: Record<string, string>
 }): Promise<Stripe.Checkout.Session> {
+  if (!priceId) throw new Error('STRIPE_PRO_MONTHLY_PRICE_ID is not set')
+
   const stripe = getStripe()
+
+  // Omitting payment_method_types lets Stripe auto-enable Apple Pay, Google Pay,
+  // Link, and card based on the user's browser and customer country.
   return stripe.checkout.sessions.create({
     mode: 'subscription',
-    payment_method_types: ['card'],
-    ...(customerId ? { customer: customerId } : {}),
+    ...(customerId
+      ? { customer: customerId }
+      : customerEmail
+        ? { customer_email: customerEmail }
+        : {}),
     line_items: [{ price: priceId, quantity: 1 }],
-    ...(trialDays ? { subscription_data: { trial_period_days: trialDays } } : {}),
+    ...(trialDays
+      ? {
+          subscription_data: {
+            trial_period_days: trialDays,
+            trial_settings: { end_behavior: { missing_payment_method: 'cancel' } },
+          },
+          payment_method_collection: 'if_required',
+        }
+      : {}),
     success_url: successUrl,
     cancel_url: cancelUrl,
     metadata: metadata ?? {},
@@ -86,7 +104,14 @@ export async function getOrCreateStripeCustomer({
     query: `metadata['clerkId']:'${clerkId}'`,
     limit: 1,
   })
-  if (existing.data.length > 0) return existing.data[0].id
+  if (existing.data.length > 0) {
+    const customer = existing.data[0]
+    // Repair placeholder email on the Stripe customer record if we now have a real one
+    if (email && customer.email === 'unknown@stableadhd.com') {
+      await stripe.customers.update(customer.id, { email, name: name ?? undefined })
+    }
+    return customer.id
+  }
 
   const customer = await stripe.customers.create({
     email,
