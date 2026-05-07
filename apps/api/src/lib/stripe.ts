@@ -71,6 +71,7 @@ export async function createCheckoutSession({
     success_url: successUrl,
     cancel_url: cancelUrl,
     metadata: metadata ?? {},
+    locale: 'en',
     allow_promotion_codes: true,
     billing_address_collection: 'auto',
   })
