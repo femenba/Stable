@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useUser, useClerk } from '@clerk/nextjs'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Crown, ShieldCheck, Mail, LogOut, User, CreditCard, Loader2, ExternalLink, AlertCircle, CheckCircle2 } from 'lucide-react'
@@ -9,13 +10,30 @@ import { Card } from '../../../src/components/ui'
 import { trpc } from '../../../src/lib/trpc-client'
 import { useState, useEffect } from 'react'
 
-export default function AccountPage() {
+// ── Skeleton shown while Suspense resolves ─────────────────────────────────────
+
+function AccountSkeleton() {
+  return (
+    <div className="px-7 md:px-10 py-10">
+      <div className="space-y-3 max-w-sm">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="h-16 rounded-2xl animate-pulse"
+               style={{ background: 'var(--stable-card-border)' }} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ── Inner component — uses useSearchParams, must be inside <Suspense> ──────────
+
+function AccountContent() {
   const { user, isLoaded } = useUser()
   const { signOut }        = useClerk()
   const searchParams       = useSearchParams()
   const router             = useRouter()
 
-  // Detect post-checkout redirect via useEffect (searchParams may not be ready at useState init)
+  // Detect post-checkout redirect via useEffect (searchParams not ready at useState init)
   const [activating, setActivating] = useState(false)
   const syncMutation = trpc.subscriptions.syncFromStripe.useMutation()
 
@@ -54,18 +72,7 @@ export default function AccountPage() {
   const [redirecting,    setRedirecting]    = useState(false)
   const [checkoutError,  setCheckoutError]  = useState<string | null>(null)
 
-  if (!isLoaded) {
-    return (
-      <div className="px-7 md:px-10 py-10">
-        <div className="space-y-3 max-w-sm">
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="h-16 rounded-2xl animate-pulse"
-                 style={{ background: 'var(--stable-card-border)' }} />
-          ))}
-        </div>
-      </div>
-    )
-  }
+  if (!isLoaded) return <AccountSkeleton />
 
   const email   = user?.emailAddresses?.[0]?.emailAddress ?? ''
   const name    = user?.firstName ?? user?.lastName ?? email.split('@')[0] ?? 'Account'
@@ -318,5 +325,15 @@ export default function AccountPage() {
 
       </div>
     </div>
+  )
+}
+
+// ── Page export — wraps inner component in Suspense ────────────────────────────
+
+export default function AccountPage() {
+  return (
+    <Suspense fallback={<AccountSkeleton />}>
+      <AccountContent />
+    </Suspense>
   )
 }
