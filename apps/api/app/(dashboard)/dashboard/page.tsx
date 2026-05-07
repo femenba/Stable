@@ -7,6 +7,7 @@ import { Wind, Hand, PauseCircle, Waves, Brain, RotateCcw, Timer, ArrowRight } f
 import { Card, Btn, Label, Empty } from '../../../src/components/ui'
 import { TaskCard } from '../../../src/components/task-card'
 import { ThemeToggle } from '../../../src/components/theme-toggle'
+import { CheckoutSuccessToast, TrialBanner, PastDueBanner } from '../../../src/components/plan-banner'
 
 const MOOD_EMOJIS = ['😔', '😕', '😐', '🙂', '😊']
 const MOOD_LABELS = ['Very low', 'Low', 'Okay', 'Good', 'Great']
@@ -36,6 +37,9 @@ export default function DashboardPage() {
 
   return (
     <div>
+      <CheckoutSuccessToast />
+      <TrialBanner />
+      <PastDueBanner />
 
       {/* ── CALM HERO — light, airy, not a banner ── */}
       <section

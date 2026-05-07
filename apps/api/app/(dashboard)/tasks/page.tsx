@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
+import { Crown } from 'lucide-react'
 import { trpc } from '../../../src/lib/trpc-client'
 import { TaskCard } from '../../../src/components/task-card'
 import { Card, Btn, Label, PageHero, Input, Empty } from '../../../src/components/ui'
@@ -35,6 +37,8 @@ export default function TasksPage() {
       setShowForm(false)
     },
   })
+
+  const limitReached = create.error?.data?.code === 'FORBIDDEN'
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault()
@@ -136,11 +140,25 @@ export default function TasksPage() {
                 </div>
               </div>
 
+              {limitReached && (
+                <div className="flex items-center gap-3 px-4 py-3 rounded-2xl"
+                     style={{ background: 'rgba(74,122,95,0.08)', border: '1px solid rgba(74,122,95,0.2)' }}>
+                  <Crown size={14} style={{ color: 'var(--cat-work)' }} className="shrink-0" />
+                  <p className="text-xs flex-1" style={{ color: 'var(--stable-t1)' }}>
+                    <strong>Task limit reached.</strong>{' '}
+                    <Link href="/pricing" className="underline font-bold" style={{ color: 'var(--cat-work)' }}>
+                      Upgrade to Pro
+                    </Link>{' '}
+                    for unlimited tasks.
+                  </p>
+                </div>
+              )}
+
               <div className="flex justify-end gap-2 pt-1">
                 <Btn type="button" variant="ghost" size="sm" onClick={() => setShowForm(false)}>
                   Cancel
                 </Btn>
-                <Btn type="submit" variant="primary" size="sm" disabled={create.isPending || !title.trim()}>
+                <Btn type="submit" variant="primary" size="sm" disabled={create.isPending || !title.trim() || limitReached}>
                   {create.isPending ? '…' : 'Create task'}
                 </Btn>
               </div>

@@ -9,7 +9,8 @@ import {
 } from 'lucide-react'
 import { useUser, useClerk } from '@clerk/nextjs'
 import { ThemeToggle } from './theme-toggle'
-import { getUserPlan, isAdminUser } from '../lib/user-roles'
+import { isAdminUser } from '../lib/user-roles'
+import { useSubscription } from '../lib/use-subscription'
 
 const NAV = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Today'     },
@@ -173,7 +174,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const name    = user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress?.split('@')[0] ?? 'Account'
   const email   = user?.emailAddresses?.[0]?.emailAddress ?? ''
   const initial = (user?.firstName?.[0] ?? email[0] ?? '?').toUpperCase()
-  const plan    = getUserPlan(email)
+  const { plan } = useSubscription()
   const admin   = isAdminUser(email)
 
   return (

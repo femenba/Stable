@@ -1,8 +1,11 @@
 import { router, protectedProcedure } from '@/trpc'
 import { getUserId } from '@/lib/getUserId'
+import { getActivePlan } from '@/lib/plan'
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
 import type { Task } from '@stable/shared'
+
+const FREE_TASK_LIMIT = 10
 
 const categorySchema = z.enum(['work', 'personal', 'family', 'health', 'other'])
 
@@ -38,6 +41,22 @@ export const tasksRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       const userId = await getUserId(ctx)
+
+      const plan = await getActivePlan(userId, ctx.userEmail, ctx.db, ctx.redis)
+      if (plan === 'free') {
+        const { count, error: countError } = await ctx.db
+          .from('tasks')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', userId)
+          .in('status', ['pending', 'in_progress'])
+        if (!countError && (count ?? 0) >= FREE_TASK_LIMIT) {
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: `Free plan is limited to ${FREE_TASK_LIMIT} active tasks. Upgrade to Pro for unlimited tasks.`,
+          })
+        }
+      }
+
       const { data, error } = await ctx.db
         .from('tasks')
         .insert({
