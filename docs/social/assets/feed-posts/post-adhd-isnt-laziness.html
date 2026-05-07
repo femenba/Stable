@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>stable. — Post: ADHD isn't laziness | @stableadhd</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@200;300;400&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest:   #0F1F0F;
+  --deep:     #1E3A1E;
+  --sage:     #4A7C4A;
+  --muted:    #7AAE7A;
+  --cream:    #F4EFE6;
+  --warm:     #FAF8F4;
+  --charcoal: #1A1A1A;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#080808; font-family:'Inter',sans-serif; padding:48px; }
+
+/* ── Page header ── */
+h1 { font-family:'Playfair Display',serif; font-weight:400; font-size:22px;
+     color:var(--cream); letter-spacing:.02em; margin-bottom:4px; }
+.meta { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);
+        letter-spacing:.12em; text-transform:uppercase; margin-bottom:56px; }
+
+/* ── Section labels ── */
+.section-label {
+  font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);
+  letter-spacing:.14em; text-transform:uppercase; margin-bottom:12px; opacity:.6;
+}
+.section { margin-bottom:64px; }
+
+/* ── Post wrapper (clips the scaled 1080px post) ── */
+.pw      { overflow:hidden; position:relative; }
+.pw-feed { width:540px; height:540px; }       /* feed + facebook: display at 0.5× */
+.pw-story{ width:270px; height:480px; }       /* story: display at 0.25× */
+
+/* ── Base post canvas ── */
+.post { position:absolute; top:0; left:0; overflow:hidden; }
+.post-feed  { width:1080px; height:1080px; transform:scale(.5);  transform-origin:top left; }
+.post-story { width:1080px; height:1920px; transform:scale(.25); transform-origin:top left; }
+
+/* ── Grain overlay (applied to every post) ── */
+.post::after {
+  content:''; position:absolute; inset:0; z-index:99; pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:.042; mix-blend-mode:overlay;
+}
+
+/* ─────────────────────────────────────────────
+   FEED / FACEBOOK  —  1080 × 1080
+───────────────────────────────────────────── */
+.feed-bg {
+  width:1080px; height:1080px;
+  background:var(--forest);
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  padding:96px 104px;
+  position:relative;
+}
+
+/* Accent blob — deep sage, top-right, barely visible */
+.feed-bg::before {
+  content:'';
+  position:absolute;
+  top:-120px; right:-80px;
+  width:520px; height:520px;
+  border-radius:50%;
+  background:var(--deep);
+  opacity:.55;
+  filter:blur(120px);
+  pointer-events:none;
+}
+
+/* Thin vertical rule on the left */
+.feed-rule {
+  width:1px;
+  height:72px;
+  background:var(--sage);
+  opacity:.5;
+  margin-bottom:48px;
+}
+
+/* Eyebrow */
+.feed-eyebrow {
+  font-family:'DM Mono',monospace;
+  font-size:13px;
+  color:var(--muted);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  margin-bottom:32px;
+}
+
+/* Main headline — two lines, different weights for contrast */
+.feed-hl {
+  font-family:'Playfair Display',serif;
+  font-weight:400;
+  font-size:88px;
+  color:var(--cream);
+  line-height:1.05;
+  letter-spacing:-.03em;
+  margin-bottom:52px;
+}
+.feed-hl em {
+  font-style:italic;
+  color:var(--cream);
+}
+
+/* Body paragraph */
+.feed-body {
+  font-family:'Inter',sans-serif;
+  font-weight:300;
+  font-size:21px;
+  color:var(--muted);
+  line-height:1.75;
+  max-width:680px;
+  margin-bottom:72px;
+}
+
+/* Wordmark */
+.feed-wm {
+  position:absolute;
+  bottom:64px;
+  right:88px;
+  font-family:'Playfair Display',serif;
+  font-weight:400;
+  font-size:18px;
+  color:var(--cream);
+  opacity:.35;
+  letter-spacing:.04em;
+}
+
+/* Bottom rule */
+.feed-bottom-rule {
+  position:absolute;
+  bottom:0; left:0; right:0;
+  height:3px;
+  background:linear-gradient(90deg, var(--sage) 0%, transparent 60%);
+  opacity:.4;
+}
+
+
+/* ─────────────────────────────────────────────
+   STORY  —  1080 × 1920
+───────────────────────────────────────────── */
+.story-bg {
+  width:1080px; height:1920px;
+  background:var(--forest);
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  padding:200px 120px;
+  position:relative;
+}
+
+/* blob */
+.story-bg::before {
+  content:'';
+  position:absolute;
+  top:-80px; right:-60px;
+  width:600px; height:600px;
+  border-radius:50%;
+  background:var(--deep);
+  opacity:.5;
+  filter:blur(160px);
+  pointer-events:none;
+}
+
+/* second blob bottom */
+.story-bg::after {
+  content:'';
+  position:absolute;
+  bottom:-100px; left:-60px;
+  width:500px; height:500px;
+  border-radius:50%;
+  background:#0A2A14;
+  opacity:.6;
+  filter:blur(130px);
+  pointer-events:none;
+}
+
+.story-rule {
+  width:1px;
+  height:88px;
+  background:var(--sage);
+  opacity:.5;
+  margin-bottom:64px;
+}
+
+.story-eyebrow {
+  font-family:'DM Mono',monospace;
+  font-size:18px;
+  color:var(--muted);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  margin-bottom:48px;
+}
+
+.story-hl {
+  font-family:'Playfair Display',serif;
+  font-weight:400;
+  font-size:104px;
+  color:var(--cream);
+  line-height:1.06;
+  letter-spacing:-.035em;
+  margin-bottom:72px;
+}
+.story-hl em { font-style:italic; }
+
+.story-body {
+  font-family:'Inter',sans-serif;
+  font-weight:300;
+  font-size:28px;
+  color:var(--muted);
+  line-height:1.75;
+  max-width:780px;
+  margin-bottom:96px;
+}
+
+.story-cta {
+  display:inline-flex;
+  align-items:center;
+  gap:16px;
+  font-family:'Inter',sans-serif;
+  font-weight:400;
+  font-size:20px;
+  color:var(--cream);
+  opacity:.5;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.story-cta::before {
+  content:'';
+  display:block;
+  width:32px; height:1px;
+  background:var(--cream);
+  opacity:.6;
+}
+
+.story-wm {
+  position:absolute;
+  bottom:120px; left:120px;
+  font-family:'Playfair Display',serif;
+  font-weight:400;
+  font-size:22px;
+  color:var(--cream);
+  opacity:.3;
+  letter-spacing:.04em;
+}
+
+/* override the ::after grain for story (story-bg uses ::after for blob) */
+/* story grain is applied via a separate element */
+.story-grain {
+  position:absolute;
+  inset:0;
+  z-index:99;
+  pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:.042;
+  mix-blend-mode:overlay;
+}
+
+/* ── Row layout for viewing ── */
+.row { display:flex; gap:48px; align-items:flex-start; flex-wrap:wrap; }
+.col { display:flex; flex-direction:column; }
+.col-label {
+  font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);
+  letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px; opacity:.5;
+}
+</style>
+</head>
+<body>
+
+<h1>stable. — Post: ADHD isn't laziness.</h1>
+<p class="meta">@stableadhd · Launch Post · Pillar: Validation / Education</p>
+
+<!-- ══════════════════════════════════════
+     FEED + FACEBOOK (1080 × 1080)
+══════════════════════════════════════ -->
+
+<div class="section">
+  <p class="section-label">Feed post — Instagram &amp; Facebook — 1080 × 1080</p>
+  <div class="row">
+    <div class="col">
+      <p class="col-label">Preview (50%)</p>
+      <div class="pw pw-feed" id="feed-wrap">
+        <div class="post post-feed" id="feed-export">
+          <div class="feed-bg">
+
+            <div class="feed-rule"></div>
+
+            <p class="feed-eyebrow">Understanding ADHD</p>
+
+            <h2 class="feed-hl">
+              ADHD isn't<br>
+              <em>laziness.</em>
+            </h2>
+
+            <p class="feed-body">
+              It's your brain searching for the dopamine<br>
+              signal it needs to begin. The task is there.<br>
+              The intention is real. The signal just isn't.
+            </p>
+
+            <span class="feed-wm">stable.</span>
+            <div class="feed-bottom-rule"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     STORY (1080 × 1920)
+══════════════════════════════════════ -->
+
+<div class="section">
+  <p class="section-label">Story version — 1080 × 1920</p>
+  <div class="row">
+    <div class="col">
+      <p class="col-label">Preview (25%)</p>
+      <div class="pw pw-story" id="story-wrap">
+        <div class="post post-story" id="story-export">
+          <div class="story-bg">
+            <div class="story-grain"></div>
+
+            <div class="story-rule"></div>
+
+            <p class="story-eyebrow">Understanding ADHD</p>
+
+            <h2 class="story-hl">
+              ADHD isn't<br>
+              <em>laziness.</em>
+            </h2>
+
+            <p class="story-body">
+              It's your brain searching for the<br>
+              dopamine signal it needs to begin.<br><br>
+              The task is there.<br>
+              The intention is real.<br>
+              The signal just isn't.
+            </p>
+
+            <div class="story-cta">link in bio</div>
+
+            <span class="story-wm">stable.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     CAPTION + HASHTAGS
+══════════════════════════════════════ -->
+
+<div class="section" style="max-width:640px;">
+  <p class="section-label">Caption</p>
+  <div style="background:rgba(255,255,255,.04); border:1px solid rgba(74,124,74,.15); border-radius:12px; padding:32px; margin-bottom:32px;">
+    <pre style="font-family:'Inter',sans-serif; font-weight:300; font-size:14px; color:var(--cream); line-height:1.8; white-space:pre-wrap;">ADHD isn't laziness.
+
+It's a brain that can't access the dopamine it needs to initiate — even when you desperately want to start.
+
+You know the task. You understand the deadline. You are not unmotivated.
+
+Your nervous system just needs a different signal.
+
+—
+
+stable. was built for exactly this moment.
+The one where you know what to do and can't make yourself do it.
+
+Try it free → link in bio
+
+#ADHDadults #neurodivergent #taskparalysis #executivedysfunction
+#ADHDlife #ADHDbrain #stableadhd #ADHDproductivity
+#latediagnosis #ADHDawareness #neurodivergentlife #ADHDtools
+#selfcompassion #ADHDwomen #ADHDmen #calmproductivity</pre>
+  </div>
+
+  <p class="section-label">CTA recommendation</p>
+  <div style="background:rgba(255,255,255,.04); border:1px solid rgba(74,124,74,.15); border-radius:12px; padding:24px;">
+    <p style="font-family:'Inter',sans-serif; font-weight:300; font-size:13px; color:var(--muted); line-height:1.7;">
+      <strong style="color:var(--cream); font-weight:400;">Primary:</strong> "save this for the next time someone calls you lazy."<br>
+      <strong style="color:var(--cream); font-weight:400;">Alternate:</strong> "send this to the person who needs to hear it."<br>
+      <strong style="color:var(--cream); font-weight:400;">Story CTA:</strong> Link sticker to stableadhd.com — no text needed on the link itself.
+    </p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     EXPORT INSTRUCTIONS
+══════════════════════════════════════ -->
+
+<div class="section">
+  <p class="section-label">Export</p>
+  <div style="background:rgba(255,255,255,.04); border:1px solid rgba(74,124,74,.15); border-radius:12px; padding:24px; max-width:520px;">
+    <p style="font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); line-height:2;">
+      node export-launch-post.mjs<br>
+      <span style="opacity:.5;">→ exported/feed/adhd-isnt-laziness-feed.png</span><br>
+      <span style="opacity:.5;">→ exported/feed/adhd-isnt-laziness-facebook.png</span><br>
+      <span style="opacity:.5;">→ exported/stories/adhd-isnt-laziness-story.png</span>
+    </p>
+  </div>
+</div>
+
+</body>
+</html>
