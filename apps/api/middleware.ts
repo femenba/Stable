@@ -18,8 +18,8 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    // Skip static files, _next internals, webhooks (own auth), and cron routes (CRON_SECRET auth)
-    '/((?!_next|api/webhooks|api/cron|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    '/(api(?!/webhooks|/cron)|trpc)(.*)',
+    // Skip static files and routes with their own auth (webhooks, cron, meta OAuth)
+    '/((?!_next|api/webhooks|api/cron|api/meta|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    '/(api(?!/webhooks|/cron|/meta)|trpc)(.*)',
   ],
 }
