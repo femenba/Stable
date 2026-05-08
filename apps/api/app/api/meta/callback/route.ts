@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export const runtime = 'nodejs'
 
 const APP_ID = '26547534768250822'
-const REDIRECT_URI = 'https://stableadhd.com/api/meta/callback'
+const REDIRECT_URI = 'https://www.stableadhd.com/api/meta/callback'
 const GQL = 'https://graph.facebook.com/v25.0'
 
 // From apps/api/.vercel/project.json
