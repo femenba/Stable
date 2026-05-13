@@ -9,14 +9,21 @@ import {
   cancellationHtml,
 } from '@/emails/templates'
 
-const FROM        = 'Stable <admin@stableadhd.com>'
+const FROM        = 'Stable <hello@stableadhd.com>'
 const PLACEHOLDER = 'unknown@stableadhd.com'
 
 let _resend: Resend | null = null
 
 function getResend(): Resend | null {
-  if (!process.env.RESEND_API_KEY) return null
-  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY)
+  const key = process.env.RESEND_API_KEY
+  if (!key) {
+    console.error('[email] RESEND_API_KEY is not set — all emails will be skipped')
+    return null
+  }
+  if (!_resend) {
+    console.log(`[email] Initialising Resend client (key prefix: ${key.slice(0, 8)}…)`)
+    _resend = new Resend(key)
+  }
   return _resend
 }
 
@@ -90,14 +97,16 @@ async function send(
   opts: SendOpts,
 ): Promise<void> {
   const tag = `[email][${opts.emailType}]`
+  console.log(`${tag} Attempting send → ${to} | subject: "${subject}"`)
+
   const resend = getResend()
 
   if (!resend) {
-    console.warn(`${tag} RESEND_API_KEY not set — skipping "${subject}"`)
+    console.error(`${tag} Aborting — RESEND_API_KEY not set`)
     return
   }
   if (!to || to === PLACEHOLDER) {
-    console.warn(`${tag} Skipping placeholder recipient`)
+    console.warn(`${tag} Aborting — placeholder or empty recipient`)
     return
   }
 

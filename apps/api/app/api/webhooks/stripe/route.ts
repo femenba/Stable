@@ -31,10 +31,10 @@ function werr(event: string, msg: string, err?: unknown) {
 // ── DB / Redis factories ──────────────────────────────────────────────────────
 
 function getDb() {
-  return createDbClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  )
+  const url = process.env.SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) throw new Error(`Missing Supabase env vars — SUPABASE_URL=${!!url} SUPABASE_SERVICE_ROLE_KEY=${!!key}`)
+  return createDbClient(url, key)
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -91,6 +91,7 @@ async function upsertSubscription(
 
   wlog(eventType, 'Upserting subscription', { userId, customerId, plan, status, subId: sub.id })
 
+  const rawPeriodEnd = (sub as any).current_period_end
   const { error } = await db.from('subscriptions').upsert(
     {
       user_id:                userId,
@@ -101,7 +102,7 @@ async function upsertSubscription(
       trial_ends_at:        sub.trial_end
         ? new Date(sub.trial_end * 1000).toISOString()
         : null,
-      current_period_end:   new Date((sub as any).current_period_end * 1000).toISOString(),
+      current_period_end:   rawPeriodEnd ? new Date(rawPeriodEnd * 1000).toISOString() : null,
       cancel_at_period_end: sub.cancel_at_period_end,
     },
     { onConflict: 'user_id' },
@@ -119,30 +120,56 @@ async function upsertSubscription(
 // ── POST handler ──────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
-  const body = await req.text()
-  const sig  = req.headers.get('stripe-signature') ?? ''
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+  let body: string
+  try {
+    body = await req.text()
+  } catch (err) {
+    console.error('[stripe-webhook] Failed to read request body:', err)
+    return NextResponse.json({ error: 'Failed to read body' }, { status: 500 })
+  }
+
+  const sig           = req.headers.get('stripe-signature') ?? ''
+  // Trim to guard against copy-paste whitespace/newline in the Vercel env var
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET?.trim()
 
   if (!webhookSecret) {
-    console.error('[stripe-webhook] STRIPE_WEBHOOK_SECRET not set')
+    console.error('[stripe-webhook] STRIPE_WEBHOOK_SECRET not set in environment')
     return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 })
   }
 
-  // Log that we received a webhook hit so we can confirm delivery in Vercel logs
-  console.log(`[stripe-webhook] Hit received sig=${sig.slice(0, 30)} secret_prefix=${webhookSecret.slice(0, 12)} body_len=${body.length}`)
+  // Confirm the function is reachable and the env is loaded
+  console.log(`[stripe-webhook] Hit — body_len=${body.length} sig_prefix=${sig.slice(0, 20)} secret_prefix=${webhookSecret.slice(0, 12)} secret_len=${webhookSecret.length}`)
+
+  // Initialise Stripe client separately so an init failure has a clear error message
+  let stripe: import('stripe').default
+  try {
+    stripe = getStripe()
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error(`[stripe-webhook] Stripe client init failed: ${msg}`)
+    return NextResponse.json({ error: `Stripe init error: ${msg}` }, { status: 500 })
+  }
 
   let event: Stripe.Event
   try {
-    event = getStripe().webhooks.constructEvent(body, sig, webhookSecret)
+    event = stripe.webhooks.constructEvent(body, sig, webhookSecret)
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Unknown error'
-    console.error(`[stripe-webhook] Signature verification FAILED: ${msg} — check STRIPE_WEBHOOK_SECRET matches the LIVE endpoint signing secret in Stripe Dashboard → Developers → Webhooks`)
+    console.error(`[stripe-webhook] Signature verification FAILED: ${msg}`)
+    console.error(`[stripe-webhook] Ensure STRIPE_WEBHOOK_SECRET in Vercel (Production) matches the LIVE endpoint secret at Stripe Dashboard → Developers → Webhooks → ${process.env.NEXT_PUBLIC_APP_URL ?? 'your endpoint'}`)
     return NextResponse.json({ error: `Webhook signature failed: ${msg}` }, { status: 400 })
   }
 
   wlog(event.type, 'Received', { id: event.id, livemode: event.livemode })
 
-  const db    = getDb()
+  let db: ReturnType<typeof getDb>
+  try {
+    db = getDb()
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error(`[stripe-webhook] DB init failed: ${msg}`)
+    return NextResponse.json({ error: `DB init error: ${msg}` }, { status: 500 })
+  }
   const redis = getRedis()
 
   try {
@@ -176,7 +203,8 @@ export async function POST(req: NextRequest) {
             plan          = sub.status === 'canceled' ? 'free' : 'pro'
             status        = sub.status
             trialEnd      = sub.trial_end ? new Date(sub.trial_end * 1000).toISOString() : null
-            periodEnd     = new Date((sub as any).current_period_end * 1000).toISOString()
+            const rawPE   = (sub as any).current_period_end
+            periodEnd     = rawPE ? new Date(rawPE * 1000).toISOString() : null
             resolvedSubId = sub.id
             wlog(event.type, 'Fetched subscription', { status, trial_end: trialEnd })
           } catch (err) {

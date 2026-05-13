@@ -36,11 +36,16 @@ function AccountContent() {
   // Detect post-checkout redirect via useEffect (searchParams not ready at useState init)
   const [activating, setActivating]   = useState(false)
   const [syncRetries, setSyncRetries] = useState(0)
+  const [syncError,   setSyncError]   = useState<string | null>(null)
   const syncMutation = trpc.subscriptions.syncFromStripe.useMutation()
 
   const runSync = () => {
     setSyncRetries(r => r + 1)
-    return syncMutation.mutateAsync().catch(() => {/* webhook will cover it */})
+    setSyncError(null)
+    return syncMutation.mutateAsync().catch((err: unknown) => {
+      const msg = err instanceof Error ? err.message : 'Sync failed — try again or contact support.'
+      setSyncError(msg)
+    })
   }
 
   useEffect(() => {
@@ -312,6 +317,22 @@ function AccountContent() {
               {checkoutError && (
                 <p className="text-center text-xs mt-2 font-medium" style={{ color: '#e05252' }}>
                   {checkoutError}
+                </p>
+              )}
+              {/* Sync button — always visible if already paid; shows errors */}
+              <button
+                onClick={runSync}
+                disabled={syncMutation.isPending}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-full text-xs font-semibold transition-all hover:opacity-70 disabled:opacity-40 mt-2"
+                style={{ background: 'var(--stable-bg)', color: 'var(--stable-t2)', border: '1px solid var(--stable-card-border)' }}
+              >
+                {syncMutation.isPending
+                  ? <><Loader2 size={12} className="animate-spin" /> Checking Stripe…</>
+                  : 'Already paid? Sync subscription'}
+              </button>
+              {syncError && (
+                <p className="text-center text-xs mt-1 font-medium" style={{ color: '#e05252' }}>
+                  {syncError}
                 </p>
               )}
             </>

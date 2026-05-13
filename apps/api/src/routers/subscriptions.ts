@@ -242,9 +242,12 @@ export const subscriptionsRouter = router({
       return { synced: false, plan: 'free', status: 'none', subscriptionId: null }
     }
 
-    const active = foundSub as Stripe.Subscription
-    const plan   = active.status === 'canceled' ? 'free' : 'pro'
-    const status = active.status
+    const active      = foundSub as Stripe.Subscription
+    const plan        = active.status === 'canceled' ? 'free' : 'pro'
+    const status      = active.status
+    const rawPeriodEnd = (active as any).current_period_end
+
+    console.log(`[syncFromStripe] subscription fields — status=${status} trial_end=${active.trial_end} current_period_end=${rawPeriodEnd}`)
 
     const { error } = await ctx.db.from('subscriptions').upsert(
       {
@@ -253,18 +256,18 @@ export const subscriptionsRouter = router({
         stripe_subscription_id: active.id,
         plan,
         status,
-        trial_ends_at:      active.trial_end
+        trial_ends_at:       active.trial_end
           ? new Date(active.trial_end * 1000).toISOString()
           : null,
-        current_period_end: new Date((active as any).current_period_end * 1000).toISOString(),
+        current_period_end:  rawPeriodEnd ? new Date(rawPeriodEnd * 1000).toISOString() : null,
         cancel_at_period_end: active.cancel_at_period_end,
       },
       { onConflict: 'user_id' },
     )
 
     if (error) {
-      console.error('[syncFromStripe] upsert failed', error)
-      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
+      console.error('[syncFromStripe] upsert failed', error.code, error.message, error.details)
+      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `DB write failed: ${error.message}` })
     }
 
     await invalidatePlanCache(userId, ctx.redis)

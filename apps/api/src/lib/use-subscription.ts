@@ -12,8 +12,9 @@ export function useSubscription({ pollUntilPro = false }: { pollUntilPro?: boole
 
   const { data: sub, isLoading } = trpc.subscriptions.getStatus.useQuery(undefined, {
     // Poll every 2 s after checkout success; otherwise use normal 5-min stale window.
-    staleTime:      pollUntilPro ? 0 : 5 * 60 * 1000,
-    refetchInterval: pollUntilPro ? 2000 : false,
+    staleTime:           pollUntilPro ? 0 : 30_000,
+    refetchInterval:     pollUntilPro ? 2000 : false,
+    refetchOnWindowFocus: true,
     retry: false,
   })
 
