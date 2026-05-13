@@ -1,8 +1,9 @@
 import Link from 'next/link'
-import { Check, Wind, Timer, Leaf, Brain, Waves, ArrowRight, Shield, Lock, Star } from 'lucide-react'
+import { Check, Wind, Timer, Leaf, Brain, Waves, ArrowRight, Shield, Lock } from 'lucide-react'
 import NavClient    from './_home/nav'
 import FAQClient    from './_home/faq'
 import ScrollReveal from './_home/scroll-reveal'
+import FeedbackForm from './_home/feedback-form'
 
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
@@ -107,7 +108,7 @@ function Hero() {
                 See how it works
               </a>
             </div>
-            <p style={{ marginTop: 20, fontSize: 13, color: C.t3 }}>Free forever · No credit card needed</p>
+            <p style={{ marginTop: 20, fontSize: 13, color: C.t3 }}>Free trial available · Cancel anytime</p>
             <div className="flex lg:hidden flex-wrap gap-2 mt-7 justify-center">
               {[['🎯', 'Focus timer'], ['🌿', 'Mood tracking'], ['🧘', 'Calm tools'], ['✓', 'Daily tasks']].map(([e, l]) => (
                 <span key={l} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.75)', border: `1px solid ${C.border}`, borderRadius: 100, padding: '7px 14px', fontSize: 13, fontWeight: 600, color: C.t1, backdropFilter: 'blur(8px)' }}>
@@ -130,8 +131,8 @@ function TrustBar() {
   const items = [
     { icon: <Lock size={14} />,   text: 'Privacy first' },
     { icon: <Shield size={14} />, text: 'Secure by design' },
-    { icon: <Star size={14} />,   text: '4.9 star rating' },
-    { icon: <Leaf size={14} />,   text: 'Built for ADHD minds' },
+    { icon: <Leaf size={14} />,   text: 'ADHD-first design' },
+    { icon: <Brain size={14} />,  text: 'Built for ADHD minds' },
     { icon: <Check size={14} />,  text: 'Free to start' },
   ]
   return (
@@ -339,38 +340,60 @@ function Pricing() {
   )
 }
 
-// ── Testimonials ───────────────────────────────────────────────────────────
-const TESTIMONIALS = [
-  { name: 'Sarah M.', role: 'Freelance designer',  text: "I've tried every productivity app. stable. is the first one that doesn't make me feel more overwhelmed than before I opened it.", rating: 5 },
-  { name: 'James T.', role: 'Software developer',  text: 'The mood check-ins genuinely changed how I understand my own patterns. Three weeks in and I actually look forward to opening it.', rating: 5 },
-  { name: 'Priya K.', role: 'University student',  text: 'Finally something built for how my brain actually works. The breathing tool alone is worth it for exam season.', rating: 5 },
+// ── Built for ──────────────────────────────────────────────────────────────
+const BUILT_FOR = [
+  'feel overwhelmed by traditional productivity apps',
+  'struggle with emotional regulation and focus',
+  'need calm systems instead of pressure',
+  'want structure without shame',
+  'are tired of burnout-based productivity',
+  'need tools that work with their brain — not against it',
 ]
 
-function Testimonials() {
+function BuiltFor() {
   return (
     <section style={{ background: C.bgAlt, padding: 'clamp(64px,8vw,96px) 24px', fontFamily: FONT }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <div data-mkt-animate style={{ textAlign: 'center', marginBottom: 52 }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: C.sage, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>WHAT PEOPLE SAY</p>
-          <h2 style={{ fontSize: 'clamp(26px, 4vw, 40px)', fontWeight: 900, color: C.t1, letterSpacing: '-1px', lineHeight: 1.1 }}>
-            Real people. Real calm.
-          </h2>
+      <div style={{ maxWidth: 860, margin: '0 auto' }}>
+        <div data-mkt-animate style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+          <div>
+            <p style={{ fontSize: 12, fontWeight: 700, color: C.sage, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 16 }}>WHAT STABLE. IS BUILT FOR</p>
+            <h2 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 900, color: C.t1, letterSpacing: '-1px', lineHeight: 1.1, marginBottom: 32 }}>
+              Built for people who:
+            </h2>
+            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {BUILT_FOR.map((item) => (
+                <li key={item} style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: C.sage, flexShrink: 0, marginTop: 8 }} />
+                  <span style={{ fontSize: 17, color: C.t2, lineHeight: 1.6 }}>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <p style={{ fontSize: 15, color: C.t3, fontStyle: 'italic', lineHeight: 1.6, borderLeft: `3px solid ${C.border}`, paddingLeft: 18 }}>
+            &ldquo;Designed for calmer routines, gentler structure, and sustainable focus.&rdquo;
+          </p>
         </div>
-        <div className="grid md:grid-cols-3" style={{ gap: 20 }}>
-          {TESTIMONIALS.map(({ name, role, text, rating }, i) => (
-            <div key={name} data-mkt-animate className={`mkt-d${i + 1}`} style={{ background: C.bg, borderRadius: 24, padding: '28px 26px', border: `1px solid ${C.border}` }}>
-              <div style={{ display: 'flex', gap: 2, marginBottom: 16 }}>
-                {Array.from({ length: rating }).map((_, j) => (
-                  <Star key={j} size={14} style={{ color: '#F4A535', fill: '#F4A535' }} />
-                ))}
-              </div>
-              <p style={{ fontSize: 15, color: C.t1, lineHeight: 1.65, marginBottom: 20, fontStyle: 'italic' }}>&ldquo;{text}&rdquo;</p>
-              <div>
-                <p style={{ fontSize: 13, fontWeight: 800, color: C.t1 }}>{name}</p>
-                <p style={{ fontSize: 12, color: C.t3 }}>{role}</p>
-              </div>
-            </div>
-          ))}
+      </div>
+    </section>
+  )
+}
+
+// ── Feedback ───────────────────────────────────────────────────────────────
+function FeedbackSection() {
+  return (
+    <section style={{ background: '#F7F5F1', padding: 'clamp(56px,7vw,80px) 24px', fontFamily: FONT }}>
+      <div style={{ maxWidth: 640, margin: '0 auto' }}>
+        <div data-mkt-animate style={{ marginBottom: 32 }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: C.sage, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>YOUR EXPERIENCE</p>
+          <h2 style={{ fontSize: 'clamp(22px, 3.5vw, 34px)', fontWeight: 900, color: C.t1, letterSpacing: '-0.5px', lineHeight: 1.15, marginBottom: 10 }}>
+            Share your experience
+          </h2>
+          <p style={{ fontSize: 15, color: C.t2, lineHeight: 1.65 }}>
+            We&apos;re an early product built with care. Honest feedback helps us build something truly useful — your words shape what stable. becomes.
+          </p>
+        </div>
+        <div data-mkt-animate className="mkt-d1" style={{ background: C.card, borderRadius: 24, padding: 'clamp(24px,4vw,36px)', border: `1px solid ${C.border}`, boxShadow: '0 2px 20px rgba(0,0,0,0.04)' }}>
+          <FeedbackForm />
         </div>
       </div>
     </section>
@@ -388,14 +411,14 @@ function FinalCTA() {
           Ready to feel more stable?
         </h2>
         <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.75)', lineHeight: 1.6, marginBottom: 36 }}>
-          Join thousands of people building calmer, more focused lives with stable.
+          A calmer, more focused life starts with one small step.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Link href="/sign-up" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#fff', color: C.sageDk, borderRadius: 100, padding: '14px 32px', fontSize: 15, fontWeight: 800, textDecoration: 'none', boxShadow: '0 6px 24px rgba(0,0,0,0.18)' }}>
             Start free today <ArrowRight size={16} />
           </Link>
         </div>
-        <p style={{ marginTop: 18, fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>Free forever · No credit card · 2 minutes to get started</p>
+        <p style={{ marginTop: 18, fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>Free trial available · Cancel anytime</p>
       </div>
     </section>
   )
@@ -448,7 +471,8 @@ export default function HomePage() {
       <Benefits />
       <HowItWorks />
       <Pricing />
-      <Testimonials />
+      <BuiltFor />
+      <FeedbackSection />
       <FAQClient />
       <FinalCTA />
       <Footer />

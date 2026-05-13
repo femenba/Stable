@@ -183,4 +183,30 @@ export const adminRouter = router({
 
       return { ok: true, to, emailType: input.emailType }
     }),
+
+  listFeedback: protectedProcedure
+    .input(z.object({ status: z.enum(['pending', 'approved', 'rejected', 'all']).default('pending') }))
+    .query(async ({ ctx, input }) => {
+      await assertAdmin(ctx)
+      let query = ctx.db
+        .from('feedback_submissions')
+        .select('*')
+        .order('created_at', { ascending: false })
+      if (input.status !== 'all') query = query.eq('status', input.status)
+      const { data, error } = await query
+      if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
+      return data ?? []
+    }),
+
+  moderateFeedback: protectedProcedure
+    .input(z.object({ id: z.string().uuid(), status: z.enum(['approved', 'rejected']) }))
+    .mutation(async ({ ctx, input }) => {
+      await assertAdmin(ctx)
+      const { error } = await ctx.db
+        .from('feedback_submissions')
+        .update({ status: input.status })
+        .eq('id', input.id)
+      if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
+      return { ok: true }
+    }),
 })
