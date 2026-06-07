@@ -1,14 +1,4 @@
 {
-  "buildCommand": "pnpm build",
-  "crons": [
-    {
-      "path": "/api/cron/instagram",
-      "schedule": "30 7 * * *"
-    },
-    {
-      "path": "/api/cron/instagram",
-      "schedule": "0 18 * * *"
-    }
-  ]
+  "buildCommand": "pnpm build"
 }
 
