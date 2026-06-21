@@ -40,22 +40,48 @@ export interface SendOpts {
 
 // ── Deduplication ─────────────────────────────────────────────────────────────
 
-async function isDuplicate(
-  stripeEventId: string,
-  emailType: string,
+/**
+ * Atomically claim the (stripeEventId, emailType) slot BEFORE sending.
+ *
+ * The unique index `email_logs_stripe_dedup_idx` makes the insert the single
+ * source of truth: the first delivery wins the row, any concurrent/duplicate
+ * delivery (Stripe retries or multiple webhook endpoints) gets a unique
+ * violation and is skipped. This is what the old read-then-send check could not
+ * guarantee — it left a window where every overlapping delivery saw "not a
+ * duplicate" and all sent.
+ *
+ * Returns the claimed row id on success, 'duplicate' if already claimed, or
+ * null on an unexpected DB error (in which case we fail open and send anyway so
+ * a transient DB issue never silently drops a lifecycle email).
+ */
+async function claimSend(
   db: DbClient,
-): Promise<boolean> {
-  try {
-    const { data } = await db
-      .from('email_logs')
-      .select('id')
-      .eq('stripe_event_id', stripeEventId)
-      .eq('email_type', emailType)
-      .limit(1)
-    return (data?.length ?? 0) > 0
-  } catch {
-    return false // table may not exist yet — allow send
+  opts: { userId?: string | null; stripeEventId: string; emailType: string },
+  recipient: string,
+  subject: string,
+): Promise<string | 'duplicate' | null> {
+  const { data, error } = await db
+    .from('email_logs')
+    .insert({
+      user_id:         opts.userId ?? null,
+      stripe_event_id: opts.stripeEventId,
+      email_type:      opts.emailType,
+      recipient,
+      subject,
+      status:          'pending',
+    })
+    .select('id')
+    .single()
+
+  if (error) {
+    // 23505 = unique_violation → another delivery already claimed this slot.
+    if (error.code === '23505') return 'duplicate'
+    // Anything else (table/column/constraint mismatch, e.g. migration not yet
+    // applied): log and fall through to an un-deduped send rather than lose it.
+    console.error(`[email] Claim insert failed (${error.code ?? '?'}) — sending without dedup: ${error.message}`)
+    return null
   }
+  return (data?.id as string) ?? null
 }
 
 // ── Logging ───────────────────────────────────────────────────────────────────
@@ -110,13 +136,21 @@ async function send(
     return
   }
 
-  // Deduplication — skip if this Stripe event already sent this email type
+  // Atomic dedup — claim the slot BEFORE sending so duplicate/concurrent Stripe
+  // deliveries of the same event can never each send an email.
+  let claimedRowId: string | null = null
   if (opts.stripeEventId && opts.db) {
-    const dup = await isDuplicate(opts.stripeEventId, opts.emailType, opts.db)
-    if (dup) {
+    const claim = await claimSend(
+      opts.db,
+      { userId: opts.userId, stripeEventId: opts.stripeEventId, emailType: opts.emailType },
+      to,
+      subject,
+    )
+    if (claim === 'duplicate') {
       console.log(`${tag} Duplicate suppressed for event ${opts.stripeEventId}`)
       return
     }
+    claimedRowId = claim // row id, or null if claim errored (fail-open path)
   }
 
   // Send with one retry on transient failure
@@ -146,7 +180,19 @@ async function send(
     console.log(`${tag} Sent → ${to} [id=${resendId}]`)
   }
 
-  if (opts.db) {
+  const finalStatus = sendError ? 'failed' : 'sent'
+
+  if (claimedRowId) {
+    // Finalize the row we already claimed for dedup.
+    try {
+      await opts.db!.from('email_logs')
+        .update({ status: finalStatus, error: sendError ?? null, resend_id: resendId ?? null })
+        .eq('id', claimedRowId)
+    } catch (err) {
+      console.error('[email] Failed to finalize email_logs row:', err)
+    }
+  } else if (opts.db) {
+    // No claim (non-Stripe email, or claim errored and we failed open) — log fresh.
     await logEmail({
       db:             opts.db,
       userId:         opts.userId,
@@ -154,7 +200,7 @@ async function send(
       emailType:      opts.emailType,
       recipient:      to,
       subject,
-      status:         sendError ? 'failed' : 'sent',
+      status:         finalStatus,
       error:          sendError,
       resendId,
     })

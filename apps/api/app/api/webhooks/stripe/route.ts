@@ -117,6 +117,34 @@ async function upsertSubscription(
   await invalidatePlanCache(userId, redis)
 }
 
+// ── Event-level idempotency ─────────────────────────────────────────────────
+// Claim each Stripe event id exactly once. Stripe can deliver the same event
+// multiple times (retries, or several configured endpoints); without this the
+// whole handler — and its side effects like emails — could run repeatedly.
+
+async function claimEvent(
+  event: Stripe.Event,
+  db: ReturnType<typeof getDb>,
+): Promise<'claimed' | 'duplicate' | 'error'> {
+  const { error } = await db
+    .from('processed_webhook_events')
+    .insert({ event_id: event.id, event_type: event.type })
+  if (!error) return 'claimed'
+  if (error.code === '23505') return 'duplicate' // already processed
+  // Unexpected (e.g. migration not yet applied): fail open — the email layer is
+  // independently idempotent, so processing again is safe.
+  werr(event.type, `Event claim failed (${error.code ?? '?'}) — processing without event guard`, error)
+  return 'error'
+}
+
+async function releaseEvent(eventId: string, db: ReturnType<typeof getDb>) {
+  try {
+    await db.from('processed_webhook_events').delete().eq('event_id', eventId)
+  } catch (err) {
+    console.error('[stripe-webhook] Failed to release event claim:', err)
+  }
+}
+
 // ── POST handler ──────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
@@ -171,6 +199,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `DB init error: ${msg}` }, { status: 500 })
   }
   const redis = getRedis()
+
+  // Process each event at most once. If already claimed, ack with 200 and skip.
+  const claim = await claimEvent(event, db)
+  if (claim === 'duplicate') {
+    wlog(event.type, 'Duplicate delivery — already processed, skipping', { id: event.id })
+    return NextResponse.json({ received: true, deduped: true })
+  }
+  const eventClaimed = claim === 'claimed'
 
   try {
     switch (event.type) {
@@ -366,7 +402,10 @@ export async function POST(req: NextRequest) {
     }
   } catch (err) {
     werr(event.type, 'Unhandled exception in webhook handler', err)
-    // Return 200 so Stripe does not retry — error is logged
+    // Release the claim so a later delivery of this event can reprocess it.
+    // Side effects (DB upserts, emails) are individually idempotent, so a
+    // re-run is safe. Still return 200 so Stripe does not hammer retries.
+    if (eventClaimed) await releaseEvent(event.id, db)
   }
 
   return NextResponse.json({ received: true })
