@@ -122,19 +122,37 @@ async function upsertSubscription(
 // multiple times (retries, or several configured endpoints); without this the
 // whole handler — and its side effects like emails — could run repeatedly.
 
+// Postgres error codes that mean "the idempotency store isn't set up" rather
+// than "the database is down" — e.g. the migration hasn't been applied yet.
+// For these we proceed without the guard (degraded) so a schema lag can't wedge
+// every webhook forever. Anything else is treated as the store being
+// unavailable, and we defer (see POST handler).
+const SCHEMA_NOT_READY = new Set([
+  '42P01', // undefined_table
+  '42703', // undefined_column
+  '23514', // check_violation
+  'PGRST205', // PostgREST: table not found in schema cache
+])
+
 async function claimEvent(
   event: Stripe.Event,
   db: ReturnType<typeof getDb>,
-): Promise<'claimed' | 'duplicate' | 'error'> {
+): Promise<'claimed' | 'duplicate' | 'skip-guard' | 'unavailable'> {
   const { error } = await db
     .from('processed_webhook_events')
     .insert({ event_id: event.id, event_type: event.type })
   if (!error) return 'claimed'
   if (error.code === '23505') return 'duplicate' // already processed
-  // Unexpected (e.g. migration not yet applied): fail open — the email layer is
-  // independently idempotent, so processing again is safe.
-  werr(event.type, `Event claim failed (${error.code ?? '?'}) — processing without event guard`, error)
-  return 'error'
+
+  if (error.code && SCHEMA_NOT_READY.has(error.code)) {
+    werr(event.type, `Idempotency table not ready (${error.code}) — processing without event guard`, error)
+    return 'skip-guard'
+  }
+  // Connection/timeout/unknown: the store is unreachable. Defer rather than
+  // process without idempotency (which is exactly what produced duplicate
+  // emails while the DB was paused).
+  werr(event.type, `Idempotency store unreachable (${error.code ?? 'no-code'}) — deferring for Stripe retry`, error)
+  return 'unavailable'
 }
 
 async function releaseEvent(eventId: string, db: ReturnType<typeof getDb>) {
@@ -206,7 +224,16 @@ export async function POST(req: NextRequest) {
     wlog(event.type, 'Duplicate delivery — already processed, skipping', { id: event.id })
     return NextResponse.json({ received: true, deduped: true })
   }
-  const eventClaimed = claim === 'claimed'
+  if (claim === 'unavailable') {
+    // Fail closed: we could not establish idempotency. Return 503 so Stripe
+    // retries later (its backoff spans days) rather than processing now with no
+    // dedup and emitting duplicate emails. Side effects are deferred, not lost.
+    return NextResponse.json(
+      { error: 'Idempotency store unavailable — retry later' },
+      { status: 503 },
+    )
+  }
+  const eventClaimed = claim === 'claimed' // 'skip-guard' → nothing to release
 
   try {
     switch (event.type) {
